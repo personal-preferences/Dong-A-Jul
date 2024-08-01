@@ -34,4 +34,20 @@ public class infoController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
+
+    @PostMapping("/modify")
+    public ResponseEntity<ToiletInfoResponse> modifyInfo(@RequestBody RequestCreateInfo toiletInfo){
+
+        if(toiletInfo.toiletLocationId() == null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+        try {
+            ToiletInfoResponse updatedToilet = toiletInfoService.updateToiletInfo(toiletInfo);
+            return ResponseEntity.status(HttpStatus.OK).body(updatedToilet);
+        } catch (Exception e) {
+            System.err.println("modifyInfo: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
 }
