@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.personal.locations_service.domain.Location;
+import org.personal.locations_service.exception.ToiletNotFound;
 import org.personal.locations_service.repository.LocationRepository;
 import org.personal.locations_service.request.LocationCreate;
 import org.personal.locations_service.response.LocationResponse;
@@ -77,5 +78,28 @@ class LocationServiceTest {
         assertEquals("서울 마포구 동교동 150-1", response.jibunAddress());
         assertEquals(10.23f, response.latitude());
         assertEquals(32.99f, response.longitude());
+    }
+
+    @Test
+    @DisplayName("이름으로 화장실 위치 1개 조회 - 존재하지 않는 화장실")
+    void getToiletLocationNotFound() {
+        // given
+        LocationCreate requestLocation = LocationCreate
+                .builder()
+                .name("홍대 화장실")
+                .roadAddress("서울 마포구 서교동 1길")
+                .jibunAddress("서울 마포구 동교동 150-1")
+                .latitude(10.23f)
+                .longitude(32.99f)
+                .build();
+        locationService.add(requestLocation);
+
+        // when
+        String nonExistToilet = "없는 화장실";
+
+        // then
+        assertThrows(ToiletNotFound.class, () -> {
+            locationService.get(nonExistToilet);
+        });
     }
 }
