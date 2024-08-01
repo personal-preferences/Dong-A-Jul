@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.personal.locations_service.domain.Location;
 import org.personal.locations_service.repository.LocationRepository;
 import org.personal.locations_service.request.LocationCreate;
+import org.personal.locations_service.response.LocationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -52,10 +53,10 @@ class LocationServiceTest {
     }
 
     @Test
-    @DisplayName("화장실 위치 조회")
+    @DisplayName("이름으로 화장실 위치 1개 조회")
     void getToiletLocation() {
         // given
-        LocationCreate locationCreate = LocationCreate
+        LocationCreate requestLocation = LocationCreate
                 .builder()
                 .name("홍대 화장실")
                 .roadAddress("서울 마포구 서교동 1길")
@@ -63,12 +64,18 @@ class LocationServiceTest {
                 .latitude(10.23f)
                 .longitude(32.99f)
                 .build();
+        locationService.add(requestLocation);
 
         // when
-        locationService.add(locationCreate);
+        LocationResponse response = locationService.get(requestLocation.name());
 
         // then
-
-
+        assertNotNull(response);
+        assertEquals(1L, locationRepository.count());
+        assertEquals("홍대 화장실", response.name());
+        assertEquals("서울 마포구 서교동 1길", response.roadAddress());
+        assertEquals("서울 마포구 동교동 150-1", response.jibunAddress());
+        assertEquals(10.23f, response.latitude());
+        assertEquals(32.99f, response.longitude());
     }
 }
