@@ -50,4 +50,20 @@ public class infoController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
+
+    @PostMapping("/{locationId}")
+    public ResponseEntity<ToiletInfoResponse> deleteInfo(@PathVariable Long locationId){
+
+        if(locationId == null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+        try {
+            toiletInfoService.deleteToiletinfo(locationId);
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        } catch (Exception e) {
+            System.err.println("deleteInfo: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
 }
