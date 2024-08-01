@@ -16,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -56,6 +57,34 @@ class LocationControllerTest {
                     .contentType(APPLICATION_JSON)
                     .content(json))
                 .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("화장실 위치 등록 시 name, roadAddress, jibunAddress값은 필수다.")
+    void addToiletRequiredValueException() throws Exception {
+        // given
+        LocationCreate request = LocationCreate
+                .builder()
+//                .name("홍대 화장실")
+//                .roadAddress("서울 마포구 서교동 1길")
+//                .jibunAddress("서울 마포구 동교동 150-1")
+                .latitude(10.23f)
+                .longitude(32.99f)
+                .build();
+
+        String json = objectMapper.writeValueAsString(request);
+
+        // expected
+        mockMvc.perform(post("/locations")
+                        .contentType(APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+                .andExpect(jsonPath("$.validation.name").value("화장실 이름을 입력하세요."))
+                .andExpect(jsonPath("$.validation.roadAddress").value("도로명 주소를 입력하세요."))
+                .andExpect(jsonPath("$.validation.jibunAddress").value("지번 주소를 입력하세요."))
                 .andDo(print());
     }
 

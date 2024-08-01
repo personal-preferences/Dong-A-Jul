@@ -4,9 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
 public record LocationCreate(
-        @NotBlank String name,
-        @NotBlank String roadAddress,
-        @NotBlank String jibunAddress,
+        @NotBlank(message = "화장실 이름을 입력하세요.") String name,
+        @NotBlank(message = "도로명 주소를 입력하세요.") String roadAddress,
+        @NotBlank(message = "지번 주소를 입력하세요.") String jibunAddress,
         Float latitude,         // 위도
         Float longitude        // 경도
 ) {
