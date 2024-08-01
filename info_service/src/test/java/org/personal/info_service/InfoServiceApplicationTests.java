@@ -1,10 +1,10 @@
-package org.personal.toilet_info_service;
+package org.personal.info_service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ToiletInfoServiceApplicationTests {
+class InfoServiceApplicationTests {
 
 	@Test
 	void contextLoads() {
