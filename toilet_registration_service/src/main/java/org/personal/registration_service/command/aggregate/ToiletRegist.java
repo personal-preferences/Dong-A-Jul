@@ -1,4 +1,4 @@
 package org.personal.registration_service.command.aggregate;
 
-public class ToiletRegistEntity {
+public class ToiletRegist {
 }
