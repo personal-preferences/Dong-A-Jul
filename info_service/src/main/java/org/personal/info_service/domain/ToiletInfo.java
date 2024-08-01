@@ -38,7 +38,6 @@ public class ToiletInfo {
     private int toiletInfoFemaleDisabledToiletsNumber;
     private int toiletInfoFemaleChildToiletsNumber;
 
-    @NotNull(message = "Toilet Location ID must not be null")
     private Long toiletLocationId;
 
     public ToiletInfo() {

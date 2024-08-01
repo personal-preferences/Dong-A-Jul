@@ -7,4 +7,6 @@ import org.springframework.stereotype.Service;
 
 public interface ToiletInfoService {
     ToiletInfoResponse createToiletInfo(RequestCreateInfo toiletInfo);
+
+    ToiletInfoResponse updateToiletInfo(RequestCreateInfo modifyToiletInfo);
 }

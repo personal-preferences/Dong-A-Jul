@@ -25,6 +25,22 @@ public class ToiletInfoServiceImpl implements ToiletInfoService {
         return convertToiletInfoToResponse(requestInfo);
     }
 
+    @Override
+    public ToiletInfoResponse updateToiletInfo(RequestCreateInfo modifyToiletInfo) {
+
+        ToiletInfo savedInfo = toiletInfoRepository.findByToiletLocationId(modifyToiletInfo.toiletLocationId());
+
+        if(savedInfo == null){
+            throw new IllegalArgumentException();
+        }
+
+        ToiletInfo updateInfo = convertRequestCreateInfoToToiletInfo(modifyToiletInfo);
+        updateInfo.setToiletInfoId(savedInfo.getToiletInfoId());
+        toiletInfoRepository.save(updateInfo);
+
+        return convertToiletInfoToResponse(updateInfo);
+    }
+
     // ToiletInfoResponse를 ToiletInfo로 변환하는 메서드
     private ToiletInfo convertRequestCreateInfoToToiletInfo(RequestCreateInfo response) {
         return ToiletInfo.builder()

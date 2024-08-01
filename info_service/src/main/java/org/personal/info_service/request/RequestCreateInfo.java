@@ -4,6 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record RequestCreateInfo(
+        Long toiletInfoId,
         boolean isDeleted,
         String toiletInfoManagementAgency,
         String toiletInfoPhoneNumber,

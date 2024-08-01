@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.personal.info_service.domain.ToiletInfo;
+import org.personal.info_service.repository.ToiletInfoRepository;
 import org.personal.info_service.request.RequestCreateInfo;
 import org.personal.info_service.response.ToiletInfoResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,19 @@ class ToiletInfoServiceTest {
 
         assertThat(savedToiletInfo.toiletInfoId()).isNotNull();
     }
+
+    @Test
+    @DisplayName("화장실 정보 수정")
+    void modifyToiletInfo(){
+
+        ToiletInfoResponse beforeInfo = toiletInfoService.createToiletInfo(createTestToiletInfo());
+        System.out.println("beforeInfo = " + beforeInfo);
+
+        ToiletInfoResponse updateInfo = toiletInfoService.updateToiletInfo(createModifyTestToiletInfo(beforeInfo));
+
+        assertThat(beforeInfo.toiletInfoFemaleToiletsNumber()).isNotEqualTo(updateInfo.toiletInfoFemaleChildToiletsNumber());
+    }
+
 
     // 테스트용 ToiletInfoResponse 객체를 생성하는 함수
     public RequestCreateInfo createTestToiletInfo() {
@@ -60,5 +74,37 @@ class ToiletInfoServiceTest {
                 .toiletLocationId(1L)
                 .build();
     }
+
+    // 테스트용 ToiletInfoResponse 객체를 생성하는 함수
+    public RequestCreateInfo createModifyTestToiletInfo(ToiletInfoResponse toiletInfoResponse) {
+        return RequestCreateInfo.builder()
+                .toiletInfoId(toiletInfoResponse.toiletInfoId())
+                .isDeleted(toiletInfoResponse.isDeleted())
+                .toiletInfoManagementAgency(toiletInfoResponse.toiletInfoManagementAgency())
+                .toiletInfoPhoneNumber(toiletInfoResponse.toiletInfoPhoneNumber())
+                .toiletInfoOpeningHours(toiletInfoResponse.toiletInfoOpeningHours())
+                .toiletInfoOpeningHoursDetails(toiletInfoResponse.toiletInfoOpeningHoursDetails())
+                .toiletInfoInstallationYearMonth(toiletInfoResponse.toiletInfoInstallationYearMonth())
+                .toiletInfoOwnershipType(toiletInfoResponse.toiletInfoOwnershipType())
+                .toiletInfoWasteDisposalMethod(toiletInfoResponse.toiletInfoWasteDisposalMethod())
+                .toiletInfoSafetyFacilityInstallationIsRequired(toiletInfoResponse.toiletInfoSafetyFacilityInstallationIsRequired())
+                .toiletInfoEmergencyBellIsInstalled(toiletInfoResponse.toiletInfoEmergencyBellIsInstalled())
+                .toiletInfoEmergencyBellLocation(toiletInfoResponse.toiletInfoEmergencyBellLocation())
+                .toiletInfoEntranceCCTVIsInstalled(toiletInfoResponse.toiletInfoEntranceCCTVIsInstalled())
+                .toiletInfoDiaperChangingTableIsAvailable(toiletInfoResponse.toiletInfoDiaperChangingTableIsAvailable())
+                .toiletInfoDiaperChangingTableLocation(toiletInfoResponse.toiletInfoDiaperChangingTableLocation())
+                .toiletInfoMaleToiletsNumber(toiletInfoResponse.toiletInfoMaleToiletsNumber())
+                .toiletInfoMaleUrinalsNumber(toiletInfoResponse.toiletInfoMaleUrinalsNumber())
+                .toiletInfoMaleDisabledToiletsNumber(toiletInfoResponse.toiletInfoMaleDisabledToiletsNumber())
+                .toiletInfoMaleDisabledUrinalsNumber(toiletInfoResponse.toiletInfoMaleDisabledUrinalsNumber())
+                .toiletInfoMaleChildToiletsNumber(toiletInfoResponse.toiletInfoMaleChildToiletsNumber())
+                .toiletInfoMaleChildUrinalsNumber(toiletInfoResponse.toiletInfoMaleChildUrinalsNumber())
+                .toiletInfoFemaleToiletsNumber(toiletInfoResponse.toiletInfoFemaleToiletsNumber() + 10)
+                .toiletInfoFemaleDisabledToiletsNumber(toiletInfoResponse.toiletInfoFemaleDisabledToiletsNumber())
+                .toiletInfoFemaleChildToiletsNumber(toiletInfoResponse.toiletInfoFemaleChildToiletsNumber())
+                .toiletLocationId(toiletInfoResponse.toiletLocationId())
+                .build();
+    }
+
 
 }
