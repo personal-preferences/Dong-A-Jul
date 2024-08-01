@@ -41,6 +41,18 @@ public class ToiletInfoServiceImpl implements ToiletInfoService {
         return convertToiletInfoToResponse(updateInfo);
     }
 
+    @Override
+    public void deleteToiletinfo(Long locationId) {
+        ToiletInfo savedInfo = toiletInfoRepository.findByToiletLocationId(locationId);
+
+        if(savedInfo == null){
+            throw new IllegalArgumentException();
+        }
+
+        savedInfo.setDeleted(true);
+        toiletInfoRepository.save(savedInfo);
+    }
+
     // ToiletInfoResponse를 ToiletInfo로 변환하는 메서드
     private ToiletInfo convertRequestCreateInfoToToiletInfo(RequestCreateInfo response) {
         return ToiletInfo.builder()

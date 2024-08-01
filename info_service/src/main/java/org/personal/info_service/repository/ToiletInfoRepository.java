@@ -7,5 +7,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ToiletInfoRepository extends JpaRepository<ToiletInfo, Long>, ToiletInfoRepositoryCustom{
 
-    ToiletInfo findByToiletLocationId(Long id);
+    ToiletInfo findByToiletLocationId(Long locationId);
+
+    ToiletInfo findByToiletInfoId(Long infoId);
 }
