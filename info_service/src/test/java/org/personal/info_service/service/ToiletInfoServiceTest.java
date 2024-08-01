@@ -19,7 +19,10 @@ import static org.junit.jupiter.api.Assertions.*;
 class ToiletInfoServiceTest {
 
     @Autowired
-    ToiletInfoService toiletInfoService;
+    private ToiletInfoService toiletInfoService;
+
+    @Autowired
+    private ToiletInfoRepository  toiletInfoRepository;
 
     @Test
     @DisplayName("화장실 정보 저장")
@@ -37,11 +40,24 @@ class ToiletInfoServiceTest {
     void modifyToiletInfo(){
 
         ToiletInfoResponse beforeInfo = toiletInfoService.createToiletInfo(createTestToiletInfo());
-        System.out.println("beforeInfo = " + beforeInfo);
 
         ToiletInfoResponse updateInfo = toiletInfoService.updateToiletInfo(createModifyTestToiletInfo(beforeInfo));
 
         assertThat(beforeInfo.toiletInfoFemaleToiletsNumber()).isNotEqualTo(updateInfo.toiletInfoFemaleChildToiletsNumber());
+    }
+
+    @Test
+    @DisplayName("화장실 정보 삭제")
+    void deleteToiletInfo(){
+
+        ToiletInfoResponse deleteInfo = toiletInfoService.createToiletInfo(createTestToiletInfo());
+        Long deleteId = deleteInfo.toiletLocationId();
+
+        toiletInfoService.deleteToiletinfo(deleteId);
+
+        ToiletInfo deletedInfo = toiletInfoRepository.findByToiletInfoId(deleteInfo.toiletInfoId());
+
+        assertTrue(deletedInfo.isDeleted());
     }
 
 
