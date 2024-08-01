@@ -1,4 +1,4 @@
-package org.personal.review_service.domain.aggregate;
+package org.personal.review_service.aggregate;
 
 import jakarta.persistence.*;
 import lombok.Getter;
