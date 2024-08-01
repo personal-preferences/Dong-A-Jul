@@ -6,8 +6,8 @@ import org.personal.locations_service.domain.Location;
 import org.personal.locations_service.exception.ToiletNotFound;
 import org.personal.locations_service.repository.LocationRepository;
 import org.personal.locations_service.request.LocationCreate;
-import org.personal.locations_service.request.LocationSearch;
 import org.personal.locations_service.response.LocationResponse;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -48,8 +48,8 @@ public class LocationServiceImpl implements LocationService{
     }
 
     @Override
-    public List<LocationResponse> getList(LocationSearch locationSearch) {
-        return locationRepository.getList(locationSearch).stream()
+    public List<LocationResponse> getList(Pageable pageable) {
+        return locationRepository.getList(pageable).stream()
                 .map(LocationResponse::new)
                 .toList();
     }
