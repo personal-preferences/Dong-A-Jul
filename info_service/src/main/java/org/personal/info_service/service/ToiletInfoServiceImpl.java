@@ -26,64 +26,64 @@ public class ToiletInfoServiceImpl implements ToiletInfoService {
 
     // ToiletInfoResponse를 ToiletInfo로 변환하는 메서드
     private ToiletInfo convertToiletInfoResponseToToiletInfo(ToiletInfoResponse response) {
-        ToiletInfo toiletInfo = new ToiletInfo();
-        toiletInfo.setToiletInfoId(response.toiletInfoId());
-        toiletInfo.setDeleted(response.isDeleted());
-        toiletInfo.setToiletInfoManagementAgency(response.toiletInfoManagementAgency());
-        toiletInfo.setToiletInfoPhoneNumber(response.toiletInfoPhoneNumber());
-        toiletInfo.setToiletInfoOpeningHours(response.toiletInfoOpeningHours());
-        toiletInfo.setToiletInfoOpeningHoursDetails(response.toiletInfoOpeningHoursDetails());
-        toiletInfo.setToiletInfoInstallationYearMonth(response.toiletInfoInstallationYearMonth());
-        toiletInfo.setToiletInfoOwnershipType(response.toiletInfoOwnershipType());
-        toiletInfo.setToiletInfoWasteDisposalMethod(response.toiletInfoWasteDisposalMethod());
-        toiletInfo.setToiletInfoSafetyFacilityInstallationIsRequired(response.toiletInfoSafetyFacilityInstallationIsRequired());
-        toiletInfo.setToiletInfoEmergencyBellIsInstalled(response.toiletInfoEmergencyBellIsInstalled());
-        toiletInfo.setToiletInfoEmergencyBellLocation(response.toiletInfoEmergencyBellLocation());
-        toiletInfo.setToiletInfoEntranceCctvIsInstalled(response.toiletInfoEntranceCCTVIsInstalled());
-        toiletInfo.setToiletInfoDiaperChangingTableIsAvailable(response.toiletInfoDiaperChangingTableIsAvailable());
-        toiletInfo.setToiletInfoDiaperChangingTableLocation(response.toiletInfoDiaperChangingTableLocation());
-        toiletInfo.setToiletInfoMaleToiletsNumber(response.toiletInfoMaleToiletsNumber());
-        toiletInfo.setToiletInfoMaleUrinalsNumber(response.toiletInfoMaleUrinalsNumber());
-        toiletInfo.setToiletInfoMaleDisabledToiletsNumber(response.toiletInfoMaleDisabledToiletsNumber());
-        toiletInfo.setToiletInfoMaleDisabledUrinalsNumber(response.toiletInfoMaleDisabledUrinalsNumber());
-        toiletInfo.setToiletInfoMaleChildToiletsNumber(response.toiletInfoMaleChildToiletsNumber());
-        toiletInfo.setToiletInfoMaleChildUrinalsNumber(response.toiletInfoMaleChildUrinalsNumber());
-        toiletInfo.setToiletInfoFemaleToiletsNumber(response.toiletInfoFemaleToiletsNumber());
-        toiletInfo.setToiletInfoFemaleDisabledToiletsNumber(response.toiletInfoFemaleDisabledToiletsNumber());
-        toiletInfo.setToiletInfoFemaleChildToiletsNumber(response.toiletInfoFemaleChildToiletsNumber());
-        toiletInfo.setToiletLocationId(response.toiletLocationId());
-
-        return toiletInfo;
+        return ToiletInfo.builder()
+                .toiletInfoId(response.toiletInfoId())
+                .isDeleted(response.isDeleted())
+                .toiletInfoManagementAgency(response.toiletInfoManagementAgency())
+                .toiletInfoPhoneNumber(response.toiletInfoPhoneNumber())
+                .toiletInfoOpeningHours(response.toiletInfoOpeningHours())
+                .toiletInfoOpeningHoursDetails(response.toiletInfoOpeningHoursDetails())
+                .toiletInfoInstallationYearMonth(response.toiletInfoInstallationYearMonth())
+                .toiletInfoOwnershipType(response.toiletInfoOwnershipType())
+                .toiletInfoWasteDisposalMethod(response.toiletInfoWasteDisposalMethod())
+                .toiletInfoSafetyFacilityInstallationIsRequired(response.toiletInfoSafetyFacilityInstallationIsRequired())
+                .toiletInfoEmergencyBellIsInstalled(response.toiletInfoEmergencyBellIsInstalled())
+                .toiletInfoEmergencyBellLocation(response.toiletInfoEmergencyBellLocation())
+                .toiletInfoEntranceCctvIsInstalled(response.toiletInfoEntranceCCTVIsInstalled())
+                .toiletInfoDiaperChangingTableIsAvailable(response.toiletInfoDiaperChangingTableIsAvailable())
+                .toiletInfoDiaperChangingTableLocation(response.toiletInfoDiaperChangingTableLocation())
+                .toiletInfoMaleToiletsNumber(response.toiletInfoMaleToiletsNumber())
+                .toiletInfoMaleUrinalsNumber(response.toiletInfoMaleUrinalsNumber())
+                .toiletInfoMaleDisabledToiletsNumber(response.toiletInfoMaleDisabledToiletsNumber())
+                .toiletInfoMaleDisabledUrinalsNumber(response.toiletInfoMaleDisabledUrinalsNumber())
+                .toiletInfoMaleChildToiletsNumber(response.toiletInfoMaleChildToiletsNumber())
+                .toiletInfoMaleChildUrinalsNumber(response.toiletInfoMaleChildUrinalsNumber())
+                .toiletInfoFemaleToiletsNumber(response.toiletInfoFemaleToiletsNumber())
+                .toiletInfoFemaleDisabledToiletsNumber(response.toiletInfoFemaleDisabledToiletsNumber())
+                .toiletInfoFemaleChildToiletsNumber(response.toiletInfoFemaleChildToiletsNumber())
+                .toiletLocationId(response.toiletLocationId())
+                .build();
     }
+
 
     // ToiletInfo를 ToiletInfoResponse로 변환하는 메서드
     private ToiletInfoResponse convertToiletInfoToResponse(ToiletInfo toiletInfo) {
-        return new ToiletInfoResponse(
-                toiletInfo.getToiletInfoId(),
-                toiletInfo.isDeleted(),
-                toiletInfo.getToiletInfoManagementAgency(),
-                toiletInfo.getToiletInfoPhoneNumber(),
-                toiletInfo.getToiletInfoOpeningHours(),
-                toiletInfo.getToiletInfoOpeningHoursDetails(),
-                toiletInfo.getToiletInfoInstallationYearMonth(),
-                toiletInfo.getToiletInfoOwnershipType(),
-                toiletInfo.getToiletInfoWasteDisposalMethod(),
-                toiletInfo.isToiletInfoSafetyFacilityInstallationIsRequired(),
-                toiletInfo.isToiletInfoEmergencyBellIsInstalled(),
-                toiletInfo.getToiletInfoEmergencyBellLocation(),
-                toiletInfo.isToiletInfoEntranceCctvIsInstalled(),
-                toiletInfo.isToiletInfoDiaperChangingTableIsAvailable(),
-                toiletInfo.getToiletInfoDiaperChangingTableLocation(),
-                toiletInfo.getToiletInfoMaleToiletsNumber(),
-                toiletInfo.getToiletInfoMaleUrinalsNumber(),
-                toiletInfo.getToiletInfoMaleDisabledToiletsNumber(),
-                toiletInfo.getToiletInfoMaleDisabledUrinalsNumber(),
-                toiletInfo.getToiletInfoMaleChildToiletsNumber(),
-                toiletInfo.getToiletInfoMaleChildUrinalsNumber(),
-                toiletInfo.getToiletInfoFemaleToiletsNumber(),
-                toiletInfo.getToiletInfoFemaleDisabledToiletsNumber(),
-                toiletInfo.getToiletInfoFemaleChildToiletsNumber(),
-                toiletInfo.getToiletLocationId()
-        );
+        return ToiletInfoResponse.builder()
+                .toiletInfoId(toiletInfo.getToiletInfoId())
+                .isDeleted(toiletInfo.isDeleted())
+                .toiletInfoManagementAgency(toiletInfo.getToiletInfoManagementAgency())
+                .toiletInfoPhoneNumber(toiletInfo.getToiletInfoPhoneNumber())
+                .toiletInfoOpeningHours(toiletInfo.getToiletInfoOpeningHours())
+                .toiletInfoOpeningHoursDetails(toiletInfo.getToiletInfoOpeningHoursDetails())
+                .toiletInfoInstallationYearMonth(toiletInfo.getToiletInfoInstallationYearMonth())
+                .toiletInfoOwnershipType(toiletInfo.getToiletInfoOwnershipType())
+                .toiletInfoWasteDisposalMethod(toiletInfo.getToiletInfoWasteDisposalMethod())
+                .toiletInfoSafetyFacilityInstallationIsRequired(toiletInfo.isToiletInfoSafetyFacilityInstallationIsRequired())
+                .toiletInfoEmergencyBellIsInstalled(toiletInfo.isToiletInfoEmergencyBellIsInstalled())
+                .toiletInfoEmergencyBellLocation(toiletInfo.getToiletInfoEmergencyBellLocation())
+                .toiletInfoEntranceCCTVIsInstalled(toiletInfo.isToiletInfoEntranceCctvIsInstalled())
+                .toiletInfoDiaperChangingTableIsAvailable(toiletInfo.isToiletInfoDiaperChangingTableIsAvailable())
+                .toiletInfoDiaperChangingTableLocation(toiletInfo.getToiletInfoDiaperChangingTableLocation())
+                .toiletInfoMaleToiletsNumber(toiletInfo.getToiletInfoMaleToiletsNumber())
+                .toiletInfoMaleUrinalsNumber(toiletInfo.getToiletInfoMaleUrinalsNumber())
+                .toiletInfoMaleDisabledToiletsNumber(toiletInfo.getToiletInfoMaleDisabledToiletsNumber())
+                .toiletInfoMaleDisabledUrinalsNumber(toiletInfo.getToiletInfoMaleDisabledUrinalsNumber())
+                .toiletInfoMaleChildToiletsNumber(toiletInfo.getToiletInfoMaleChildToiletsNumber())
+                .toiletInfoMaleChildUrinalsNumber(toiletInfo.getToiletInfoMaleChildUrinalsNumber())
+                .toiletInfoFemaleToiletsNumber(toiletInfo.getToiletInfoFemaleToiletsNumber())
+                .toiletInfoFemaleDisabledToiletsNumber(toiletInfo.getToiletInfoFemaleDisabledToiletsNumber())
+                .toiletInfoFemaleChildToiletsNumber(toiletInfo.getToiletInfoFemaleChildToiletsNumber())
+                .toiletLocationId(toiletInfo.getToiletLocationId())
+                .build();
     }
 }

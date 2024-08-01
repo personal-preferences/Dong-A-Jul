@@ -1,5 +1,8 @@
 package org.personal.info_service.response;
 
+import lombok.Builder;
+
+@Builder
 public record ToiletInfoResponse(
         Long toiletInfoId,
         boolean isDeleted,
