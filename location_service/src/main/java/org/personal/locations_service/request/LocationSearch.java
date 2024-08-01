@@ -16,6 +16,8 @@ public record LocationSearch(
     }
 
     public long getOffset() {
+        // 페이지 번호가 1보다 작은 경우 기본값 1
+        // 페이지 번호를 0기반으로 변환
         return (long) (max(1, page) -1) * min(size, MAX_SIZE);
     }
 }

@@ -1,6 +1,5 @@
 package org.personal.locations_service.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -11,9 +10,12 @@ import org.personal.locations_service.request.LocationCreate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+import java.util.stream.IntStream;
+
+import static org.hamcrest.Matchers.is;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -127,6 +129,35 @@ class LocationControllerTest {
         mockMvc.perform(get("/locations/{toiletName}", nonExistToilet)
                     .contentType(APPLICATION_JSON))
                 .andExpect(status().isNotFound())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("화장실 여러개 조회")
+    void getLocationList() throws Exception {
+        // given
+        List<Location> requestLocationList = IntStream.range(0, 30)
+                .mapToObj(i -> Location.builder()
+                        .name("홍대 화장실" + i)
+                        .roadAddress("서울 마포구 서교동 1길" + i)
+                        .jibunAddress("서울 마포구 동교동 150-1" + i)
+                        .latitude(10.23f + i)
+                        .longitude(32.99f + i)
+                        .build())
+                .toList();
+
+        locationRepository.saveAll(requestLocationList);
+
+        // expected
+        mockMvc.perform(get("/locations?page=1&size=10")
+                    .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", is(10)))
+                .andExpect(jsonPath("$[0].name").value("홍대 화장실29"))
+                .andExpect(jsonPath("$[0].roadAddress").value("서울 마포구 서교동 1길29"))
+                .andExpect(jsonPath("$[0].jibunAddress").value("서울 마포구 동교동 150-129"))
+                .andExpect(jsonPath("$[0].latitude").value("39.23"))
+                .andExpect(jsonPath("$[0].longitude").value("61.99"))
                 .andDo(print());
     }
 }
