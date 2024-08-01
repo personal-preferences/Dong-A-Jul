@@ -3,6 +3,7 @@ package org.personal.locations_service.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.personal.locations_service.domain.Location;
+import org.personal.locations_service.exception.ToiletNotFound;
 import org.personal.locations_service.repository.LocationRepository;
 import org.personal.locations_service.request.LocationCreate;
 import org.personal.locations_service.request.LocationSearch;
@@ -34,10 +35,9 @@ public class LocationServiceImpl implements LocationService{
     @Override
     public LocationResponse get(String toiletName) {
         Location location = locationRepository.findByName(toiletName)
-                .orElseThrow(); // TODO 임의의 exception 만들기
+                .orElseThrow(ToiletNotFound::new);
 
-        return LocationResponse
-                .builder()
+        return LocationResponse.builder()
                 .id(location.getId())
                 .name(location.getName())
                 .roadAddress(location.getRoadAddress())
