@@ -3,9 +3,12 @@ package org.personal.user_service.user.service;
 import org.personal.user_service.config.DateParsing;
 import org.personal.user_service.user.domain.User;
 import org.personal.user_service.user.etc.ROLE;
+import org.personal.user_service.user.exception.InvalidRequestException;
+import org.personal.user_service.user.exception.NotFoundException;
 import org.personal.user_service.user.repository.UserRepository;
 import org.personal.user_service.user.response.ResponseUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -45,8 +48,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean registUser(RequestRegist requestRegist) {
+    public boolean registUser(RequestRegist requestRegist) throws InvalidRequestException {
         try {
+            if (isrequestRegistNull(requestRegist)) {
+                throw new InvalidRequestException("Bad Request of Regist");
+            }
             System.out.println("requestRegist = " + requestRegist);
             User user = new User();
             user.setUserEmail(requestRegist.userEmail());
@@ -66,5 +72,18 @@ public class UserServiceImpl implements UserService {
         }
 
         return true;
+    }
+
+    private boolean isrequestRegistNull(RequestRegist requestRegist) {
+        return requestRegist.userEmail() != null
+                && requestRegist.userRole() != null
+                && requestRegist.userNickname() != null
+                && requestRegist.userPassword() != null;
+    }
+
+    @Override
+    public User getUser(int userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(()-> new NotFoundException("User Not Found"));
     }
 }
