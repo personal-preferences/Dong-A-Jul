@@ -1,5 +1,6 @@
 package org.personal.review_service.controller;
 
+import jakarta.validation.Valid;
 import org.personal.review_service.exception.ReviewNotFoundException;
 import org.personal.review_service.request.ReviewCreate;
 import org.personal.review_service.response.ReviewResponse;
@@ -7,12 +8,14 @@ import org.personal.review_service.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/reviews")
+@RequestMapping("/review")
+@Validated
 public class ReviewController {
 
     private final ReviewService reviewService;
@@ -22,8 +25,8 @@ public class ReviewController {
         this.reviewService = reviewService;
     }
 
-    @PostMapping
-    public ResponseEntity<ReviewResponse> createReview(@RequestBody ReviewCreate reviewCreate) {
+    @PostMapping()
+    public ResponseEntity<ReviewResponse> createReview(@RequestBody @Valid ReviewCreate reviewCreate) {
         ReviewResponse reviewResponse = reviewService.createReview(reviewCreate);
         return new ResponseEntity<>(reviewResponse, HttpStatus.CREATED);
     }

@@ -22,7 +22,7 @@ public class Review {
     private String reviewContent;
 
     @Column(name = "review_score", nullable = false)
-    private Long reviewScore;
+    private Integer reviewScore;
 
     @Column(name = "review_registred_date", nullable = false)
     private String reviewRegisteredDate;
@@ -37,7 +37,7 @@ public class Review {
     private Long locationId;
 
     @Builder
-    public Review(Long reviewId, String reviewContent, Long reviewScore, String reviewRegisteredDate,
+    public Review(Long reviewId, String reviewContent, Integer reviewScore, String reviewRegisteredDate,
                   Boolean reviewIsDeleted, Long userId, Long locationId) {
         this.reviewId = reviewId;
         this.reviewContent = reviewContent;

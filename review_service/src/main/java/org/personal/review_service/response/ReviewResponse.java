@@ -5,14 +5,14 @@ import lombok.Builder;
 public record ReviewResponse(
         Long reviewId,
         String reviewContent,
-        Long reviewScore,
+        Integer reviewScore,
         String reviewRegisteredDate,
         Boolean reviewIsDeleted,
         Long userId,
         Long locationId
 ) {
     @Builder
-    public ReviewResponse(Long reviewId, String reviewContent, Long reviewScore,
+    public ReviewResponse(Long reviewId, String reviewContent, Integer reviewScore,
                           String reviewRegisteredDate, Boolean reviewIsDeleted, Long userId, Long locationId) {
         this.reviewId = reviewId;
         this.reviewContent = reviewContent;
