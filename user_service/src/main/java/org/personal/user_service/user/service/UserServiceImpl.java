@@ -48,7 +48,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean registUser(RequestRegist requestRegist) throws InvalidRequestException {
+    public boolean registUser(RequestRegist requestRegist)  {
         try {
             if (isrequestRegistNull(requestRegist)) {
                 throw new InvalidRequestException("Bad Request of Regist");
@@ -75,10 +75,10 @@ public class UserServiceImpl implements UserService {
     }
 
     private boolean isrequestRegistNull(RequestRegist requestRegist) {
-        return requestRegist.userEmail() != null
-                && requestRegist.userRole() != null
-                && requestRegist.userNickname() != null
-                && requestRegist.userPassword() != null;
+        return requestRegist.userEmail() == null
+                || requestRegist.userRole() == null
+                || requestRegist.userNickname() == null
+                || requestRegist.userPassword() == null;
     }
 
     @Override

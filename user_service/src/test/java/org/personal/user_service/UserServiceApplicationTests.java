@@ -130,6 +130,34 @@ class UserServiceApplicationTests {
         // then
         assertTrue(result);
         assertNotEquals(requestRegist.userPassword(),user.getUserPassword());
+    }
 
+    @Test
+    @DisplayName("사용자 회원가입-실패")
+    public void testRegist_failed() {
+        // given
+        RequestRegist requestRegist = new RequestRegist(
+                "register@test.com",
+                "register",
+                null,
+                null
+        );
+        User user = new User();
+        user.setUserEmail("register@test.com");
+        user.setUserNickname("register");
+        user.setUserPassword("changed_password");
+        user.setUserEnrollDate(LocalDateTime.now());
+        user.setUserDeleteDate(null);
+        user.setUserIsDeleted(false);
+        user.setUserRole(ROLE.ROLE_USER);
+
+        when(bCryptPasswordEncoder.encode("1234")).thenReturn("changed_password");
+        when(userRepository.save(any(User.class))).thenReturn(user);
+
+        // when
+        boolean result = userService.registUser(requestRegist);
+
+        // then
+        assertFalse(result);
     }
 }
