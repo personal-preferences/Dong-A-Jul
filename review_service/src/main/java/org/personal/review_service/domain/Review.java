@@ -1,6 +1,7 @@
-package org.personal.review_service.aggregate;
+package org.personal.review_service.domain;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -9,19 +10,19 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @Entity
-@Table(name = "review")
+@Table(name = "review", schema = "public")
 public class Review {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "review_id", nullable = false)
-    private Integer reviewId;
+    private Long reviewId;
 
     @Column(name = "review_content", nullable = false)
     private String reviewContent;
 
     @Column(name = "review_score", nullable = false)
-    private Integer reviewScore;
+    private Long reviewScore;
 
     @Column(name = "review_registred_date", nullable = false)
     private String reviewRegisteredDate;
@@ -30,9 +31,24 @@ public class Review {
     private Boolean reviewIsDeleted;
 
     @JoinColumn(name = "user_id", nullable = false)
-    private Integer userId;
+    private Long userId;
 
     @JoinColumn(name = "location_id", nullable = false)
-    private Integer locationId;
+    private Long locationId;
 
+    @Builder
+    public Review(Long reviewId, String reviewContent, Long reviewScore, String reviewRegisteredDate,
+                  Boolean reviewIsDeleted, Long userId, Long locationId) {
+        this.reviewId = reviewId;
+        this.reviewContent = reviewContent;
+        this.reviewScore = reviewScore;
+        this.reviewRegisteredDate = reviewRegisteredDate;
+        this.reviewIsDeleted = reviewIsDeleted;
+        this.userId = userId;
+        this.locationId = locationId;
+    }
+
+    public void markAsDeleted(){
+        this.reviewIsDeleted = Boolean.TRUE;
+    }
 }
