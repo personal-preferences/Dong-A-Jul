@@ -2,6 +2,7 @@ package org.personal.info_service.service;
 
 import org.personal.info_service.domain.ToiletInfo;
 import org.personal.info_service.repository.ToiletInfoRepository;
+import org.personal.info_service.request.RequestCreateInfo;
 import org.personal.info_service.response.ToiletInfoResponse;
 import org.springframework.stereotype.Service;
 
@@ -15,9 +16,9 @@ public class ToiletInfoServiceImpl implements ToiletInfoService {
     }
 
     @Override
-    public ToiletInfoResponse createToiletInfo(ToiletInfoResponse toiletInfo) {
+    public ToiletInfoResponse createToiletInfo(RequestCreateInfo toiletInfo) {
 
-        ToiletInfo requestInfo = convertToiletInfoResponseToToiletInfo(toiletInfo);
+        ToiletInfo requestInfo = convertRequestCreateInfoToToiletInfo(toiletInfo);
 
         toiletInfoRepository.save(requestInfo);
 
@@ -25,9 +26,8 @@ public class ToiletInfoServiceImpl implements ToiletInfoService {
     }
 
     // ToiletInfoResponse를 ToiletInfo로 변환하는 메서드
-    private ToiletInfo convertToiletInfoResponseToToiletInfo(ToiletInfoResponse response) {
+    private ToiletInfo convertRequestCreateInfoToToiletInfo(RequestCreateInfo response) {
         return ToiletInfo.builder()
-                .toiletInfoId(response.toiletInfoId())
                 .isDeleted(response.isDeleted())
                 .toiletInfoManagementAgency(response.toiletInfoManagementAgency())
                 .toiletInfoPhoneNumber(response.toiletInfoPhoneNumber())

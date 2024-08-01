@@ -1,6 +1,7 @@
 package org.personal.info_service.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 import lombok.Data;
 
@@ -37,6 +38,7 @@ public class ToiletInfo {
     private int toiletInfoFemaleDisabledToiletsNumber;
     private int toiletInfoFemaleChildToiletsNumber;
 
+    @NotNull(message = "Toilet Location ID must not be null")
     private Long toiletLocationId;
 
     public ToiletInfo() {

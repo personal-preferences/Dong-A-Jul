@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.personal.info_service.domain.ToiletInfo;
+import org.personal.info_service.request.RequestCreateInfo;
 import org.personal.info_service.response.ToiletInfoResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,7 +24,7 @@ class ToiletInfoServiceTest {
     @DisplayName("화장실 정보 저장")
     void registToiletInfo(){
 
-        ToiletInfoResponse toiletInfo = createTestToiletInfo();
+        RequestCreateInfo toiletInfo = createTestToiletInfo();
 
         ToiletInfoResponse savedToiletInfo = toiletInfoService.createToiletInfo(toiletInfo);
 
@@ -31,8 +32,8 @@ class ToiletInfoServiceTest {
     }
 
     // 테스트용 ToiletInfoResponse 객체를 생성하는 함수
-    public ToiletInfoResponse createTestToiletInfo() {
-        return ToiletInfoResponse.builder()
+    public RequestCreateInfo createTestToiletInfo() {
+        return RequestCreateInfo.builder()
                 .isDeleted(false)
                 .toiletInfoManagementAgency("Public Agency")
                 .toiletInfoPhoneNumber("123-456-7890")
