@@ -48,9 +48,9 @@ public class LocationServiceImpl implements LocationService{
     }
 
     @Override
-    public List<LocationResponse> getLocationList(LocationSearch locationSearch) {
-//        Location location = LocationRepository.getList().
-
-        return List.of();
+    public List<LocationResponse> getList(LocationSearch locationSearch) {
+        return locationRepository.getList(locationSearch).stream()
+                .map(LocationResponse::new)
+                .toList();
     }
 }

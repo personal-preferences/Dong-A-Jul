@@ -13,5 +13,5 @@ public interface LocationService {
 
     LocationResponse get(String toiletName);
 
-    List<LocationResponse> getLocationList(LocationSearch locationSearch);
+    List<LocationResponse> getList(LocationSearch locationSearch);
 }
