@@ -1,11 +1,12 @@
 package org.personal.locations_service.request;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
 public record LocationCreate(
-        String name,
-        String roadAddress,
-        String jibunAddress,
+        @NotBlank String name,
+        @NotBlank String roadAddress,
+        @NotBlank String jibunAddress,
         Float latitude,         // 위도
         Float longitude        // 경도
 ) {

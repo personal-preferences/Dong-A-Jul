@@ -1,5 +1,6 @@
 package org.personal.locations_service.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.personal.locations_service.request.LocationCreate;
@@ -16,7 +17,7 @@ public class LocationController {
     private final LocationService locationService;
 
     @PostMapping
-    public void add(@RequestBody LocationCreate locationCreate) {
+    public void add(@RequestBody @Valid LocationCreate locationCreate) {
         locationService.add(locationCreate);
     }
 
