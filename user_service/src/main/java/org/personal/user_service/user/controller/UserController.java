@@ -4,6 +4,7 @@ import org.personal.user_service.config.DateParsing;
 import org.personal.user_service.user.domain.User;
 import org.personal.user_service.user.exception.InvalidRequestException;
 import org.personal.user_service.user.exception.NotFoundException;
+import org.personal.user_service.user.request.RequestUpdatePassword;
 import org.personal.user_service.user.response.ResponseUser;
 import org.personal.user_service.user.request.RequestRegist;
 import org.personal.user_service.user.service.UserService;
@@ -43,11 +44,7 @@ public class UserController {
 
         if (errors.hasErrors()){
 
-            StringBuilder returnValue= new StringBuilder();
-            for (int i = 0; i < errors.getAllErrors().size(); i++) {
-                returnValue.append(errors.getAllErrors().get(i).getDefaultMessage()).append("\n");
-            }
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(returnValue.toString());
+            throw new InvalidRequestException(checkValidation(errors));
         }
 
         if (!userService.registUser(requestRegist)){
@@ -65,6 +62,16 @@ public class UserController {
         return ResponseEntity.ok(responseUser);
     }
 
+    @PutMapping("/password")
+    public ResponseEntity putUserPassword(@RequestBody@Validated RequestUpdatePassword requestUpdatePassword
+                                          ,Errors errors){
+        if (errors.hasErrors()){
+            throw new InvalidRequestException(checkValidation(errors));
+        }
+        userService.putUserPassword(requestUpdatePassword);
+        return ResponseEntity.ok().build();
+    }
+
 
     // User to ResponseUser
     private ResponseUser convertToResponseUser(User user) {
@@ -72,8 +79,18 @@ public class UserController {
         return new ResponseUser(user);
     }
 
+    private String checkValidation(Errors errors) {
+        StringBuilder returnValue= new StringBuilder();
+        for (int i = 0; i < errors.getAllErrors().size(); i++) {
+            returnValue.append(errors.getAllErrors().get(i).getDefaultMessage()).append("\n");
+        }
+        return returnValue.toString();
+    }
+
 
     // Exception hadlers
+
+
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<String> handleNotFoundException(NotFoundException e) {
 

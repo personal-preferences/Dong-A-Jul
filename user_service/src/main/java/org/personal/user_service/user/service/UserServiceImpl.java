@@ -7,10 +7,12 @@ import org.personal.user_service.user.exception.InvalidRequestException;
 import org.personal.user_service.user.exception.NotFoundException;
 import org.personal.user_service.user.repository.UserRepository;
 import org.personal.user_service.user.request.RequestRegist;
+import org.personal.user_service.user.request.RequestUpdatePassword;
 import org.personal.user_service.user.response.ResponseUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -30,11 +32,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<User> getUserList() {
         return userRepository.findAll();
     }
 
     @Override
+    @Transactional(readOnly = false)
     public boolean registUser(RequestRegist requestRegist)  {
         try {
             if (isrequestRegistNull(requestRegist)) {
@@ -71,9 +75,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public User getUser(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(()-> new NotFoundException("잘못된 회원 번호"));
+    }
+
+    @Override
+    @Transactional(readOnly = false)
+    public void putUserPassword(RequestUpdatePassword requestUpdatePassword) {
+        User user = userRepository.findById(requestUpdatePassword.userId())
+                .orElseThrow(()->new NotFoundException("잘못된 회원 번호"));
+        user.setUserPassword(bCryptPasswordEncoder.encode(requestUpdatePassword.userPassword()));
+        userRepository.save(user);
     }
 
 }
