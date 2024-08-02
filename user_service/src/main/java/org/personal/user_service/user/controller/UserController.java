@@ -72,6 +72,13 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("/{userId}")
+    public ResponseEntity deleteUser(@PathVariable Long userId){
+
+        userService.deleteUser(userId);
+        return ResponseEntity.ok().build();
+    }
+
 
     // User to ResponseUser
     private ResponseUser convertToResponseUser(User user) {
@@ -88,8 +95,7 @@ public class UserController {
     }
 
 
-    // Exception hadlers
-
+    // Exception handlers
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<String> handleNotFoundException(NotFoundException e) {

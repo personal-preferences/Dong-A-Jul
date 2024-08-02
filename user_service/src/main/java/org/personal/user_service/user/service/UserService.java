@@ -17,4 +17,6 @@ public interface UserService {
     User getUser(Long userId);
 
     void putUserPassword(RequestUpdatePassword requestUpdatePassword);
+
+    void deleteUser(Long userId);
 }

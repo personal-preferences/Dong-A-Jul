@@ -3,6 +3,9 @@ package org.personal.user_service.user.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+import org.hibernate.annotations.Where;
 import org.personal.user_service.user.etc.ROLE;
 
 import java.time.LocalDateTime;
@@ -15,6 +18,8 @@ import java.time.LocalDateTime;
 @ToString
 @Entity
 @Table(name = "user", schema = "public")
+@SQLDelete(sql = "UPDATE public.user SET user_is_deleted = true WHERE user_id = ?")
+@SQLRestriction("user_is_deleted = false")
 public class User {
 
     @Id
