@@ -10,11 +10,11 @@ import java.util.List;
 
 public interface UserService {
 
-    List<User> getUserList();
+    List<ResponseUser> getUserList();
 
     boolean registUser(RequestRegist requestRegist) throws InvalidRequestException;
 
-    User getUser(Long userId);
+    ResponseUser getUser(Long userId);
 
     void putUserPassword(RequestUpdatePassword requestUpdatePassword);
 

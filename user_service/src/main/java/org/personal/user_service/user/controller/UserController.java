@@ -33,9 +33,8 @@ public class UserController {
     @GetMapping("")
     public ResponseEntity<List<ResponseUser>> getUsers(){
 
-        List<User> userList = userService.getUserList();
-        List<ResponseUser> responseUserList = userList.stream().map(this::convertToResponseUser).toList();
-        return ResponseEntity.ok(responseUserList);
+        List<ResponseUser> userList = userService.getUserList();
+        return ResponseEntity.ok(userList);
     }
 
 
@@ -44,7 +43,7 @@ public class UserController {
 
         if (errors.hasErrors()){
 
-            throw new InvalidRequestException(checkValidation(errors));
+            throw new InvalidRequestException(responseValidationErrors(errors));
         }
 
         if (!userService.registUser(requestRegist)){
@@ -57,16 +56,15 @@ public class UserController {
     @GetMapping("/{userId}")
     public ResponseEntity<ResponseUser> getUser(@PathVariable Long userId){
 
-        User user = userService.getUser(userId);
-        ResponseUser responseUser = convertToResponseUser(user);
-        return ResponseEntity.ok(responseUser);
+        ResponseUser user = userService.getUser(userId);
+        return ResponseEntity.ok(user);
     }
 
     @PutMapping("/password")
     public ResponseEntity putUserPassword(@RequestBody@Validated RequestUpdatePassword requestUpdatePassword
                                           ,Errors errors){
         if (errors.hasErrors()){
-            throw new InvalidRequestException(checkValidation(errors));
+            throw new InvalidRequestException(responseValidationErrors(errors));
         }
         userService.putUserPassword(requestUpdatePassword);
         return ResponseEntity.ok().build();
@@ -79,14 +77,7 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-
-    // User to ResponseUser
-    private ResponseUser convertToResponseUser(User user) {
-
-        return new ResponseUser(user);
-    }
-
-    private String checkValidation(Errors errors) {
+    private String responseValidationErrors(Errors errors) {
         StringBuilder returnValue= new StringBuilder();
         for (int i = 0; i < errors.getAllErrors().size(); i++) {
             returnValue.append(errors.getAllErrors().get(i).getDefaultMessage()).append("\n");

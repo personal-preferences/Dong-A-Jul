@@ -33,8 +33,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<User> getUserList() {
-        return userRepository.findAll();
+    public List<ResponseUser> getUserList() {
+
+        List<User> userList = userRepository.findAll();
+        return userList.stream().map(this::convertToResponseUser).toList();
     }
 
     @Override
@@ -76,9 +78,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public User getUser(Long userId) {
-        return userRepository.findById(userId)
+    public ResponseUser getUser(Long userId) {
+        User user= userRepository.findById(userId)
                 .orElseThrow(()-> new NotFoundException("잘못된 회원 번호"));
+        return convertToResponseUser(user);
     }
 
     @Override
@@ -93,6 +96,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long userId) {
         userRepository.deleteById(userId);
+    }
+
+
+    // User to ResponseUser
+    private ResponseUser convertToResponseUser(User user) {
+
+        return new ResponseUser(user);
     }
 
 }
