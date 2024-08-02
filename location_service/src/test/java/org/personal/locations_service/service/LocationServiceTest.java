@@ -7,6 +7,7 @@ import org.personal.locations_service.domain.Location;
 import org.personal.locations_service.exception.ToiletNotFound;
 import org.personal.locations_service.repository.LocationRepository;
 import org.personal.locations_service.request.LocationCreate;
+import org.personal.locations_service.request.LocationEdit;
 import org.personal.locations_service.response.LocationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -141,5 +142,38 @@ class LocationServiceTest {
         assertEquals("서울 마포구 동교동 150-129", responseList.get(0).jibunAddress());
         assertEquals(39.23f, responseList.get(0).latitude());
         assertEquals(61.99f, responseList.get(0).longitude());
+    }
+
+    @Test
+    @DisplayName("화장실 위치 수정")
+    void editLocation() throws Exception {
+        // given
+        Location location = Location.builder()
+                .name("홍대 화장실")
+                .roadAddress("서울 마포구 서교동 1길")
+                .jibunAddress("서울 마포구 동교동 150-1")
+                .latitude(10.23f)
+                .longitude(32.99f)
+                .build();
+        locationRepository.save(location);
+
+        LocationEdit locationEdit = LocationEdit.builder()
+                .name("한강진역 화장실")
+                .roadAddress("서울 용산구 청파로 93길 27")
+                .jibunAddress("서울 용산구 서계동 227-1")
+                .latitude(99.11f)
+                .longitude(55.89f)
+                .build();
+
+        // when
+        locationService.edit(location.getId(), locationEdit);
+
+        // then
+        Location edittedLocation = locationRepository.findById(location.getId()).orElseThrow(ToiletNotFound::new);
+        assertEquals("한강진역 화장실", edittedLocation.getName());
+        assertEquals("서울 용산구 청파로 93길 27", edittedLocation.getRoadAddress());
+        assertEquals("서울 용산구 서계동 227-1", edittedLocation.getJibunAddress());
+        assertEquals(99.11f, edittedLocation.getLatitude());
+        assertEquals(55.89f, edittedLocation.getLongitude());
     }
 }
