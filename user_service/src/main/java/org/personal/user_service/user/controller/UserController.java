@@ -5,18 +5,20 @@ import org.personal.user_service.user.domain.User;
 import org.personal.user_service.user.exception.InvalidRequestException;
 import org.personal.user_service.user.exception.NotFoundException;
 import org.personal.user_service.user.response.ResponseUser;
-import org.personal.user_service.user.service.RequestRegist;
+import org.personal.user_service.user.request.RequestRegist;
 import org.personal.user_service.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
 
     private final UserService userService;
@@ -28,11 +30,30 @@ public class UserController {
 
     @GetMapping("")
     public ResponseEntity<List<ResponseUser>> getUsers(){
-        List<ResponseUser> userDTOList = userService.getUserList();
-        return ResponseEntity.ok(userDTOList);
+        List<User> userList = userService.getUserList();
+        List<ResponseUser> responseUserList = userList.stream().map(this::convertToResponseUser).toList();
+        return ResponseEntity.ok(responseUserList);
     }
+
+    private ResponseUser convertToResponseUser(User user) {
+        return new ResponseUser(
+                user.getUserEmail(),
+                user.getUserNickname(),
+                DateParsing.LdtToStr(user.getUserEnrollDate()),
+                DateParsing.LdtToStr(user.getUserDeleteDate()),
+                user.isUserIsDeleted(),
+                user.getUserRole());
+    }
+
     @PostMapping("/regist")
-    public ResponseEntity regist(@RequestBody RequestRegist requestRegist){
+    public ResponseEntity regist(@RequestBody@Validated RequestRegist requestRegist, Errors errors){
+        if (errors.hasErrors()){
+            StringBuilder returnValue= new StringBuilder();
+            for (int i = 0; i < errors.getAllErrors().size(); i++) {
+                returnValue.append(errors.getAllErrors().get(i).getDefaultMessage()).append("\n");
+            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(returnValue.toString());
+        }
         if (!userService.registUser(requestRegist)){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -40,16 +61,9 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public ResponseEntity<ResponseUser> getUser(@PathVariable int userId){
+    public ResponseEntity<ResponseUser> getUser(@PathVariable Long userId){
         User user = userService.getUser(userId);
-        ResponseUser responseUser = new ResponseUser(
-                user.getUserEmail(),
-                user.getUserNickname(),
-                DateParsing.LdtToStr(user.getUserEnrollDate()),
-                DateParsing.LdtToStr(user.getUserDeleteDate()),
-                user.isUserIsDeleted(),
-                user.getUserRole()
-        );
+        ResponseUser responseUser = convertToResponseUser(user);
         return ResponseEntity.ok(responseUser);
     }
 

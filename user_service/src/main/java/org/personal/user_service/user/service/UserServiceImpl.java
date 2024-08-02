@@ -6,9 +6,9 @@ import org.personal.user_service.user.etc.ROLE;
 import org.personal.user_service.user.exception.InvalidRequestException;
 import org.personal.user_service.user.exception.NotFoundException;
 import org.personal.user_service.user.repository.UserRepository;
+import org.personal.user_service.user.request.RequestRegist;
 import org.personal.user_service.user.response.ResponseUser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -30,45 +30,28 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<ResponseUser> getUserList() {
-        List<User> userList = userRepository.findAll();
-        List<ResponseUser> responseUserList = new ArrayList<>();
-        if (userList.isEmpty())
-            return Collections.emptyList();
-        userList.forEach(user -> responseUserList.add(
-                new ResponseUser(
-                        user.getUserEmail(),
-                        user.getUserNickname(),
-                        DateParsing.LdtToStr(user.getUserEnrollDate()),
-                        DateParsing.LdtToStr(user.getUserDeleteDate()),
-                        user.isUserIsDeleted(),
-                        user.getUserRole()
-                )));
-        return responseUserList;
+    public List<User> getUserList() {
+        return userRepository.findAll();
     }
 
     @Override
     public boolean registUser(RequestRegist requestRegist)  {
         try {
             if (isrequestRegistNull(requestRegist)) {
-                throw new InvalidRequestException("Bad Request of Regist");
+                throw new InvalidRequestException("잘못된 회원가입");
             }
-            System.out.println("requestRegist = " + requestRegist);
             User user = new User();
             user.setUserEmail(requestRegist.userEmail());
             user.setUserNickname(requestRegist.userNickname());
             user.setUserPassword(bCryptPasswordEncoder.encode(requestRegist.userPassword()));
-            user.setUserRole(requestRegist.userRole());
+            user.setUserRole(ROLE.valueOf(requestRegist.userRole()));
             user.setUserEnrollDate(LocalDateTime.now());
             user.setUserDeleteDate(null);
             user.setUserIsDeleted(false);
 
-            System.out.println("user = " + user);
             userRepository.save(user);
         } catch (Exception e) {
-            System.err.println("Regist Failed!!!!");
-            e.printStackTrace(); // Print the stack trace for better debugging
-            return false;
+            throw new InvalidRequestException("회원가입 실패");
         }
 
         return true;
@@ -82,8 +65,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User getUser(int userId) {
+    public User getUser(Long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(()-> new NotFoundException("User Not Found"));
+                .orElseThrow(()-> new NotFoundException("잘못된 회원 번호"));
     }
+
 }
