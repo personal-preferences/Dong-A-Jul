@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -255,6 +256,26 @@ class LocationControllerTest {
                 .andExpect(jsonPath("$.validation.name").value("화장실 이름을 입력하세요."))
                 .andExpect(jsonPath("$.validation.roadAddress").value("도로명 주소를 입력하세요."))
                 .andExpect(jsonPath("$.validation.jibunAddress").value("지번 주소를 입력하세요."))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("화장실 위치 삭제")
+    void deleteLocation() throws Exception {
+        // given
+        Location location = Location.builder()
+                .name("홍대 화장실")
+                .roadAddress("서울 마포구 서교동 1길")
+                .jibunAddress("서울 마포구 동교동 150-1")
+                .latitude(10.23f)
+                .longitude(32.99f)
+                .build();
+        locationRepository.save(location);
+
+        // expected
+        mockMvc.perform(delete("/locations/{locationId}", location.getId())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
                 .andDo(print());
     }
 }

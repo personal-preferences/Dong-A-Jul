@@ -176,4 +176,24 @@ class LocationServiceTest {
         assertEquals(99.11f, edittedLocation.getLatitude());
         assertEquals(55.89f, edittedLocation.getLongitude());
     }
+
+    @Test
+    @DisplayName("화장실 위치 삭제")
+    void deleteLocation() throws Exception {
+        // given
+        Location location = Location.builder()
+                .name("홍대 화장실")
+                .roadAddress("서울 마포구 서교동 1길")
+                .jibunAddress("서울 마포구 동교동 150-1")
+                .latitude(10.23f)
+                .longitude(32.99f)
+                .build();
+        locationRepository.save(location);
+
+        // when
+        locationService.delete(location.getId());
+
+        // then
+        assertEquals(0L, locationRepository.count());
+    }
 }
