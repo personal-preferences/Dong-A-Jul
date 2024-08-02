@@ -11,6 +11,7 @@ import org.personal.user_service.user.domain.User;
 import org.personal.user_service.user.etc.ROLE;
 import org.personal.user_service.user.exception.InvalidRequestException;
 import org.personal.user_service.user.repository.UserRepository;
+import org.personal.user_service.user.request.RequestUpdatePassword;
 import org.personal.user_service.user.response.ResponseUser;
 import org.personal.user_service.user.request.RequestRegist;
 import org.personal.user_service.user.service.UserServiceImpl;
@@ -20,9 +21,11 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class UserServiceApplicationTests {
@@ -177,21 +180,31 @@ class UserServiceApplicationTests {
     }
 
     @Test
-    @DisplayName("사용자 비밀번호 변경-성공")
+    @DisplayName("사용자 비밀번호 변경")
     public void testChangePassword(){
 
-        //given
-        User afterChangedUser = user1;
+        // given
+        RequestUpdatePassword requestUpdatePassword = new RequestUpdatePassword(1L, "1234");
+        User afterChangedUser = new User();
+        afterChangedUser.setUserEmail(user1.getUserEmail());
+        afterChangedUser.setUserNickname(user1.getUserNickname());
         afterChangedUser.setUserPassword("changed_password");
-        when(bCryptPasswordEncoder.encode("1234")).thenReturn("changed_password");
+        afterChangedUser.setUserEnrollDate(user1.getUserEnrollDate());
+        afterChangedUser.setUserDeleteDate(user1.getUserDeleteDate());
+        afterChangedUser.setUserIsDeleted(user1.isUserIsDeleted());
+        afterChangedUser.setUserRole(user1.getUserRole());
 
+        when(bCryptPasswordEncoder.encode("1234")).thenReturn("changed_password");
+        when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(user1));
         when(userRepository.save(any(User.class))).thenReturn(afterChangedUser);
 
-        //when
+        // when
+        userService.putUserPassword(requestUpdatePassword);
 
-
-        //then
-//        assertNotEquals(requestRegist.userPassword(),user.getUserPassword());
+        // then
+        verify(userRepository).findById(1L);
+        verify(userRepository).save(any(User.class));
+        assertEquals("changed_password", afterChangedUser.getUserPassword());
     }
 
 }
