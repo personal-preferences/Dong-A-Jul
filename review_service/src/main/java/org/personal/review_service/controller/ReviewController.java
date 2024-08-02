@@ -37,7 +37,7 @@ public class ReviewController {
             ReviewResponse reviewResponse = reviewService.getReview(reviewId);
             return new ResponseEntity<>(reviewResponse, HttpStatus.OK);
         } catch (ReviewNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // 리뷰가 없는 경우 404 반환
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 리뷰가 없는 경우 204 반환
         }
     }
 
@@ -47,7 +47,7 @@ public class ReviewController {
             List<ReviewResponse> reviewResponses = reviewService.getReviewListByUserId(userId);
             return new ResponseEntity<>(reviewResponses, HttpStatus.OK);
         } catch (ReviewNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
     }
 
@@ -57,7 +57,7 @@ public class ReviewController {
             List<ReviewResponse> reviewResponses = reviewService.getReviewListByLocationId(locationId);
             return new ResponseEntity<>(reviewResponses, HttpStatus.OK);
         } catch (ReviewNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
     }
 
