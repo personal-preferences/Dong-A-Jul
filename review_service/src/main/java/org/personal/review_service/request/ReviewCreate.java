@@ -4,15 +4,15 @@ import jakarta.validation.constraints.*;
 import lombok.Builder;
 
 public record ReviewCreate(
-        @NotNull(message = "Review content cannot be null")
+        @NotNull(message = "리뷰 내용은 null일 수 없습니다.")
         String reviewContent,
-        @NotNull(message = "Review score cannot be null")
-        @Max(value = 5, message = "Review score must be between 1 and 5")
-        @Min(value = 1, message = "Review score must be between 1 and 5")
+        @NotNull(message = "리뷰 점수는 null일 수 없습니다.")
+        @Max(value = 5, message = "리뷰 점수는 1~5 사이의 값이어야 합니다.")
+        @Min(value = 1, message = "리뷰 점수는 1~5 사이의 값이어야 합니다.")
         Integer reviewScore,
-        @NotNull(message = "User ID cannot be null")
+        @NotNull(message = "회원 ID는 null일 수 없습니다.")
         Long userId,
-        @NotNull(message = "Location ID cannot be null")
+        @NotNull(message = "위치 ID는 null일 수 없습니다.")
         Long locationId
 ) {
     @Builder

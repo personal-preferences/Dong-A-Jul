@@ -42,7 +42,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public ReviewResponse getReview(Long reviewId) {
         Review review = reviewRepository.findByReviewId(reviewId)
-                .orElseThrow(() -> new ReviewNotFoundException("Review not found for id: " + reviewId));
+                .orElseThrow(() -> new ReviewNotFoundException("다음 리뷰 ID에 알맞는 리뷰를 찾지 못했습니다: " + reviewId));
 
         return reviewResponseBuilder.build(review);
     }
@@ -52,7 +52,7 @@ public class ReviewServiceImpl implements ReviewService {
         List<Review> reviewList = reviewRepository.findReviewsByUserId(userId);
 
         if (reviewList.isEmpty()) {
-            throw new ReviewNotFoundException("No reviews found for user id: " + userId);
+            throw new ReviewNotFoundException("다음 회원 ID에 알맞는 리뷰를 찾지 못했습니다: " + userId);
         }
 
         return reviewList.stream()
@@ -65,7 +65,7 @@ public class ReviewServiceImpl implements ReviewService {
         List<Review> reviewList = reviewRepository.findReviewsByLocationId(locationId);
 
         if (reviewList.isEmpty()) {
-            throw new ReviewNotFoundException("No reviews found for location id: " + locationId);
+            throw new ReviewNotFoundException("다음 위치 ID에 알맞는 리뷰를 찾지 못했습니다: " + locationId);
         }
 
         return reviewList.stream()
@@ -77,7 +77,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public Boolean deleteReviewByReviewId(Long reviewId) {
         Review review = reviewRepository.findByReviewId(reviewId)
-                .orElseThrow(() -> new ReviewNotFoundException("Review not found for id: " + reviewId));
+                .orElseThrow(() -> new ReviewNotFoundException("다음 리뷰 ID에 알맞는 리뷰를 찾지 못했습니다: " + reviewId));
 
         review.markAsDeleted();
         reviewRepository.save(review);
