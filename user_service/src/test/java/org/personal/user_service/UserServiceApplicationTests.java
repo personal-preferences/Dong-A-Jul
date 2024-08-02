@@ -25,8 +25,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class UserServiceApplicationTests {
 
@@ -47,6 +46,7 @@ class UserServiceApplicationTests {
         MockitoAnnotations.openMocks(this);
 
         user1 = new User();
+        user1.setUserId(1L);
         user1.setUserEmail("user1@test.com");
         user1.setUserNickname("user1");
         user1.setUserEnrollDate(LocalDateTime.now().minusDays(1));
@@ -55,6 +55,7 @@ class UserServiceApplicationTests {
         user1.setUserRole(ROLE.ROLE_USER);
 
         user2 = new User();
+        user2.setUserId(2L);
         user2.setUserEmail("user2@test.com");
         user2.setUserNickname("user2");
         user2.setUserEnrollDate(LocalDateTime.now().minusDays(2));
@@ -207,4 +208,14 @@ class UserServiceApplicationTests {
         assertEquals("changed_password", afterChangedUser.getUserPassword());
     }
 
+    @Test
+    @DisplayName("사용자 탈퇴")
+    public void testDeleteUser(){
+        // given
+        // when
+        userService.deleteUser(user1.getUserId());
+        // then
+        verify(userRepository, times(1)).deleteById(user1.getUserId());
+    }
+    
 }
