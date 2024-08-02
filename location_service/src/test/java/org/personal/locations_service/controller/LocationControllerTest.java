@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.hamcrest.Matchers.is;
@@ -151,6 +152,35 @@ class LocationControllerTest {
         // expected
         mockMvc.perform(get("/locations?page=1&size=10")
                     .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.length()", is(10)))
+                .andExpect(jsonPath("$[0].name").value("홍대 화장실29"))
+                .andExpect(jsonPath("$[0].roadAddress").value("서울 마포구 서교동 1길29"))
+                .andExpect(jsonPath("$[0].jibunAddress").value("서울 마포구 동교동 150-129"))
+                .andExpect(jsonPath("$[0].latitude").value("39.23"))
+                .andExpect(jsonPath("$[0].longitude").value("61.99"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("페이지를 0으로 요청하면 첫 페이지를 가져온다.")
+    void getLocationListByPage0() throws Exception {
+        // given
+        List<Location> requestLocationList = IntStream.range(0, 30)
+                .mapToObj(i -> Location.builder()
+                        .name("홍대 화장실" + i)
+                        .roadAddress("서울 마포구 서교동 1길" + i)
+                        .jibunAddress("서울 마포구 동교동 150-1" + i)
+                        .latitude(10.23f + i)
+                        .longitude(32.99f + i)
+                        .build())
+                .toList();
+
+        locationRepository.saveAll(requestLocationList);
+
+        // expected
+        mockMvc.perform(get("/locations?page=0&size=10")
+                        .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", is(10)))
                 .andExpect(jsonPath("$[0].name").value("홍대 화장실29"))
