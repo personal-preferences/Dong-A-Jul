@@ -2,6 +2,7 @@ package org.personal.locations_service.service;
 
 
 import org.personal.locations_service.request.LocationCreate;
+import org.personal.locations_service.request.LocationEdit;
 import org.personal.locations_service.response.LocationResponse;
 import org.springframework.data.domain.Pageable;
 
@@ -14,4 +15,6 @@ public interface LocationService {
     LocationResponse get(String toiletName);
 
     List<LocationResponse> getList(Pageable pageable);
+
+    void edit(Long id, LocationEdit request);
 }

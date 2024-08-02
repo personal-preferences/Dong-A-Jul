@@ -5,6 +5,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.personal.locations_service.request.LocationEdit;
 
 @Getter
 @Entity
@@ -39,5 +40,13 @@ public class Location {
         this.latitude = latitude;
         this.longitude = longitude;
         this.isDeleted = isDeleted;
+    }
+
+    public void edit(LocationEdit request) {
+        this.name = request.name();
+        this.roadAddress = request.roadAddress();
+        this.jibunAddress = request.jibunAddress();
+        this.latitude = request.latitude();
+        this.longitude = request.longitude();
     }
 }
