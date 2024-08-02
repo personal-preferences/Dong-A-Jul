@@ -9,9 +9,10 @@ import org.mockito.MockitoAnnotations;
 import org.personal.user_service.config.DateParsing;
 import org.personal.user_service.user.domain.User;
 import org.personal.user_service.user.etc.ROLE;
+import org.personal.user_service.user.exception.InvalidRequestException;
 import org.personal.user_service.user.repository.UserRepository;
 import org.personal.user_service.user.response.ResponseUser;
-import org.personal.user_service.user.service.RequestRegist;
+import org.personal.user_service.user.request.RequestRegist;
 import org.personal.user_service.user.service.UserServiceImpl;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -59,6 +60,16 @@ class UserServiceApplicationTests {
         user2.setUserRole(ROLE.ROLE_ADMIN);
     }
 
+    ResponseUser convertToResponseUser(User user) {
+        return new ResponseUser(
+                user.getUserEmail(),
+                user.getUserNickname(),
+                DateParsing.LdtToStr(user.getUserEnrollDate()),
+                DateParsing.LdtToStr(user.getUserDeleteDate()),
+                user.isUserIsDeleted(),
+                user.getUserRole());
+    }
+
     @Test
     @DisplayName("사용자 목록 조회")
     public void testGetUserList() {
@@ -66,13 +77,13 @@ class UserServiceApplicationTests {
         when(userRepository.findAll()).thenReturn(Arrays.asList(user1, user2));
 
         // when
-        List<ResponseUser> responseUserList = userService.getUserList();
+        List<User> responseUserList = userService.getUserList();
 
         // then
         assertEquals(2, responseUserList.size());
 
         // user 1
-        ResponseUser responseUser1 = responseUserList.get(0);
+        ResponseUser responseUser1 = convertToResponseUser(responseUserList.get(0));
         assertEquals("user1@test.com", responseUser1.userEmail());
         assertEquals("user1", responseUser1.userNickName());
         assertEquals(DateParsing.LdtToStr(user1.getUserEnrollDate()), responseUser1.userEnrollDate());
@@ -81,7 +92,7 @@ class UserServiceApplicationTests {
         assertEquals("ROLE_USER", responseUser1.userRole().name());
 
         // user 2
-        ResponseUser responseUser2 = responseUserList.get(1);
+        ResponseUser responseUser2 = convertToResponseUser(responseUserList.get(1));
         assertEquals("user2@test.com", responseUser2.userEmail());
         assertEquals("user2", responseUser2.userNickName());
         assertEquals(DateParsing.LdtToStr(user2.getUserEnrollDate()), responseUser2.userEnrollDate());
@@ -97,7 +108,7 @@ class UserServiceApplicationTests {
         when(userRepository.findAll()).thenReturn(Collections.emptyList());
 
         // when
-        List<ResponseUser> responseUserList = userService.getUserList();
+        List<User> responseUserList = userService.getUserList();
 
         // then
         assertEquals(0, responseUserList.size());
@@ -111,7 +122,7 @@ class UserServiceApplicationTests {
                 "register@test.com",
                 "register",
                 "1234",
-                ROLE.ROLE_USER
+                ROLE.ROLE_USER.name()
         );
         User user = new User();
         user.setUserEmail("register@test.com");
@@ -154,10 +165,14 @@ class UserServiceApplicationTests {
         when(bCryptPasswordEncoder.encode("1234")).thenReturn("changed_password");
         when(userRepository.save(any(User.class))).thenReturn(user);
 
-        // when
-        boolean result = userService.registUser(requestRegist);
+        try {
+            // when
+            userService.registUser(requestRegist);
+        }catch (InvalidRequestException e){
+            //then
+            assertEquals(e.getMessage(),"회원가입 실패");
+        }
 
-        // then
-        assertFalse(result);
+
     }
 }
