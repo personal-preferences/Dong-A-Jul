@@ -40,6 +40,12 @@ public class UserServiceImpl implements UserService {
             if (isrequestRegistNull(requestRegist)) {
                 throw new InvalidRequestException("잘못된 회원가입");
             }
+            if(userRepository.existsByUserEmail(requestRegist.userEmail())){
+                throw new InvalidRequestException("이메일 중복");
+            }
+            if(userRepository.existsByUserNickname(requestRegist.userNickname())){
+                throw new InvalidRequestException("닉네임 중복");
+            }
             User user = new User();
             user.setUserEmail(requestRegist.userEmail());
             user.setUserNickname(requestRegist.userNickname());
@@ -51,7 +57,7 @@ public class UserServiceImpl implements UserService {
 
             userRepository.save(user);
         } catch (Exception e) {
-            throw new InvalidRequestException("회원가입 실패");
+            throw new InvalidRequestException(e.getMessage());
         }
 
         return true;

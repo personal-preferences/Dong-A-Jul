@@ -28,6 +28,7 @@ public class UserController {
         this.userService = userService;
     }
 
+    //APIs
     @GetMapping("")
     public ResponseEntity<List<ResponseUser>> getUsers(){
 
@@ -52,6 +53,7 @@ public class UserController {
         if (!userService.registUser(requestRegist)){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
+
         return ResponseEntity.ok().build();
     }
 
@@ -63,12 +65,15 @@ public class UserController {
         return ResponseEntity.ok(responseUser);
     }
 
+
     // User to ResponseUser
     private ResponseUser convertToResponseUser(User user) {
 
         return new ResponseUser(user);
     }
 
+
+    // Exception hadlers
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<String> handleNotFoundException(NotFoundException e) {
 

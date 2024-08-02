@@ -172,7 +172,7 @@ class UserServiceApplicationTests {
             userService.registUser(requestRegist);
         }catch (InvalidRequestException e){
             //then
-            assertEquals(e.getMessage(),"회원가입 실패");
+            assertEquals(e.getMessage(),"잘못된 회원가입");
         }
     }
 
