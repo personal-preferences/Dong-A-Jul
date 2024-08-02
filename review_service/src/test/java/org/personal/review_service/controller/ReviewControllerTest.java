@@ -55,7 +55,7 @@ class ReviewControllerTest {
 
         when(reviewService.createReview(any(ReviewCreate.class))).thenReturn(reviewResponse);
 
-        ResultActions result = mockMvc.perform(post("/review")
+        ResultActions result = mockMvc.perform(post("/reviews")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(reviewCreate)));
 
@@ -74,7 +74,7 @@ class ReviewControllerTest {
 
         when(reviewService.getReview(anyLong())).thenReturn(reviewResponse);
 
-        ResultActions result = mockMvc.perform(get("/review/{reviewId}", 1L)
+        ResultActions result = mockMvc.perform(get("/reviews/{reviewId}", 1L)
                 .contentType(MediaType.APPLICATION_JSON));
 
         result.andExpect(status().isOk())
@@ -95,7 +95,7 @@ class ReviewControllerTest {
         when(reviewService.getReviewListByUserId(anyLong())).thenReturn(reviewResponses);
 
         // Perform request and assert
-        ResultActions result = mockMvc.perform(get("/review/user/{userId}", 1L)
+        ResultActions result = mockMvc.perform(get("/reviews/user/{userId}", 1L)
                 .contentType(MediaType.APPLICATION_JSON));
 
         result.andExpect(status().isOk())
@@ -117,7 +117,7 @@ class ReviewControllerTest {
         when(reviewService.getReviewListByLocationId(anyLong())).thenReturn(reviewResponses);
 
         // Perform request and assert
-        ResultActions result = mockMvc.perform(get("/review/location/{locationId}", 1L)
+        ResultActions result = mockMvc.perform(get("/reviews/location/{locationId}", 1L)
                 .contentType(MediaType.APPLICATION_JSON));
 
         result.andExpect(status().isOk())
@@ -133,7 +133,7 @@ class ReviewControllerTest {
     void deleteReview() throws Exception {
         when(reviewService.deleteReviewByReviewId(anyLong())).thenReturn(true);
 
-        ResultActions result = mockMvc.perform(delete("/review/{reviewId}", 1L)
+        ResultActions result = mockMvc.perform(delete("/reviews/{reviewId}", 1L)
                 .contentType(MediaType.APPLICATION_JSON));
 
         result.andExpect(status().isNoContent())
