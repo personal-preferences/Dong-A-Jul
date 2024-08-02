@@ -34,7 +34,7 @@ public class LocationServiceImpl implements LocationService{
 
     @Override
     public LocationResponse get(String toiletName) {
-        Location location = locationRepository.findByName(toiletName)
+        Location location = locationRepository.findByNameAndIsDeletedFalse(toiletName)
                 .orElseThrow(ToiletNotFound::new);
 
         return LocationResponse.builder()

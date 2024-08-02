@@ -17,6 +17,7 @@ public class LocationRepositoryImpl implements LocationRepositoryCustom {
     @Override
     public List<Location> getList(Pageable pageable) {
         return jpaQueryFactory.selectFrom(location)
+                .where(location.isDeleted.eq(false))
                 .limit(pageable.getPageSize())
                 .offset(pageable.getOffset())
                 .orderBy(location.id.desc())
