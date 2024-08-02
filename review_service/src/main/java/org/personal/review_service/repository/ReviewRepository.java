@@ -1,34 +1,10 @@
 package org.personal.review_service.repository;
 
-import com.querydsl.jpa.impl.JPAQueryFactory;
-import org.personal.review_service.domain.QReview;
+
 import org.personal.review_service.domain.Review;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
+public interface ReviewRepository extends JpaRepository<Review, Long>, ReviewRepositoryCustom{
+    // JPA 쿼리 메서드와 커스텀 메서드를 모두 사용 가능
 
-@Repository
-public class ReviewRepository {
-
-    @Autowired
-    private JPAQueryFactory jpaQueryFactory;
-
-    public List<Review> findReviewsByUserId(Long userId) {
-        QReview review = QReview.review;
-
-        return jpaQueryFactory
-                .selectFrom(review)
-                .where(review.userId.eq(userId))
-                .fetch();
-    }
-
-    public List<Review> findReviewsByLocationId(Long locationId) {
-        QReview review = QReview.review;
-
-        return jpaQueryFactory
-                .selectFrom(review)
-                .where(review.locationId.eq(locationId))
-                .fetch();
-    }
 }
