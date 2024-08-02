@@ -117,6 +117,7 @@ class UserServiceApplicationTests {
     @Test
     @DisplayName("사용자 회원가입")
     public void testRegist() {
+
         // given
         RequestRegist requestRegist = new RequestRegist(
                 "register@test.com",
@@ -146,6 +147,7 @@ class UserServiceApplicationTests {
     @Test
     @DisplayName("사용자 회원가입-실패")
     public void testRegist_failed() {
+
         // given
         RequestRegist requestRegist = new RequestRegist(
                 "register@test.com",
@@ -172,7 +174,24 @@ class UserServiceApplicationTests {
             //then
             assertEquals(e.getMessage(),"회원가입 실패");
         }
-
-
     }
+
+    @Test
+    @DisplayName("사용자 비밀번호 변경-성공")
+    public void testChangePassword(){
+
+        //given
+        User afterChangedUser = user1;
+        afterChangedUser.setUserPassword("changed_password");
+        when(bCryptPasswordEncoder.encode("1234")).thenReturn("changed_password");
+
+        when(userRepository.save(any(User.class))).thenReturn(afterChangedUser);
+
+        //when
+
+
+        //then
+//        assertNotEquals(requestRegist.userPassword(),user.getUserPassword());
+    }
+
 }

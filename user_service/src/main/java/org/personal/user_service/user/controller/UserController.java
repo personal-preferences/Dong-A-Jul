@@ -30,30 +30,25 @@ public class UserController {
 
     @GetMapping("")
     public ResponseEntity<List<ResponseUser>> getUsers(){
+
         List<User> userList = userService.getUserList();
         List<ResponseUser> responseUserList = userList.stream().map(this::convertToResponseUser).toList();
         return ResponseEntity.ok(responseUserList);
     }
 
-    private ResponseUser convertToResponseUser(User user) {
-        return new ResponseUser(
-                user.getUserEmail(),
-                user.getUserNickname(),
-                DateParsing.LdtToStr(user.getUserEnrollDate()),
-                DateParsing.LdtToStr(user.getUserDeleteDate()),
-                user.isUserIsDeleted(),
-                user.getUserRole());
-    }
 
     @PostMapping("/regist")
     public ResponseEntity regist(@RequestBody@Validated RequestRegist requestRegist, Errors errors){
+
         if (errors.hasErrors()){
+
             StringBuilder returnValue= new StringBuilder();
             for (int i = 0; i < errors.getAllErrors().size(); i++) {
                 returnValue.append(errors.getAllErrors().get(i).getDefaultMessage()).append("\n");
             }
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(returnValue.toString());
         }
+
         if (!userService.registUser(requestRegist)){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -62,18 +57,27 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<ResponseUser> getUser(@PathVariable Long userId){
+
         User user = userService.getUser(userId);
         ResponseUser responseUser = convertToResponseUser(user);
         return ResponseEntity.ok(responseUser);
     }
 
+    // User to ResponseUser
+    private ResponseUser convertToResponseUser(User user) {
+
+        return new ResponseUser(user);
+    }
+
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<String> handleNotFoundException(NotFoundException e) {
+
         return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(InvalidRequestException.class)
     public ResponseEntity<String> handleInvalidRequestException(InvalidRequestException e) {
+
         return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
     }
 }
