@@ -17,4 +17,6 @@ public interface LocationService {
     List<LocationResponse> getList(Pageable pageable);
 
     void edit(Long id, LocationEdit request);
+
+    void delete(Long id);
 }

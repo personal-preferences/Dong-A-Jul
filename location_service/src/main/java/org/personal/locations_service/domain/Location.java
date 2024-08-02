@@ -5,12 +5,16 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 import org.personal.locations_service.request.LocationEdit;
 
 @Getter
 @Entity
 @Table(name="location", schema = "public")
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
+@SQLDelete(sql = "UPDATE location SET is_deleted = true WHERE id = ?")
+@SQLRestriction("is_deleted = false")
 public class Location {
 
     @Id

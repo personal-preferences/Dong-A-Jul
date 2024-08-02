@@ -64,4 +64,11 @@ public class LocationServiceImpl implements LocationService{
 
         location.edit(request);
     }
+
+    @Override
+    public void delete(Long id) {
+        Location location = locationRepository.findById(id).orElseThrow(ToiletNotFound::new);
+
+        locationRepository.delete(location);
+    }
 }

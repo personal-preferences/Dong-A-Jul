@@ -40,4 +40,7 @@ public class LocationController {
     public void editLocation(@PathVariable Long locationId, @RequestBody @Valid LocationEdit request) {
         locationService.edit(locationId, request);
     }
+
+    @DeleteMapping("/{locationId}")
+    public void delete(@PathVariable Long locationId) { locationService.delete(locationId); }
 }
