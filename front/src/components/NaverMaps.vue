@@ -17,7 +17,12 @@ onMounted(async () => {
         zoom: 10
       };
 
-      const res = new window.naver.maps.Map(mapRef.value, mapOptions);
+      const map = new window.naver.maps.Map(mapRef.value, mapOptions);
+
+      const marker = new window.naver.maps.Marker({
+        position: new window.naver.maps.LatLng(37.3595704, 127.105399),
+        map: map
+      });
     } else {
       console.error('Naver Maps API is not loaded');
     }
