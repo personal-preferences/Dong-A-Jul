@@ -1,6 +1,7 @@
 package org.personal.locations_service.response;
 
 import lombok.Builder;
+import org.personal.locations_service.domain.Location;
 
 public record LocationResponse(
         Long id,
@@ -12,12 +13,10 @@ public record LocationResponse(
 ) {
 
     @Builder
-    public LocationResponse(Long id, String name, String roadAddress, String jibunAddress, float latitude, float longitude) {
-        this.id = id;
-        this.name = name;
-        this.roadAddress = roadAddress;
-        this.jibunAddress = jibunAddress;
-        this.latitude = latitude;
-        this.longitude = longitude;
+    public LocationResponse {
+    }
+
+    public LocationResponse(Location location) {
+        this(location.getId(), location.getName(), location.getRoadAddress(), location.getJibunAddress(), location.getLatitude(), location.getLongitude());
     }
 }

@@ -6,7 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.personal.locations_service.request.LocationCreate;
 import org.personal.locations_service.response.LocationResponse;
 import org.personal.locations_service.service.LocationService;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -27,7 +31,7 @@ public class LocationController {
     }
 
     @GetMapping
-    public void getLocations() {
-
+    public List<LocationResponse> getList(@PageableDefault(sort = "id") Pageable pageable) {
+        return locationService.getList(pageable);
     }
 }

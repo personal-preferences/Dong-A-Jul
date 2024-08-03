@@ -4,12 +4,26 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.personal.locations_service.domain.Location;
+import org.personal.locations_service.exception.ToiletNotFound;
 import org.personal.locations_service.repository.LocationRepository;
 import org.personal.locations_service.request.LocationCreate;
+import org.personal.locations_service.response.LocationResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
+import java.util.List;
+import java.util.stream.IntStream;
+
+import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 class LocationServiceTest {
@@ -52,10 +66,10 @@ class LocationServiceTest {
     }
 
     @Test
-    @DisplayName("화장실 위치 조회")
+    @DisplayName("이름으로 화장실 위치 1개 조회")
     void getToiletLocation() {
         // given
-        LocationCreate locationCreate = LocationCreate
+        LocationCreate requestLocation = LocationCreate
                 .builder()
                 .name("홍대 화장실")
                 .roadAddress("서울 마포구 서교동 1길")
@@ -63,12 +77,69 @@ class LocationServiceTest {
                 .latitude(10.23f)
                 .longitude(32.99f)
                 .build();
+        locationService.add(requestLocation);
 
         // when
-        locationService.add(locationCreate);
+        LocationResponse response = locationService.get(requestLocation.name());
 
         // then
+        assertNotNull(response);
+        assertEquals(1L, locationRepository.count());
+        assertEquals("홍대 화장실", response.name());
+        assertEquals("서울 마포구 서교동 1길", response.roadAddress());
+        assertEquals("서울 마포구 동교동 150-1", response.jibunAddress());
+        assertEquals(10.23f, response.latitude());
+        assertEquals(32.99f, response.longitude());
+    }
 
+    @Test
+    @DisplayName("이름으로 화장실 위치 1개 조회 - 존재하지 않는 화장실")
+    void getToiletLocationNotFound() {
+        // given
+        LocationCreate requestLocation = LocationCreate
+                .builder()
+                .name("홍대 화장실")
+                .roadAddress("서울 마포구 서교동 1길")
+                .jibunAddress("서울 마포구 동교동 150-1")
+                .latitude(10.23f)
+                .longitude(32.99f)
+                .build();
+        locationService.add(requestLocation);
 
+        // when
+        String nonExistToilet = "없는 화장실";
+
+        // then
+        assertThrows(ToiletNotFound.class, () -> {
+            locationService.get(nonExistToilet);
+        });
+    }
+
+    @Test
+    @DisplayName("화장실 여러개 조회")
+    void getLocationList() throws Exception {
+        // given
+        List<Location> requestLocationList = IntStream.range(0, 30)
+                .mapToObj(i -> Location.builder()
+                        .name("홍대 화장실" + i)
+                        .roadAddress("서울 마포구 서교동 1길" + i)
+                        .jibunAddress("서울 마포구 동교동 150-1" + i)
+                        .latitude(10.23f + i)
+                        .longitude(32.99f + i)
+                        .build())
+                .toList();
+        locationRepository.saveAll(requestLocationList);
+
+        // when
+        Pageable pageable = PageRequest.of(0, 10, Sort.by("id").descending());
+        List<LocationResponse> responseList = locationService.getList(pageable);
+
+        // then
+        assertEquals(10, responseList.size());
+        assertEquals("홍대 화장실29", responseList.get(0).name());
+        assertEquals("서울 마포구 서교동 1길29", responseList.get(0).roadAddress());
+        assertEquals("서울 마포구 동교동 150-129", responseList.get(0).jibunAddress());
+        assertEquals(39.23f, responseList.get(0).latitude());
+        assertEquals(61.99f, responseList.get(0).longitude());
     }
 }

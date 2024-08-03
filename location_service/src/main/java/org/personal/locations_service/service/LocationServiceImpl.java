@@ -3,10 +3,11 @@ package org.personal.locations_service.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.personal.locations_service.domain.Location;
+import org.personal.locations_service.exception.ToiletNotFound;
 import org.personal.locations_service.repository.LocationRepository;
 import org.personal.locations_service.request.LocationCreate;
-import org.personal.locations_service.request.LocationSearch;
 import org.personal.locations_service.response.LocationResponse;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,11 +34,10 @@ public class LocationServiceImpl implements LocationService{
 
     @Override
     public LocationResponse get(String toiletName) {
-        Location location = locationRepository.findByName(toiletName)
-                .orElseThrow(); // TODO 임의의 exception 만들기
+        Location location = locationRepository.findByNameAndIsDeletedFalse(toiletName)
+                .orElseThrow(ToiletNotFound::new);
 
-        return LocationResponse
-                .builder()
+        return LocationResponse.builder()
                 .id(location.getId())
                 .name(location.getName())
                 .roadAddress(location.getRoadAddress())
@@ -48,9 +48,9 @@ public class LocationServiceImpl implements LocationService{
     }
 
     @Override
-    public List<LocationResponse> getLocationList(LocationSearch locationSearch) {
-//        Location location = LocationRepository.getList().
-
-        return List.of();
+    public List<LocationResponse> getList(Pageable pageable) {
+        return locationRepository.getList(pageable).stream()
+                .map(LocationResponse::new)
+                .toList();
     }
 }
