@@ -6,9 +6,11 @@ import org.personal.locations_service.domain.Location;
 import org.personal.locations_service.exception.ToiletNotFound;
 import org.personal.locations_service.repository.LocationRepository;
 import org.personal.locations_service.request.LocationCreate;
+import org.personal.locations_service.request.LocationEdit;
 import org.personal.locations_service.response.LocationResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -52,5 +54,21 @@ public class LocationServiceImpl implements LocationService{
         return locationRepository.getList(pageable).stream()
                 .map(LocationResponse::new)
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public void edit(Long id, LocationEdit request) {
+        Location location = locationRepository.findById(id)
+                .orElseThrow(ToiletNotFound::new);
+
+        location.edit(request);
+    }
+
+    @Override
+    public void delete(Long id) {
+        Location location = locationRepository.findById(id).orElseThrow(ToiletNotFound::new);
+
+        locationRepository.delete(location);
     }
 }

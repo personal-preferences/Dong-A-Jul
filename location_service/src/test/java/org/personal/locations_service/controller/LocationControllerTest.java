@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.personal.locations_service.domain.Location;
 import org.personal.locations_service.repository.LocationRepository;
 import org.personal.locations_service.request.LocationCreate;
+import org.personal.locations_service.request.LocationEdit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,9 +18,9 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -188,6 +189,93 @@ class LocationControllerTest {
                 .andExpect(jsonPath("$[0].jibunAddress").value("서울 마포구 동교동 150-129"))
                 .andExpect(jsonPath("$[0].latitude").value("39.23"))
                 .andExpect(jsonPath("$[0].longitude").value("61.99"))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("화장실 위치 수정")
+    void editSuccessful() throws Exception {
+        // given
+        Location location = Location.builder()
+                .name("홍대 화장실")
+                .roadAddress("서울 마포구 서교동 1길")
+                .jibunAddress("서울 마포구 동교동 150-1")
+                .latitude(10.23f)
+                .longitude(32.99f)
+                .build();
+        locationRepository.save(location);
+
+        LocationEdit locationEdit = LocationEdit.builder()
+                .name("한강진역 화장실")
+                .roadAddress("서울 용산구 청파로 93길 27")
+                .jibunAddress("서울 용산구 서계동 227-1")
+                .latitude(99.11f)
+                .longitude(55.89f)
+                .build();
+
+        String json = objectMapper.writeValueAsString(locationEdit);
+
+        // expected
+        mockMvc.perform(patch("/locations/{locationId}", location.getId())
+                        .contentType(APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("화장실 위치 수정 시 name, roadAddress, jibunAddress값은 필수다.")
+    void editToiletRequiredValueException() throws Exception {
+        // given
+        Location location = Location.builder()
+                .name("홍대 화장실")
+                .roadAddress("서울 마포구 서교동 1길")
+                .jibunAddress("서울 마포구 동교동 150-1")
+                .latitude(10.23f)
+                .longitude(32.99f)
+                .build();
+        locationRepository.save(location);
+
+        LocationEdit locationEdit = LocationEdit.builder()
+//                .name("한강진역 화장실")
+//                .roadAddress("서울 용산구 청파로 93길 27")
+//                .jibunAddress("서울 용산구 서계동 227-1")
+                .latitude(99.11f)
+                .longitude(55.89f)
+                .build();
+
+        String json = objectMapper.writeValueAsString(locationEdit);
+
+        // expected
+        mockMvc.perform(post("/locations")
+                        .contentType(APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+                .andExpect(jsonPath("$.validation.name").value("화장실 이름을 입력하세요."))
+                .andExpect(jsonPath("$.validation.roadAddress").value("도로명 주소를 입력하세요."))
+                .andExpect(jsonPath("$.validation.jibunAddress").value("지번 주소를 입력하세요."))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("화장실 위치 삭제")
+    void deleteLocation() throws Exception {
+        // given
+        Location location = Location.builder()
+                .name("홍대 화장실")
+                .roadAddress("서울 마포구 서교동 1길")
+                .jibunAddress("서울 마포구 동교동 150-1")
+                .latitude(10.23f)
+                .longitude(32.99f)
+                .build();
+        locationRepository.save(location);
+
+        // expected
+        mockMvc.perform(delete("/locations/{locationId}", location.getId())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
                 .andDo(print());
     }
 }

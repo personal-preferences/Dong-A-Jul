@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.personal.locations_service.request.LocationCreate;
+import org.personal.locations_service.request.LocationEdit;
 import org.personal.locations_service.response.LocationResponse;
 import org.personal.locations_service.service.LocationService;
 import org.springframework.data.domain.Pageable;
@@ -34,4 +35,12 @@ public class LocationController {
     public List<LocationResponse> getList(@PageableDefault(sort = "id") Pageable pageable) {
         return locationService.getList(pageable);
     }
+
+    @PatchMapping("/{locationId}")
+    public void editLocation(@PathVariable Long locationId, @RequestBody @Valid LocationEdit request) {
+        locationService.edit(locationId, request);
+    }
+
+    @DeleteMapping("/{locationId}")
+    public void delete(@PathVariable Long locationId) { locationService.delete(locationId); }
 }
