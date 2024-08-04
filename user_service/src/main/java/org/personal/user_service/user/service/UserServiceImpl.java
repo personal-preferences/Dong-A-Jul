@@ -9,6 +9,7 @@ import org.personal.user_service.user.repository.UserRepository;
 import org.personal.user_service.user.request.RequestRegist;
 import org.personal.user_service.user.request.RequestUpdatePassword;
 import org.personal.user_service.user.response.ResponseUser;
+import org.personal.user_service.user.response.ResponseUserDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -96,6 +97,19 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteUser(Long userId) {
         userRepository.deleteById(userId);
+    }
+
+    @Override
+    public ResponseUserDetail getUserByEmail(String userEmail) {
+        User user = userRepository.findByUserEmail(userEmail);
+        if (user==null)
+            throw new NotFoundException("회원 정보 없음");
+        return convertToResponseUserDetail(user);
+    }
+
+
+    private ResponseUserDetail convertToResponseUserDetail(User user) {
+        return new ResponseUserDetail(user);
     }
 
 

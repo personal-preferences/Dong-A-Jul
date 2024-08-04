@@ -5,6 +5,7 @@ import org.personal.user_service.user.exception.InvalidRequestException;
 import org.personal.user_service.user.request.RequestRegist;
 import org.personal.user_service.user.request.RequestUpdatePassword;
 import org.personal.user_service.user.response.ResponseUser;
+import org.personal.user_service.user.response.ResponseUserDetail;
 
 import java.util.List;
 
@@ -19,4 +20,6 @@ public interface UserService {
     void putUserPassword(RequestUpdatePassword requestUpdatePassword);
 
     void deleteUser(Long userId);
+
+    ResponseUserDetail getUserByEmail(String userEmail);
 }
