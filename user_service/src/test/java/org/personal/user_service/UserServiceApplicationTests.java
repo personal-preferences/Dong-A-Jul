@@ -81,13 +81,13 @@ class UserServiceApplicationTests {
         when(userRepository.findAll()).thenReturn(Arrays.asList(user1, user2));
 
         // when
-        List<User> responseUserList = userService.getUserList();
+        List<ResponseUser> responseUserList = userService.getUserList();
 
         // then
         assertEquals(2, responseUserList.size());
 
         // user 1
-        ResponseUser responseUser1 = convertToResponseUser(responseUserList.get(0));
+        ResponseUser responseUser1 = responseUserList.get(0);
         assertEquals("user1@test.com", responseUser1.userEmail());
         assertEquals("user1", responseUser1.userNickName());
         assertEquals(DateParsing.LdtToStr(user1.getUserEnrollDate()), responseUser1.userEnrollDate());
@@ -96,7 +96,7 @@ class UserServiceApplicationTests {
         assertEquals("ROLE_USER", responseUser1.userRole().name());
 
         // user 2
-        ResponseUser responseUser2 = convertToResponseUser(responseUserList.get(1));
+        ResponseUser responseUser2 = responseUserList.get(1);
         assertEquals("user2@test.com", responseUser2.userEmail());
         assertEquals("user2", responseUser2.userNickName());
         assertEquals(DateParsing.LdtToStr(user2.getUserEnrollDate()), responseUser2.userEnrollDate());
@@ -112,7 +112,7 @@ class UserServiceApplicationTests {
         when(userRepository.findAll()).thenReturn(Collections.emptyList());
 
         // when
-        List<User> responseUserList = userService.getUserList();
+        List<ResponseUser> responseUserList = userService.getUserList();
 
         // then
         assertEquals(0, responseUserList.size());
