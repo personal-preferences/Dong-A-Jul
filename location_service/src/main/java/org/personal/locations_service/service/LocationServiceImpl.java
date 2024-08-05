@@ -7,6 +7,7 @@ import org.personal.locations_service.exception.ToiletNotFound;
 import org.personal.locations_service.repository.LocationRepository;
 import org.personal.locations_service.request.LocationCreate;
 import org.personal.locations_service.request.LocationEdit;
+import org.personal.locations_service.request.LocationMarker;
 import org.personal.locations_service.response.LocationResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -50,8 +51,8 @@ public class LocationServiceImpl implements LocationService{
     }
 
     @Override
-    public List<LocationResponse> getList(Pageable pageable) {
-        return locationRepository.getList(pageable).stream()
+    public List<LocationResponse> getList(LocationMarker request) {
+        return locationRepository.getList(request).stream()
                 .map(LocationResponse::new)
                 .toList();
     }

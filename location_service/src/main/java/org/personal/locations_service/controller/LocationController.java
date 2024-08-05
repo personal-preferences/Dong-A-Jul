@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.personal.locations_service.request.LocationCreate;
 import org.personal.locations_service.request.LocationEdit;
+import org.personal.locations_service.request.LocationMarker;
 import org.personal.locations_service.response.LocationResponse;
 import org.personal.locations_service.service.LocationService;
 import org.springframework.data.domain.Pageable;
@@ -32,8 +33,8 @@ public class LocationController {
     }
 
     @GetMapping
-    public List<LocationResponse> getList(@PageableDefault(sort = "id") Pageable pageable) {
-        return locationService.getList(pageable);
+    public List<LocationResponse> getList(@RequestBody @Valid LocationMarker request) {
+        return locationService.getList(request);
     }
 
     @PatchMapping("/{locationId}")
