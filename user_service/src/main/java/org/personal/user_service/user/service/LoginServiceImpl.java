@@ -46,13 +46,13 @@ public class LoginServiceImpl implements LoginService{
         }
 
         String accessToken = jwtUtil.createJwt("access", responseUser.userEmail(), responseUser.userNickname(),
-                responseUser.userRole().name(),860000L );
+                responseUser.userRole().name(),3600000L ); // 1시간
         String refreshToken = jwtUtil.createJwt("refresh", responseUser.userEmail(), responseUser.userNickname(),
-                responseUser.userRole().name(),860000L );
+                responseUser.userRole().name(),86400000L ); // 24시간
         response.addHeader("access", "Bearer " + accessToken);
         response.addCookie(createCookie("refresh",refreshToken));
 
-        Token token = new Token(responseUser.userNickname(),refreshToken,20 ); //임시 20초
+        Token token = new Token(responseUser.userNickname(),refreshToken,86400 ); //24시간
         refreshRepository.save(token);
         return response;
     }
@@ -78,11 +78,13 @@ public class LoginServiceImpl implements LoginService{
 
     private Cookie createCookie(String key, String value) {
         Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24*60*60);
+        cookie.setMaxAge(24*60*60); // 초
 //        cookie.setSecure(true);   //https 인 경우 사용
         cookie.setPath("/");   //쿠키 지정 범위
         cookie.setHttpOnly(true);
 
         return cookie;
     }
+
+
 }

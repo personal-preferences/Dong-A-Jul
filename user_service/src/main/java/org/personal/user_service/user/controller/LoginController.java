@@ -30,6 +30,7 @@ public class LoginController {
 
         return ResponseEntity.ok().build();
     }
+
     @DeleteMapping("")
     public ResponseEntity<String> logout(HttpServletRequest req){
         loginService.logout(req);
