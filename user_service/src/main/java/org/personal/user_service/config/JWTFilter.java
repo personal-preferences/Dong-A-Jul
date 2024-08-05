@@ -27,7 +27,7 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
         String accessToken = request.getHeader("access");
         String refreshToken = request.getHeader("refresh");
-
+        System.out.println("accessToken = " + accessToken);
         try {
             // 엑세스 토큰 검사
             if (accessToken != null && accessToken.startsWith("Bearer ")) {

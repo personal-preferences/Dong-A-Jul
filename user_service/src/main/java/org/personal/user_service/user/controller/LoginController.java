@@ -1,5 +1,6 @@
 package org.personal.user_service.user.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.personal.user_service.user.request.RequestLogin;
 import org.personal.user_service.user.service.LoginService;
@@ -7,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/login")
@@ -30,6 +28,11 @@ public class LoginController {
 
         response = loginService.login(requestLogin, response);
 
+        return ResponseEntity.ok().build();
+    }
+    @DeleteMapping("")
+    public ResponseEntity<String> logout(HttpServletRequest req){
+        loginService.logout(req);
         return ResponseEntity.ok().build();
     }
 }
