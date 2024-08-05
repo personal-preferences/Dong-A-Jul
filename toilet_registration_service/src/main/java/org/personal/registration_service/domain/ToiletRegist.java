@@ -1,14 +1,27 @@
 package org.personal.registration_service.domain;
 
+import java.time.LocalDateTime;
+
+import org.personal.registration_service.common.DateParsing;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "toilet_regist", schema = "public")
+@Builder
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ToiletRegist {
 
 	@Id
@@ -16,31 +29,31 @@ public class ToiletRegist {
 	@Column(name = "toilet_regist_id")
 	private Long toiletRegistId;
 
-	@Column(name = "toilet_regist_date")
+	@Column(name = "toilet_regist_date", nullable = false)
 	private String toiletRegistDate;
 
-	@Column(name = "toilet_regist_img")
+	@Column(name = "toilet_regist_img", nullable = false)
 	private String toiletRegistImg;
 
 	@Column(name = "toilet_regist_is_approved")
-	private Boolean toiletRegistIsApproved;
+	private Boolean toiletRegistIsApproved = false;		// 초기값 False 설정.
 
 	@Column(name = "toilet_regist_confirmed_date")
 	private String toiletRegistConfirmedDate;
 
-	@Column(name = "toilet_regist_toilet_name")
+	@Column(name = "toilet_regist_toilet_name", nullable = false)
 	private String toiletRegistToiletName;
 
-	@Column(name = "toilet_regist_road_name_address")
+	@Column(name = "toilet_regist_road_name_address", nullable = false)
 	private String toiletRegistRoadNameAddress;
 
-	@Column(name = "toilet_regist_number_address")
+	@Column(name = "toilet_regist_number_address", nullable = false)
 	private String toiletRegistNumberAddress;
 
-	@Column(name = "toilet_regist_latitude")
+	@Column(name = "toilet_regist_latitude", nullable = false)
 	private Double toiletRegistLatitude;
 
-	@Column(name = "toilet_regist_longitude")
+	@Column(name = "toilet_regist_longitude", nullable = false)
 	private Double toiletRegistLongitude;
 
 	@Column(name = "toilet_regist_management_agency")
@@ -111,4 +124,11 @@ public class ToiletRegist {
 
 	@Column(name = "user_email")
 	private String userEmail;
+
+	@PrePersist		//엔티티가 처음 저장될 때 기본값을 설정
+	protected void onCreate() {
+		if (toiletRegistDate == null) {
+			toiletRegistDate = DateParsing.LdtToStr(LocalDateTime.now());
+		}
+	}
 }
