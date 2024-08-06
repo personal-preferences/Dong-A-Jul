@@ -95,9 +95,10 @@ public class LoginServiceImpl implements LoginService{
 
         // 사용자 정보를 DB에 저장하는 로직을 추가합니다.
         String randomPassword = nickname+ Math.random();
-        RequestRegist requestRegistUser = new RequestRegist(email, "12341234", nickname,"ROLE_USER");
+        RequestRegist requestRegistUser = new RequestRegist(email,nickname,"12341234","ROLE_USER");
         System.out.println("requestRegistUser = " + requestRegistUser);
-        userService.registUser(requestRegistUser);
+
+        userService.registKakaoUser(requestRegistUser);
 
         // JWT 토큰을 생성합니다.
         String accessToken = jwtUtil.createJwt("access", email, nickname, role, 86000000L);

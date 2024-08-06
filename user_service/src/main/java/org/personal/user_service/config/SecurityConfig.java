@@ -78,7 +78,7 @@ public class SecurityConfig {
         // 경로별 인가 설정
         httpSecurity
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login").permitAll()
+                        .requestMatchers("/login/**").permitAll()
                         .requestMatchers("/ws/**").permitAll()
                         .anyRequest().authenticated()
                 );

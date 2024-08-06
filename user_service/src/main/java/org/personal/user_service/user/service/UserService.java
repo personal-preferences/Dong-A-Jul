@@ -22,4 +22,6 @@ public interface UserService {
     void deleteUser(Long userId);
 
     ResponseUserDetail getUserByEmail(String userEmail);
+
+    void registKakaoUser(RequestRegist requestRegistUser);
 }

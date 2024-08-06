@@ -107,6 +107,12 @@ public class UserServiceImpl implements UserService {
         return convertToResponseUserDetail(user);
     }
 
+    @Override
+    public void registKakaoUser(RequestRegist requestRegistUser) {
+        if (!userRepository.existsByUserEmail(requestRegistUser.userEmail()))
+            registUser(requestRegistUser);
+    }
+
 
     private ResponseUserDetail convertToResponseUserDetail(User user) {
         return new ResponseUserDetail(user);
@@ -115,7 +121,6 @@ public class UserServiceImpl implements UserService {
 
     // User to ResponseUser
     private ResponseUser convertToResponseUser(User user) {
-
         return new ResponseUser(user);
     }
 

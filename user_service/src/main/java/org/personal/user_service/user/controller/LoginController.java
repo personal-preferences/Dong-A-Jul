@@ -47,7 +47,7 @@ public class LoginController {
 
 
     // kakao login 접근
-    @GetMapping("/login/kakao")
+    @GetMapping("/kakao")
     public ResponseEntity<String> kakaoLogin(){
 
         String url ="https://accounts.kakao.com/login/?continue=https%3A%2F%2Fkauth.kakao.com%2Foauth%2Fauthorize%3Fscope%3Dprofile_nickname%2520account_email%26response_type%3Dcode%26state%3D62UzJ8jpPAE34JYZCi6JszXPGW-ZnEmZwrX1lxi3voU%253D%26" +
@@ -63,7 +63,7 @@ public class LoginController {
 
         response.addHeader("access", accessToken);
         response.addHeader("refresh", refreshToken);
-        String redirectUrl = "http://localhost:5173/kakao-login?access=" + accessToken + "&refresh=" + refreshToken;
+        String redirectUrl = "http://localhost:8765/kakao-login?access=" + accessToken + "&refresh=" + refreshToken;
         response.sendRedirect(redirectUrl);
     }
 
