@@ -95,8 +95,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = false)
     public void deleteUser(Long userId) {
-        userRepository.deleteById(userId);
+        User user = userRepository.findById(userId).orElseThrow(()->new NotFoundException("없는 회원번호"));
+        user.setUserDeleteDate(LocalDateTime.now());
+        user.setUserIsDeleted(true);
+        userRepository.save(user);
     }
 
     @Override
