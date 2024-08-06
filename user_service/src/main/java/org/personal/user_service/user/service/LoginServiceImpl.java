@@ -94,7 +94,7 @@ public class LoginServiceImpl implements LoginService{
         String role = "ROLE_USER"; // 기본 역할을 설정합니다. 필요에 따라 다르게 설정할 수 있습니다.
 
         // 사용자 정보를 DB에 저장하는 로직을 추가합니다.
-        String randomPassword = nickname+ Math.random();
+        // 카카오 회원 초기 비밀번호는 12341234입니다.
         RequestRegist requestRegistUser = new RequestRegist(email,nickname,"12341234","ROLE_USER");
         System.out.println("requestRegistUser = " + requestRegistUser);
 
