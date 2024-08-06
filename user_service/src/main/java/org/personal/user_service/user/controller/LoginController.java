@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.IOException;
 
 @RestController
-@RequestMapping("/login")
+@RequestMapping("")
 public class LoginController {
 
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
@@ -28,7 +28,7 @@ public class LoginController {
     }
 
 
-    @PostMapping("")
+    @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody@Validated RequestLogin requestLogin,
                                         HttpServletResponse response, Errors errors){
 
@@ -39,7 +39,7 @@ public class LoginController {
 
 
 
-    @DeleteMapping("")
+    @DeleteMapping("/login")
     public ResponseEntity<String> logout(HttpServletRequest req){
         loginService.logout(req);
         return ResponseEntity.ok().build();
@@ -47,7 +47,7 @@ public class LoginController {
 
 
     // kakao login 접근
-    @GetMapping("/kakao")
+    @GetMapping("/login/kakao")
     public ResponseEntity<String> kakaoLogin(){
 
         String url ="https://accounts.kakao.com/login/?continue=https%3A%2F%2Fkauth.kakao.com%2Foauth%2Fauthorize%3Fscope%3Dprofile_nickname%2520account_email%26response_type%3Dcode%26state%3D62UzJ8jpPAE34JYZCi6JszXPGW-ZnEmZwrX1lxi3voU%253D%26" +
