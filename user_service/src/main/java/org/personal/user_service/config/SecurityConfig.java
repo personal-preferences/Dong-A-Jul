@@ -2,6 +2,8 @@ package org.personal.user_service.config;
 
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.personal.user_service.oauth.CustomOAuth2UserService;
+import org.personal.user_service.user.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,11 +30,18 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
 
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final LoginService loginService;
+
 
     @Autowired
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil) {
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil, OAuth2SuccessHandler oAuth2SuccessHandler, CustomOAuth2UserService customOAuth2UserService, LoginService loginService) {
         this.authenticationConfiguration = authenticationConfiguration;
         this.jwtUtil = jwtUtil;
+        this.oAuth2SuccessHandler = oAuth2SuccessHandler;
+        this.customOAuth2UserService = customOAuth2UserService;
+        this.loginService = loginService;
     }
 
     @Bean
@@ -82,6 +91,17 @@ public class SecurityConfig {
 
         httpSecurity
                 .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+
+        httpSecurity
+                .oauth2Login(oauth2 -> oauth2
+                                .loginPage("/oauth2/authorization/kakao")
+                                .defaultSuccessUrl("/auth/success")
+//                        .failureUrl("/loginFailure")
+                                .userInfoEndpoint(userInfo -> userInfo
+                                        .userService(customOAuth2UserService)
+                                )
+                                .successHandler(oAuth2SuccessHandler)
+                );
 
         return httpSecurity.build();
     }
