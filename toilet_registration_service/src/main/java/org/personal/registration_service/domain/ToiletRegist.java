@@ -2,6 +2,7 @@ package org.personal.registration_service.domain;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.personal.registration_service.common.DateParsing;
 
 import jakarta.persistence.Column;
@@ -29,14 +30,14 @@ public class ToiletRegist {
 	@Column(name = "toilet_regist_id")
 	private Long toiletRegistId;
 
-	@Column(name = "toilet_regist_date", nullable = false)
+	@Column(name = "toilet_regist_date", nullable = false, updatable = false)
 	private String toiletRegistDate;
 
 	@Column(name = "toilet_regist_img", nullable = false)
 	private String toiletRegistImg;
 
-	@Column(name = "toilet_regist_is_approved")
-	private Boolean toiletRegistIsApproved = false;		// 초기값 False 설정.
+	@Column(name = "toilet_regist_is_approved", nullable = false)
+	private Boolean toiletRegistIsApproved;
 
 	@Column(name = "toilet_regist_confirmed_date")
 	private String toiletRegistConfirmedDate;
@@ -129,6 +130,9 @@ public class ToiletRegist {
 	protected void onCreate() {
 		if (toiletRegistDate == null) {
 			toiletRegistDate = DateParsing.LdtToStr(LocalDateTime.now());
+		}
+		if (toiletRegistIsApproved == null) {
+			toiletRegistIsApproved = false;
 		}
 	}
 }
