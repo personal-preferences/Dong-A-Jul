@@ -10,6 +10,7 @@ import org.personal.user_service.config.DateParsing;
 import org.personal.user_service.user.domain.User;
 import org.personal.user_service.user.etc.ROLE;
 import org.personal.user_service.user.exception.InvalidRequestException;
+import org.personal.user_service.user.exception.NotFoundException;
 import org.personal.user_service.user.repository.UserRepository;
 import org.personal.user_service.user.request.RequestUpdatePassword;
 import org.personal.user_service.user.response.ResponseUser;
@@ -210,12 +211,26 @@ class UserServiceApplicationTests {
 
     @Test
     @DisplayName("사용자 탈퇴")
-    public void testDeleteUser(){
+    public void testDeleteUser() {
         // given
+        User user1 = new User();
+        user1.setUserId(1L);
+        user1.setUserEmail("user1@test.com");
+        user1.setUserNickname("user1");
+        user1.setUserPassword("password");
+        user1.setUserEnrollDate(LocalDateTime.now());
+        user1.setUserRole(ROLE.ROLE_USER);
+
+        when(userRepository.findById(user1.getUserId())).thenReturn(Optional.of(user1));
+        when(userRepository.save(user1)).thenReturn(user1);
+
         // when
         userService.deleteUser(user1.getUserId());
+
         // then
-        verify(userRepository, times(1)).deleteById(user1.getUserId());
+        verify(userRepository, times(1)).findById(user1.getUserId());
+        verify(userRepository, times(1)).save(user1);
     }
-    
+
+
 }
