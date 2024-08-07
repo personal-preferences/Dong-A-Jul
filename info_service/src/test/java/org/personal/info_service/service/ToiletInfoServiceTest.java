@@ -88,6 +88,20 @@ class ToiletInfoServiceTest {
         assertEquals(getInfoList.size(), 2);
     }
 
+    @Test
+    @DisplayName("장애인 화장실 조회")
+    void getDisabledToiletInfoList(){
+
+        toiletInfoService.createToiletInfo(createTestToiletInfo());
+
+        List<ToiletInfoResponse> disabledToiletInfoList = toiletInfoService.getDisabledToilets();
+        ToiletInfoResponse disabledToiletInfo = disabledToiletInfoList.get(0);
+
+        assertTrue((disabledToiletInfo.toiletInfoFemaleDisabledToiletsNumber()
+                + disabledToiletInfo.toiletInfoMaleDisabledToiletsNumber()
+                + disabledToiletInfo.toiletInfoMaleDisabledUrinalsNumber()) > 0);
+    }
+
     // 테스트용 RequestCreateInfo 객체 생성
     public RequestCreateInfo createTestToiletInfo() {
         return RequestCreateInfo.builder()
@@ -148,6 +162,5 @@ class ToiletInfoServiceTest {
                 .toiletLocationId(toiletInfoResponse.toiletLocationId())
                 .build();
     }
-
 
 }
