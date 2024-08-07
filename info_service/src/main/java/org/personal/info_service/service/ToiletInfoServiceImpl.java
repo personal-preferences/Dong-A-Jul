@@ -31,7 +31,7 @@ public class ToiletInfoServiceImpl implements ToiletInfoService {
         ToiletInfo savedInfo = toiletInfoRepository.findByToiletLocationId(modifyToiletInfo.toiletLocationId());
 
         if(savedInfo == null){
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("화장실 정보가 존재하지 않습니다.");
         }
 
         ToiletInfo updateInfo = convertRequestCreateInfoToToiletInfo(modifyToiletInfo);

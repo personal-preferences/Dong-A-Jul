@@ -61,7 +61,7 @@ class ToiletInfoServiceTest {
     }
 
 
-    // 테스트용 ToiletInfoResponse 객체를 생성하는 함수
+    // 테스트용 RequestCreateInfo 객체 생성
     public RequestCreateInfo createTestToiletInfo() {
         return RequestCreateInfo.builder()
                 .isDeleted(false)
@@ -91,7 +91,7 @@ class ToiletInfoServiceTest {
                 .build();
     }
 
-    // 테스트용 ToiletInfoResponse 객체를 생성하는 함수
+    // 수정 테스트용 RequestCreateInfo 객체 생성
     public RequestCreateInfo createModifyTestToiletInfo(ToiletInfoResponse toiletInfoResponse) {
         return RequestCreateInfo.builder()
                 .toiletInfoId(toiletInfoResponse.toiletInfoId())

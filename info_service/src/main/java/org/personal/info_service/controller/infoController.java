@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RequestMapping("/info")
+@RestController
 public class infoController {
 
     private final ToiletInfoService toiletInfoService;
@@ -37,7 +38,6 @@ public class infoController {
 
     @PostMapping("/modify")
     public ResponseEntity<ToiletInfoResponse> modifyInfo(@RequestBody RequestCreateInfo toiletInfo){
-
         if(toiletInfo.toiletLocationId() == null){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
@@ -45,13 +45,17 @@ public class infoController {
         try {
             ToiletInfoResponse updatedToilet = toiletInfoService.updateToiletInfo(toiletInfo);
             return ResponseEntity.status(HttpStatus.OK).body(updatedToilet);
-        } catch (Exception e) {
+        }
+        catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        catch (Exception e) {
             System.err.println("modifyInfo: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
 
-    @PostMapping("/{locationId}")
+    @PostMapping("/delete/{locationId}")
     public ResponseEntity<ToiletInfoResponse> deleteInfo(@PathVariable Long locationId){
 
         if(locationId == null){
