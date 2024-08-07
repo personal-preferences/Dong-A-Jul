@@ -75,6 +75,19 @@ class ToiletInfoServiceTest {
         assertNotNull(getInfo);
     }
 
+    @Test
+    @DisplayName("화장실 정보 리스트 조회")
+    void getToiletInfoList(){
+
+        ToiletInfoResponse info1 = toiletInfoService.createToiletInfo(createTestToiletInfo());
+        ToiletInfoResponse info2 = toiletInfoService.createToiletInfo(createTestToiletInfo());
+        List<Long> idList = Arrays.asList(info1.toiletLocationId(), info2.toiletLocationId());
+
+        List<ToiletInfoResponse> getInfoList = toiletInfoService.getToiletInfoList(idList);
+
+        assertEquals(getInfoList.size(), 2);
+    }
+
     // 테스트용 RequestCreateInfo 객체 생성
     public RequestCreateInfo createTestToiletInfo() {
         return RequestCreateInfo.builder()
