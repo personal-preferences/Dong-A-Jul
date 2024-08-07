@@ -16,8 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -46,7 +45,7 @@ class infoControllerTest {
         mockMvc.perform(post("/info/add")
                         .contentType(APPLICATION_JSON)
                         .content(json))
-                .andExpect(status().isOk())
+                .andExpect(status().isCreated())
                 .andDo(print());
     }
 
@@ -100,6 +99,32 @@ class infoControllerTest {
         mockMvc.perform(patch("/info/modify")
                         .contentType(APPLICATION_JSON)
                         .content(json))
+                .andExpect(status().isNoContent())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("화장실 정보 삭제 성공")
+    void deleteToiletInfoSuccess() throws Exception {
+
+        RequestCreateInfo origin = RequestCreateInfo.builder()
+                .toiletLocationId(1L)
+                .toiletInfoFemaleToiletsNumber(3)
+                .build();
+        toiletInfoService.createToiletInfo(origin);
+
+        mockMvc.perform(delete("/info/delete/" + origin.toiletLocationId())
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("정보 삭제 실패 - 저장된 값이 없는 경우")
+    void deleteInfoIllegalArgumentException() throws Exception {
+
+        mockMvc.perform(delete("/info/delete/" + -1L)
+                        .contentType(APPLICATION_JSON))
                 .andExpect(status().isNoContent())
                 .andDo(print());
     }

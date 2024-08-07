@@ -27,13 +27,9 @@ public class infoController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
-        try {
-            ToiletInfoResponse savedToilet = toiletInfoService.createToiletInfo(toiletInfo);
-            return ResponseEntity.status(HttpStatus.OK).body(savedToilet);
-        } catch (Exception e) {
-            System.err.println("addInfo: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
+        ToiletInfoResponse savedToilet = toiletInfoService.createToiletInfo(toiletInfo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedToilet);
+
     }
 
     @PatchMapping("/modify")
@@ -46,19 +42,14 @@ public class infoController {
         return ResponseEntity.status(HttpStatus.OK).body(updatedToilet);
     }
 
-    @PostMapping("/delete/{locationId}")
+    @DeleteMapping("/delete/{locationId}")
     public ResponseEntity<ToiletInfoResponse> deleteInfo(@PathVariable Long locationId){
 
         if(locationId == null){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
-        try {
-            toiletInfoService.deleteToiletinfo(locationId);
-            return ResponseEntity.status(HttpStatus.OK).body(null);
-        } catch (Exception e) {
-            System.err.println("deleteInfo: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
+        toiletInfoService.deleteToiletinfo(locationId);
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 }
