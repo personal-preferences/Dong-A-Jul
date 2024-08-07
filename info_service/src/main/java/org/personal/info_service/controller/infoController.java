@@ -49,7 +49,20 @@ public class infoController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
-        toiletInfoService.deleteToiletinfo(Long.valueOf(locationId));
+        toiletInfoService.deleteToiletinfo(locationId);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
+
+    @GetMapping("/{locationId}")
+    public ResponseEntity<ToiletInfoResponse> getToiletInfo(@PathVariable Long locationId){
+
+        if(locationId == null){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+        ToiletInfoResponse info = toiletInfoService.getToiletInfo(locationId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(info);
+    }
+
 }
