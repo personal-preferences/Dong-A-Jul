@@ -43,13 +43,13 @@ public class infoController {
     }
 
     @DeleteMapping("/delete/{locationId}")
-    public ResponseEntity<ToiletInfoResponse> deleteInfo(@PathVariable Long locationId){
+    public ResponseEntity<Void> deleteInfo(@PathVariable Long locationId){
 
         if(locationId == null){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
-        toiletInfoService.deleteToiletinfo(locationId);
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        toiletInfoService.deleteToiletinfo(Long.valueOf(locationId));
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
