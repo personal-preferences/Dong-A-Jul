@@ -7,6 +7,9 @@ import org.personal.info_service.request.RequestCreateInfo;
 import org.personal.info_service.response.ToiletInfoResponse;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class ToiletInfoServiceImpl implements ToiletInfoService {
 
@@ -65,6 +68,16 @@ public class ToiletInfoServiceImpl implements ToiletInfoService {
         }
 
         return toiletInfoMapper.convertToiletInfoToResponse(info);
+    }
+
+    @Override
+    public List<ToiletInfoResponse> getToiletInfoList(List<Long> idList) {
+
+        List<ToiletInfo> infoList = toiletInfoRepository.findToiletInfoList(idList);
+
+        return infoList.stream()
+                .map(toiletInfoMapper::convertToiletInfoToResponse)
+                .collect(Collectors.toList());
     }
 
 
