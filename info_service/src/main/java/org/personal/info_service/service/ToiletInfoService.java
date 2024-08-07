@@ -11,4 +11,6 @@ public interface ToiletInfoService {
     ToiletInfoResponse updateToiletInfo(RequestCreateInfo modifyToiletInfo);
 
     void deleteToiletinfo(Long locationId);
+
+    ToiletInfoResponse getToiletInfo(Long locationId);
 }

@@ -55,4 +55,17 @@ public class ToiletInfoServiceImpl implements ToiletInfoService {
         savedInfo.setDeleted(true);
         toiletInfoRepository.save(savedInfo);
     }
+
+    @Override
+    public ToiletInfoResponse getToiletInfo(Long locationId) {
+        ToiletInfo info = toiletInfoRepository.findToiletInfo(locationId);
+
+        if(info == null){
+            throw new IllegalArgumentException("화장실 정보가 없습니다.");
+        }
+
+        return toiletInfoMapper.convertToiletInfoToResponse(info);
+    }
+
+
 }
