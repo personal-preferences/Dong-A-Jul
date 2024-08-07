@@ -63,6 +63,47 @@ class infoControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    @DisplayName("화장실 정보 수정 성공")
+    void modifyToiletInfoSuccess() throws Exception {
+
+        RequestCreateInfo origin = RequestCreateInfo.builder()
+                .toiletLocationId(1L)
+                .toiletInfoFemaleToiletsNumber(3)
+                .build();
+        toiletInfoService.createToiletInfo(origin);
+
+        RequestCreateInfo request = RequestCreateInfo.builder()
+                .toiletLocationId(1L)
+                .toiletInfoFemaleToiletsNumber(5)
+                .build();
+        String json = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(patch("/info/modify")
+                        .contentType(APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.toiletInfoFemaleToiletsNumber").value(5))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("정보 수정 실패 - 저장된 값이 없는 경우")
+    void modifyInfoIllegalArgumentException() throws Exception {
+
+        RequestCreateInfo request = RequestCreateInfo.builder()
+                .toiletLocationId(-1L)
+                .toiletInfoFemaleToiletsNumber(5)
+                .build();
+        String json = objectMapper.writeValueAsString(request);
+
+        mockMvc.perform(patch("/info/modify")
+                        .contentType(APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isNoContent())
+                .andDo(print());
+    }
+
     public RequestCreateInfo createTestToiletInfo() {
         return RequestCreateInfo.builder()
                 .isDeleted(false)

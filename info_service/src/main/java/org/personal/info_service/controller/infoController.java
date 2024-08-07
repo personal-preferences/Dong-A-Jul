@@ -36,23 +36,14 @@ public class infoController {
         }
     }
 
-    @PostMapping("/modify")
+    @PatchMapping("/modify")
     public ResponseEntity<ToiletInfoResponse> modifyInfo(@RequestBody RequestCreateInfo toiletInfo){
         if(toiletInfo.toiletLocationId() == null){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
-        try {
-            ToiletInfoResponse updatedToilet = toiletInfoService.updateToiletInfo(toiletInfo);
-            return ResponseEntity.status(HttpStatus.OK).body(updatedToilet);
-        }
-        catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-        catch (Exception e) {
-            System.err.println("modifyInfo: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
+        ToiletInfoResponse updatedToilet = toiletInfoService.updateToiletInfo(toiletInfo);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedToilet);
     }
 
     @PostMapping("/delete/{locationId}")
