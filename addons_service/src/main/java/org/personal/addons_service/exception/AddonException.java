@@ -1,7 +1,15 @@
 package org.personal.addons_service.exception;
 
-public abstract class AddonException extends RuntimeException {
-	public AddonException(String message) {
-		super(message);
-	}
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
+public class AddonException extends RuntimeException {
+
+	private final AddonErrorResult errorResult;
+
+
 }
+
