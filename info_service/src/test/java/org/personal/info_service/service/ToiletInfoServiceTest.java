@@ -11,6 +11,10 @@ import org.personal.info_service.response.ToiletInfoResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -60,6 +64,16 @@ class ToiletInfoServiceTest {
         assertTrue(deletedInfo.isDeleted());
     }
 
+    @Test
+    @DisplayName("화장실 정보 조회")
+    void getToiletInfo(){
+
+        ToiletInfoResponse savedToiletInfo = toiletInfoService.createToiletInfo(createTestToiletInfo());
+
+        ToiletInfoResponse getInfo = toiletInfoService.getToiletInfo(savedToiletInfo.toiletLocationId());
+
+        assertNotNull(getInfo);
+    }
 
     // 테스트용 RequestCreateInfo 객체 생성
     public RequestCreateInfo createTestToiletInfo() {
