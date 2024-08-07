@@ -80,5 +80,14 @@ public class ToiletInfoServiceImpl implements ToiletInfoService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<ToiletInfoResponse> getDisabledToilets() {
+        List<ToiletInfo> infoList = toiletInfoRepository.findAllWithDisabledToilets();
+
+        return infoList.stream()
+                .map(toiletInfoMapper::convertToiletInfoToResponse)
+                .collect(Collectors.toList());
+    }
+
 
 }

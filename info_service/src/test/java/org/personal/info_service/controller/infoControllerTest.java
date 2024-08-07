@@ -109,7 +109,6 @@ class infoControllerTest {
 
         RequestCreateInfo origin = RequestCreateInfo.builder()
                 .toiletLocationId(1L)
-                .toiletInfoFemaleToiletsNumber(3)
                 .build();
         toiletInfoService.createToiletInfo(origin);
 
