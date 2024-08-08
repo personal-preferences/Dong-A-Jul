@@ -18,5 +18,5 @@ public interface ToiletInfoService {
 
     List<ToiletInfoResponse> getToiletInfoList(List<Long> idList);
 
-    List<ToiletInfoResponse> getDisabledToilets();
+    List<ToiletInfoResponse> getDisabledToiletList();
 }

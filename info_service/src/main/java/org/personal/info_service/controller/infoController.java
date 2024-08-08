@@ -79,4 +79,12 @@ public class infoController {
         return ResponseEntity.status(HttpStatus.OK).body(infoList);
     }
 
+    @GetMapping("/disabledToilet")
+    public ResponseEntity<List<ToiletInfoResponse>> getDisabledToiletInfoList(){
+
+        List<ToiletInfoResponse> infoList = toiletInfoService.getDisabledToiletList();
+
+        return ResponseEntity.status(HttpStatus.OK).body(infoList);
+    }
+
 }

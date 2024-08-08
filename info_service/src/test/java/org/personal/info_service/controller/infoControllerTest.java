@@ -171,6 +171,23 @@ class infoControllerTest {
                 .andDo(print());
     }
 
+    @Test
+    @DisplayName("장애인 화장실 정보 리스트 조회 성공")
+    void getDisabledToiletInfoListSuccess() throws Exception {
+
+        RequestCreateInfo origin = RequestCreateInfo.builder()
+                .toiletLocationId(1L)
+                .toiletInfoFemaleDisabledToiletsNumber(3)
+                .build();
+        toiletInfoService.createToiletInfo(origin);
+
+        mockMvc.perform(get("/info/disabledToilet")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(not(emptyOrNullString())))
+                .andDo(print());
+    }
+
     public RequestCreateInfo createTestToiletInfo() {
         return RequestCreateInfo.builder()
                 .isDeleted(false)

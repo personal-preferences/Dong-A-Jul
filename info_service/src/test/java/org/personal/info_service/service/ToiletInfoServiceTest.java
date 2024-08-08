@@ -94,7 +94,7 @@ class ToiletInfoServiceTest {
 
         toiletInfoService.createToiletInfo(createTestToiletInfo());
 
-        List<ToiletInfoResponse> disabledToiletInfoList = toiletInfoService.getDisabledToilets();
+        List<ToiletInfoResponse> disabledToiletInfoList = toiletInfoService.getDisabledToiletList();
         ToiletInfoResponse disabledToiletInfo = disabledToiletInfoList.get(0);
 
         assertTrue((disabledToiletInfo.toiletInfoFemaleDisabledToiletsNumber()

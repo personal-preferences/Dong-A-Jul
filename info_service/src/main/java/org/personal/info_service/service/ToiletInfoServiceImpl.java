@@ -81,7 +81,7 @@ public class ToiletInfoServiceImpl implements ToiletInfoService {
     }
 
     @Override
-    public List<ToiletInfoResponse> getDisabledToilets() {
+    public List<ToiletInfoResponse> getDisabledToiletList() {
         List<ToiletInfo> infoList = toiletInfoRepository.findAllWithDisabledToilets();
 
         return infoList.stream()
