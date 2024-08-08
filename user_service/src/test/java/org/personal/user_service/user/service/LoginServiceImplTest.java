@@ -1,6 +1,8 @@
 package org.personal.user_service.user.service;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,13 +14,16 @@ import org.personal.user_service.config.JWTUtil;
 import org.personal.user_service.user.domain.Token;
 import org.personal.user_service.user.domain.User;
 import org.personal.user_service.user.etc.ROLE;
+import org.personal.user_service.user.exception.InvalidRequestException;
 import org.personal.user_service.user.exception.NotFoundException;
 import org.personal.user_service.user.repository.RefreshRepository;
 import org.personal.user_service.user.request.RequestLogin;
 import org.personal.user_service.user.response.ResponseUserDetail;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -130,6 +135,80 @@ class LoginServiceImplTest {
         assertEquals("비밀번호 불일치", exception.getMessage());
     }
 
+    @Test
+    @DisplayName("로그아웃 성공")
+    public void testLogoutSuccess(){
 
+// given
+        Cookie cookie = new Cookie("refresh", "refresh_token");
+        Cookie[] cookies = {cookie};
+
+        HttpServletRequest req = mock(HttpServletRequest.class);
+        when(req.getCookies()).thenReturn(cookies);
+
+        Optional<Token> tokenOpt = Optional.of(new Token("nickname", "refresh_token", 86400L));
+        when(refreshRepository.findByToken(anyString())).thenReturn(tokenOpt);
+
+        // when
+        loginService.logout(req);
+
+        // then
+        verify(refreshRepository, times(1)).delete(any(Token.class));
+    }
+
+    @Test
+    @DisplayName("로그아웃 실패- 쿠키가 없을 경우")
+    public void testLogoutFailWhenCookieNull(){
+
+        // given
+//        Cookie cookie = new Cookie("refresh", "refresh_token");
+        Cookie[] cookies = {null};
+
+        HttpServletRequest req = mock(HttpServletRequest.class);
+        when(req.getCookies()).thenReturn(cookies);
+
+        // when, then
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> {
+            loginService.logout(req);
+        });
+//        loginService.logout(req);
+
+        verify(refreshRepository, times(0)).delete(any(Token.class));
+    }
+    @Test
+    @DisplayName("로그아웃 실패 - 쿠키에 refresh가 없는 경우")
+    public void testLogoutFailWhenRefreshNull(){
+        // given
+        Cookie cookie = new Cookie("refresh", "refresh_token");
+        Cookie[] cookies = {null};
+
+        HttpServletRequest req = mock(HttpServletRequest.class);
+        when(req.getCookies()).thenReturn(cookies);
+
+        // when, then
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> {
+            loginService.logout(req);
+        });
+
+        verify(refreshRepository, times(0)).delete(any(Token.class));
+    }
+    @Test
+    @DisplayName("로그아웃 실패 - 유효하지 않은 토큰일 경우")
+    public void testLogoutWhenTokenInvalid(){
+        // given
+        Cookie cookie = new Cookie("refresh", "refresh_token");
+        Cookie[] cookies = {cookie};
+
+        HttpServletRequest req = mock(HttpServletRequest.class);
+        when(req.getCookies()).thenReturn(cookies);
+
+        when(refreshRepository.findByToken(anyString())).thenReturn(null);
+
+        // when, then
+        InvalidRequestException exception = assertThrows(InvalidRequestException.class, () -> {
+            loginService.logout(req);
+        });
+        verify(refreshRepository, times(0)).delete(any(Token.class));
+    }
 
 }
