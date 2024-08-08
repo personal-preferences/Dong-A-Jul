@@ -98,8 +98,24 @@ class LoginServiceImplTest {
     }
 
     @Test
-    @DisplayName("로그인 실패")
-    public void testLoginFail(){
+    @DisplayName("로그인 실패 - 아이디 불일치")
+    public void testLoginEmailFail(){
+        // given
+        RequestLogin requestLogin = new RequestLogin(userEmail, userPassword);
+        ResponseUserDetail responseUserDetail = new ResponseUserDetail(user);
+        when(userService.getUserByEmail(anyString()))
+                .thenThrow(new NotFoundException("회원 정보 없음"));
+
+        // when & then
+        NotFoundException exception = assertThrows(NotFoundException.class, () -> {
+            loginService.login(requestLogin, mock(HttpServletResponse.class));
+        });
+        assertEquals("회원 정보 없음", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("로그인 실패- 비밀번호 불일치")
+    public void testLoginPasswordFail(){
         // given
         RequestLogin requestLogin = new RequestLogin(userEmail, userPassword);
         ResponseUserDetail responseUserDetail = new ResponseUserDetail(user);
@@ -107,17 +123,13 @@ class LoginServiceImplTest {
                 .thenReturn(responseUserDetail);
         when(bCryptPasswordEncoder.matches(userPassword, responseUserDetail.userPassword()))
                 .thenReturn(false);
-        when(jwtUtil.createJwt(anyString(), anyString(), anyString(), anyString(), anyLong()))
-                .thenReturn("mockAccessToken").thenReturn("mockRefreshToken");
-        HttpServletResponse response = mock(HttpServletResponse.class);
-
         // when & then
         NotFoundException exception = assertThrows(NotFoundException.class, () -> {
             loginService.login(requestLogin, mock(HttpServletResponse.class));
         });
         assertEquals("비밀번호 불일치", exception.getMessage());
     }
-    
+
 
 
 }
