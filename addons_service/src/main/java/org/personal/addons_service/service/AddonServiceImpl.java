@@ -1,5 +1,6 @@
 package org.personal.addons_service.service;
 
+import org.personal.addons_service.domain.Addon;
 import org.personal.addons_service.exception.AddonErrorResult;
 import org.personal.addons_service.exception.AddonException;
 import org.personal.addons_service.repository.AddonRepository;
@@ -24,6 +25,15 @@ public class AddonServiceImpl implements AddonService {
 			.ifPresent(existingAddon -> {
 				throw new AddonException(AddonErrorResult.DUPLICATED_ADDON_CREATE);
 			});
+
+		Addon addon = Addon.builder()
+			.memoContent(request.memoContent())
+			.isBookmarked(request.isBookmarked())
+			.userEmail(request.userEmail())
+			.toiletLocationId(request.toiletLocationId())
+			.build();
+
+		addonRepository.save(addon);
 
 	}
 
