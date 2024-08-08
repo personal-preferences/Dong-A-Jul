@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.personal.user_service.config.GetUserInfo;
 import org.personal.user_service.config.JWTUtil;
 import org.personal.user_service.user.domain.Token;
+import org.personal.user_service.user.exception.InvalidRequestException;
 import org.personal.user_service.user.exception.NotFoundException;
 import org.personal.user_service.user.repository.RefreshRepository;
 import org.personal.user_service.user.request.RequestLogin;
@@ -18,6 +19,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
 
@@ -29,6 +31,7 @@ public class LoginServiceImpl implements LoginService{
     private final JWTUtil jwtUtil;
     private final RefreshRepository refreshRepository;
     private final GetUserInfo getUserInfo;
+
 
     @Autowired
     public LoginServiceImpl(PasswordEncoder passwordEncoder, UserService userService, JWTUtil jwtUtil, RefreshRepository refreshRepository, GetUserInfo getUserInfo) {
@@ -65,19 +68,32 @@ public class LoginServiceImpl implements LoginService{
     @Transactional(readOnly = false)
     public void logout(HttpServletRequest req) {
         String refresh = null;
-        Cookie[] cookies = req.getCookies();
-        for(Cookie cookie : cookies){
-            if(cookie.getName().equals("refresh")){
-                refresh = cookie.getValue();
+        try {
+            Cookie[] cookies = req.getCookies();
+            for(Cookie cookie : cookies){
+                if(cookie.getName().equals("refresh")){
+                    refresh = cookie.getValue();
+                }
             }
+        }catch (NullPointerException e){
+            throwRefreshIsNull();
         }
-        System.out.println(getUserInfo.getName());
         System.out.println("refresh = " + refresh);
         if (refresh==null)
-            throw new NotFoundException("refresh 없음");
+            throwRefreshIsNull();
 
         Optional<Token> tokenOpt = refreshRepository.findByToken(refresh);
-        tokenOpt.ifPresent(refreshRepository::delete);
+        try {
+            tokenOpt.ifPresent(refreshRepository::delete);
+
+        }catch (Exception e){
+            throw new InvalidRequestException("refresh 토큰 유효하지 않음");
+        }
+
+    }
+
+    private static void throwRefreshIsNull() {
+        throw new NotFoundException("refresh 없음");
     }
 
     @Override
