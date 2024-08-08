@@ -12,6 +12,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.hamcrest.Matchers.emptyOrNullString;
 import static org.hamcrest.Matchers.not;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -139,6 +142,30 @@ class infoControllerTest {
 
         mockMvc.perform(get("/info/" + origin.toiletLocationId())
                         .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(not(emptyOrNullString())))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("화장실 정보 리스트 조회 성공")
+    void getToiletInfoListSuccess() throws Exception {
+
+        RequestCreateInfo origin1 = RequestCreateInfo.builder()
+                .toiletLocationId(1L)
+                .build();
+        RequestCreateInfo origin2 = RequestCreateInfo.builder()
+                .toiletLocationId(2L)
+                .build();
+        toiletInfoService.createToiletInfo(origin1);
+        toiletInfoService.createToiletInfo(origin2);
+
+        List<Long> idList = Arrays.asList(origin1.toiletLocationId(), origin2.toiletLocationId());
+        String json = objectMapper.writeValueAsString(idList);
+
+        mockMvc.perform(post("/info")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
                 .andExpect(status().isOk())
                 .andExpect(content().string(not(emptyOrNullString())))
                 .andDo(print());

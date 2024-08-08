@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RequestMapping("/info")
 @RestController
@@ -63,6 +65,18 @@ public class infoController {
         ToiletInfoResponse info = toiletInfoService.getToiletInfo(locationId);
 
         return ResponseEntity.status(HttpStatus.OK).body(info);
+    }
+
+    @PostMapping("")
+    public ResponseEntity<List<ToiletInfoResponse>> getToiletInfoList(@RequestBody List<Long> idList){
+
+        if(idList.isEmpty()){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+        List<ToiletInfoResponse> infoList = toiletInfoService.getToiletInfoList(idList);
+
+        return ResponseEntity.status(HttpStatus.OK).body(infoList);
     }
 
 }
