@@ -2,7 +2,6 @@ package org.personal.registration_service.domain;
 
 import java.time.LocalDateTime;
 
-import org.hibernate.annotations.ColumnDefault;
 import org.personal.registration_service.common.DateParsing;
 
 import jakarta.persistence.Column;

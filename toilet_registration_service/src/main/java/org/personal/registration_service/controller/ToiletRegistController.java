@@ -1,5 +1,9 @@
 package org.personal.registration_service.controller;
 
+import static org.personal.registration_service.common.Constants.*;
+
+import javax.validation.Valid;
+
 import org.personal.registration_service.request.ToiletRegistRequest;
 import org.personal.registration_service.response.ToiletRegistResponse;
 import org.springframework.http.HttpStatus;
@@ -16,8 +20,8 @@ public class ToiletRegistController {
 
 	@PostMapping
 	public ResponseEntity<ToiletRegistResponse> addToiletRegist(
-		@RequestHeader() final String userId,
-		@RequestBody final ToiletRegistRequest toiletRegistRequest){
+		@RequestHeader(USER_ID_HEADER) final String userId,
+		@RequestBody @Valid final ToiletRegistRequest toiletRegistRequest){
 
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}
