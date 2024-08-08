@@ -1,9 +1,9 @@
-package org.personal.info_service.response;
+package org.personal.info_service.request;
 
 import lombok.Builder;
 
 @Builder
-public record ToiletInfoResponse(
+public record RequestCreateInfo(
         Long toiletInfoId,
         boolean isDeleted,
         String toiletInfoManagementAgency,
