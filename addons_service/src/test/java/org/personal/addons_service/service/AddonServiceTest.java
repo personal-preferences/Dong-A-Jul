@@ -62,6 +62,43 @@ public class AddonServiceTest {
 		assertThat(result.getErrorResult()).isEqualTo(AddonErrorResult.DUPLICATED_ADDON_CREATE);
 	}
 
+	@Test
+	@DisplayName("등록 성공")
+	public void testCreateAddonSuccessfully() {
+
+		// given
+		doReturn(Optional.empty()).when(addonRepository).findByUserEmailAndToiletLocationId(userEmail, locationId);
+
+		CreateAddonRequest request = new CreateAddonRequest(
+			"New memo",
+			false,
+			userEmail,
+			locationId
+		);
+
+		// 반환할 Addon 객체 생성
+		Addon newAddon = Addon.builder()
+			.addonId(1L)
+			.memoContent("New memo")
+			.isBookmarked(false)
+			.userEmail(userEmail)
+			.toiletLocationId(locationId)
+			.build();
+
+		doReturn(newAddon).when(addonRepository).save(any(Addon.class));
+
+		// when
+		assertDoesNotThrow(() -> addonService.createAddon(request));
+
+		// then
+		verify(addonRepository, times(1)).findByUserEmailAndToiletLocationId(userEmail, locationId);
+		verify(addonRepository, times(1)).save(any(Addon.class));
+	}
+
+
+
+
+
 
 
 }
