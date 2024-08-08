@@ -1,6 +1,7 @@
 package org.personal.info_service.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.personal.info_service.request.RequestCreateInfo;
 import org.personal.info_service.response.ToiletInfoResponse;
 import org.personal.info_service.service.ToiletInfoService;
@@ -14,13 +15,10 @@ import java.util.List;
 
 @RequestMapping("/info")
 @RestController
+@RequiredArgsConstructor
 public class infoController {
 
     private final ToiletInfoService toiletInfoService;
-
-    public infoController(ToiletInfoService toiletInfoService) {
-        this.toiletInfoService = toiletInfoService;
-    }
 
     @PostMapping("/add")
     public ResponseEntity<ToiletInfoResponse> addInfo(@RequestBody RequestCreateInfo toiletInfo){

@@ -1,6 +1,7 @@
 package org.personal.info_service.repository;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import lombok.RequiredArgsConstructor;
 import org.personal.info_service.domain.QToiletInfo;
 import org.personal.info_service.domain.ToiletInfo;
 import org.springframework.data.domain.Pageable;
@@ -9,16 +10,12 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalTime;
 import java.util.List;
 
-@Repository
+@RequiredArgsConstructor
 public class ToiletInfoRepositoryCustomImpl implements ToiletInfoRepositoryCustom {
 
     private final JPAQueryFactory jpaQueryFactory;
 
     private QToiletInfo toilet = QToiletInfo.toiletInfo;
-
-    public ToiletInfoRepositoryCustomImpl(JPAQueryFactory jpaQueryFactory) {
-        this.jpaQueryFactory = jpaQueryFactory;
-    }
 
     @Override
     public ToiletInfo findToiletInfo(Long locationId){

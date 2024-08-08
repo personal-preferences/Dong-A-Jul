@@ -1,5 +1,6 @@
 package org.personal.info_service.service;
 
+import lombok.RequiredArgsConstructor;
 import org.personal.info_service.domain.ToiletInfo;
 import org.personal.info_service.mapper.ToiletInfoMapper;
 import org.personal.info_service.repository.ToiletInfoRepository;
@@ -11,15 +12,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ToiletInfoServiceImpl implements ToiletInfoService {
 
     private final ToiletInfoRepository toiletInfoRepository;
     private final ToiletInfoMapper toiletInfoMapper;
-
-    public ToiletInfoServiceImpl(ToiletInfoRepository toiletInfoRepository, ToiletInfoMapper toiletInfoMapper) {
-        this.toiletInfoRepository = toiletInfoRepository;
-        this.toiletInfoMapper = toiletInfoMapper;
-    }
 
     @Override
     public ToiletInfoResponse createToiletInfo(RequestCreateInfo toiletInfo) {
