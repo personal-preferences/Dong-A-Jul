@@ -38,7 +38,7 @@ public class ToiletInfoServiceImpl implements ToiletInfoService {
         }
 
         ToiletInfo updateInfo = toiletInfoMapper.convertRequestCreateInfoToToiletInfo(modifyToiletInfo);
-        updateInfo.setToiletInfoId(savedInfo.getToiletInfoId());
+        updateInfo.updateInfoId(savedInfo.getToiletInfoId());
         toiletInfoRepository.save(updateInfo);
 
         return toiletInfoMapper.convertToiletInfoToResponse(updateInfo);
@@ -52,7 +52,7 @@ public class ToiletInfoServiceImpl implements ToiletInfoService {
             throw new IllegalArgumentException();
         }
 
-        savedInfo.setDeleted(true);
+        savedInfo.updateDeleted(true);
         toiletInfoRepository.save(savedInfo);
     }
 
