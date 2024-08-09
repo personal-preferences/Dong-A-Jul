@@ -6,6 +6,7 @@ import org.personal.info_service.mapper.ToiletInfoMapper;
 import org.personal.info_service.repository.ToiletInfoRepository;
 import org.personal.info_service.request.RequestCreateInfo;
 import org.personal.info_service.response.ToiletInfoResponse;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,7 +22,13 @@ public class ToiletInfoServiceImpl implements ToiletInfoService {
     @Override
     public ToiletInfoResponse createToiletInfo(RequestCreateInfo toiletInfo) {
 
-        ToiletInfo requestInfo = toiletInfoMapper.convertRequestCreateInfoToToiletInfo(toiletInfo);
+        ToiletInfo requestInfo = toiletInfoRepository.findByToiletLocationId(toiletInfo.toiletLocationId());
+
+        if(requestInfo != null){
+            throw new DuplicateKeyException("화장실 정보가 이미 존재합니다.");
+        }
+
+        requestInfo = toiletInfoMapper.convertRequestCreateInfoToToiletInfo(toiletInfo);
 
         toiletInfoRepository.save(requestInfo);
 
