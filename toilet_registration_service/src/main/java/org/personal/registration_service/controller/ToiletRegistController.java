@@ -2,8 +2,6 @@ package org.personal.registration_service.controller;
 
 import static org.personal.registration_service.common.Constants.*;
 
-import javax.validation.Valid;
-
 import org.personal.registration_service.request.ToiletRegistRequest;
 import org.personal.registration_service.response.ToiletRegistResponse;
 import org.personal.registration_service.service.ToiletRegistService;
@@ -15,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController

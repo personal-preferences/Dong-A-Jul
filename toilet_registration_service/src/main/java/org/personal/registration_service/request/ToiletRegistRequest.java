@@ -1,7 +1,6 @@
 package org.personal.registration_service.request;
 
-import javax.validation.constraints.NotNull;
-
+import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 public record ToiletRegistRequest(
