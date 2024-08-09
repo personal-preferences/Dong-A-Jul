@@ -29,10 +29,8 @@ public class ToiletRegistController {
 		@RequestHeader(USER_ID_HEADER) final String userId,
 		@RequestBody @Valid final ToiletRegistRequest toiletRegistRequest){
 
-		toiletregistService
-			.addToiletRegist(toiletRegistRequest.toiletRegistLatitude(), toiletRegistRequest.toiletRegistLongitude());
-
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+			ToiletRegistResponse response = toiletregistService
+				.addToiletRegist(toiletRegistRequest.toiletRegistLatitude(), toiletRegistRequest.toiletRegistLongitude());
+			return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
-
 }

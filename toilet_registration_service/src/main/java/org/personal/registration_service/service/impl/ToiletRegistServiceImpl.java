@@ -25,10 +25,6 @@ public class ToiletRegistServiceImpl implements ToiletRegistService {
 		}
 
 		final ToiletRegist toiletRegist = ToiletRegist.builder()
-			.toiletRegistImg("sample_image.png")
-			.toiletRegistToiletName("Sample Toilet")
-			.toiletRegistRoadNameAddress("123 Sample Road")
-			.toiletRegistNumberAddress("456")
 			.toiletRegistLatitude(37.123456)
 			.toiletRegistLongitude(127.123456)
 			.build();

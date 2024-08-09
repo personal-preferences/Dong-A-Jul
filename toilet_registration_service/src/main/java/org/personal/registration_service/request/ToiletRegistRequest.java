@@ -3,15 +3,23 @@ package org.personal.registration_service.request;
 import javax.validation.constraints.NotNull;
 
 import lombok.Builder;
-import lombok.NoArgsConstructor;
 
-@Builder
 public record ToiletRegistRequest(
+
+	Long toiletRegistId,
+	String toiletRegistDate,
+	Boolean toiletRegistIsApproved,
 
 	@NotNull
 	Double toiletRegistLatitude,
 
 	@NotNull
 	Double toiletRegistLongitude
+
 ) {
+
+	@Builder
+	public ToiletRegistRequest {
+
+	}
 }

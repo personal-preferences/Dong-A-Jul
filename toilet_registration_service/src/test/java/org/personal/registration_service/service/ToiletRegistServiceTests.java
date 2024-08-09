@@ -63,10 +63,6 @@ class ToiletRegistServiceTests {
 	private ToiletRegist toiletRegist() {
 		return ToiletRegist.builder()
 			.toiletRegistId(1L) 		// Mockito를 사용하여 save 메서드를 모킹(mocking)할 때, ID가 자동으로 설정되지 않아 설정해줌.
-			.toiletRegistImg("sample_image.png")
-			.toiletRegistToiletName("Sample Toilet")
-			.toiletRegistRoadNameAddress("123 Sample Road")
-			.toiletRegistNumberAddress("456")
 			.toiletRegistLatitude(37.123456)
 			.toiletRegistLongitude(127.123456)
 			.build();

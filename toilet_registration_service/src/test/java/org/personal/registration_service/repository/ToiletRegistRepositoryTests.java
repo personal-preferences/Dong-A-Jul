@@ -22,10 +22,6 @@ class ToiletRegistRepositoryTests {
 	public void 화장실등록신청등록테스트() {
 		// given
 		final ToiletRegist toiletRegist = ToiletRegist.builder()
-			.toiletRegistImg("sample_image.png")
-			.toiletRegistToiletName("Sample Toilet")
-			.toiletRegistRoadNameAddress("123 Sample Road")
-			.toiletRegistNumberAddress("456")
 			.toiletRegistLatitude(37.123456)
 			.toiletRegistLongitude(127.123456)
 			.build();
@@ -36,11 +32,7 @@ class ToiletRegistRepositoryTests {
 		// then
 		assertThat(result.getToiletRegistId()).isNotNull();
 		assertThat(result.getToiletRegistDate()).isEqualTo(toiletRegist.getToiletRegistDate());
-		assertThat(result.getToiletRegistImg()).isEqualTo(toiletRegist.getToiletRegistImg());
 		assertThat(result.getToiletRegistIsApproved()).isEqualTo(toiletRegist.getToiletRegistIsApproved());
-		assertThat(result.getToiletRegistToiletName()).isEqualTo(toiletRegist.getToiletRegistToiletName());
-		assertThat(result.getToiletRegistRoadNameAddress()).isEqualTo(toiletRegist.getToiletRegistRoadNameAddress());
-		assertThat(result.getToiletRegistNumberAddress()).isEqualTo(toiletRegist.getToiletRegistNumberAddress());
 		assertThat(result.getToiletRegistLatitude()).isEqualTo(toiletRegist.getToiletRegistLatitude());
 		assertThat(result.getToiletRegistLongitude()).isEqualTo(toiletRegist.getToiletRegistLongitude());
 	}
@@ -49,10 +41,6 @@ class ToiletRegistRepositoryTests {
 	public void 등록신청된화장실인지테스트(){
 		// given
 		final ToiletRegist toiletRegist = ToiletRegist.builder()
-			.toiletRegistImg("sample_image.png")
-			.toiletRegistToiletName("Sample Toilet")
-			.toiletRegistRoadNameAddress("123 Sample Road")
-			.toiletRegistNumberAddress("456")
 			.toiletRegistLatitude(37.123456)
 			.toiletRegistLongitude(127.123456)
 			.build();
@@ -66,11 +54,7 @@ class ToiletRegistRepositoryTests {
 		assertThat(findResult).isNotNull();
 		assertThat(findResult.getToiletRegistId()).isNotNull();
 		assertThat(findResult.getToiletRegistDate()).isEqualTo(toiletRegist.getToiletRegistDate());
-		assertThat(findResult.getToiletRegistImg()).isEqualTo(toiletRegist.getToiletRegistImg());
 		assertThat(findResult.getToiletRegistIsApproved()).isEqualTo(toiletRegist.getToiletRegistIsApproved());
-		assertThat(findResult.getToiletRegistToiletName()).isEqualTo(toiletRegist.getToiletRegistToiletName());
-		assertThat(findResult.getToiletRegistRoadNameAddress()).isEqualTo(toiletRegist.getToiletRegistRoadNameAddress());
-		assertThat(findResult.getToiletRegistNumberAddress()).isEqualTo(toiletRegist.getToiletRegistNumberAddress());
 		assertThat(findResult.getToiletRegistLatitude()).isEqualTo(toiletRegist.getToiletRegistLatitude());
 		assertThat(findResult.getToiletRegistLongitude()).isEqualTo(toiletRegist.getToiletRegistLongitude());
 	}
