@@ -5,4 +5,4 @@ spring:
   application:
     name: user_service
   profiles:
-    active: h2,postgresql # 기본 프로파일을 h2와 postgresql로 설정합니다.
+    active: h2 #,postgresql # 기본 프로파일을 h2와 postgresql로 설정합니다.
