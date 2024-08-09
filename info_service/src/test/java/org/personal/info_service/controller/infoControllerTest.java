@@ -148,6 +148,16 @@ class infoControllerTest {
     }
 
     @Test
+    @DisplayName("정보 조회 실패 - 저장된 값이 없는 경우")
+    void getInfoIllegalArgumentException() throws Exception {
+
+        mockMvc.perform(get("/info/" + -1L)
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isNoContent())
+                .andDo(print());
+    }
+
+    @Test
     @DisplayName("화장실 정보 리스트 조회 성공")
     void getToiletInfoListSuccess() throws Exception {
 
