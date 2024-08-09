@@ -5,17 +5,20 @@ import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.personal.info_service.request.RequestCreateInfo;
-import org.personal.info_service.response.ToiletInfoResponse;
 import org.personal.info_service.service.ToiletInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.hamcrest.Matchers.emptyOrNullString;
+import static org.hamcrest.Matchers.not;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -109,7 +112,6 @@ class infoControllerTest {
 
         RequestCreateInfo origin = RequestCreateInfo.builder()
                 .toiletLocationId(1L)
-                .toiletInfoFemaleToiletsNumber(3)
                 .build();
         toiletInfoService.createToiletInfo(origin);
 
@@ -126,6 +128,63 @@ class infoControllerTest {
         mockMvc.perform(delete("/info/delete/" + -1L)
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isNoContent())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("화장실 정보 조회 성공")
+    void getToiletInfoSuccess() throws Exception {
+
+        RequestCreateInfo origin = RequestCreateInfo.builder()
+                .toiletLocationId(1L)
+                .build();
+        toiletInfoService.createToiletInfo(origin);
+
+        mockMvc.perform(get("/info/" + origin.toiletLocationId())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(not(emptyOrNullString())))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("화장실 정보 리스트 조회 성공")
+    void getToiletInfoListSuccess() throws Exception {
+
+        RequestCreateInfo origin1 = RequestCreateInfo.builder()
+                .toiletLocationId(1L)
+                .build();
+        RequestCreateInfo origin2 = RequestCreateInfo.builder()
+                .toiletLocationId(2L)
+                .build();
+        toiletInfoService.createToiletInfo(origin1);
+        toiletInfoService.createToiletInfo(origin2);
+
+        List<Long> idList = Arrays.asList(origin1.toiletLocationId(), origin2.toiletLocationId());
+        String json = objectMapper.writeValueAsString(idList);
+
+        mockMvc.perform(post("/info")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isOk())
+                .andExpect(content().string(not(emptyOrNullString())))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("장애인 화장실 정보 리스트 조회 성공")
+    void getDisabledToiletInfoListSuccess() throws Exception {
+
+        RequestCreateInfo origin = RequestCreateInfo.builder()
+                .toiletLocationId(1L)
+                .toiletInfoFemaleDisabledToiletsNumber(3)
+                .build();
+        toiletInfoService.createToiletInfo(origin);
+
+        mockMvc.perform(get("/info/disabledToilet")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().string(not(emptyOrNullString())))
                 .andDo(print());
     }
 

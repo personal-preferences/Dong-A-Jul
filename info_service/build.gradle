@@ -37,8 +37,29 @@ dependencies {
 
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 
+	// QueryDSL
+	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+	annotationProcessor "jakarta.annotation:jakarta.annotation-api" // javax.annotation.Generated 에러 대응
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api" // javax.persistence.Entity 에러 대응
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+def generated = 'src/main/generated'
+
+tasks.withType(JavaCompile) {
+	options.getGeneratedSourceOutputDirectory().set(file(generated))
+	options.encoding = 'UTF-8'
+	options.compilerArgs += ['-parameters']
+}
+
+sourceSets {
+	main.java.srcDirs += [generated]
+}
+
+clean {
+	delete file(generated)
 }

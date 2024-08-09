@@ -11,6 +11,10 @@ import org.personal.info_service.response.ToiletInfoResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -60,6 +64,43 @@ class ToiletInfoServiceTest {
         assertTrue(deletedInfo.isDeleted());
     }
 
+    @Test
+    @DisplayName("화장실 정보 조회")
+    void getToiletInfo(){
+
+        ToiletInfoResponse savedToiletInfo = toiletInfoService.createToiletInfo(createTestToiletInfo());
+
+        ToiletInfoResponse getInfo = toiletInfoService.getToiletInfo(savedToiletInfo.toiletLocationId());
+
+        assertNotNull(getInfo);
+    }
+
+    @Test
+    @DisplayName("화장실 정보 리스트 조회")
+    void getToiletInfoList(){
+
+        ToiletInfoResponse info1 = toiletInfoService.createToiletInfo(createTestToiletInfo());
+        ToiletInfoResponse info2 = toiletInfoService.createToiletInfo(createTestToiletInfo());
+        List<Long> idList = Arrays.asList(info1.toiletLocationId(), info2.toiletLocationId());
+
+        List<ToiletInfoResponse> getInfoList = toiletInfoService.getToiletInfoList(idList);
+
+        assertEquals(getInfoList.size(), 2);
+    }
+
+    @Test
+    @DisplayName("장애인 화장실 조회")
+    void getDisabledToiletInfoList(){
+
+        toiletInfoService.createToiletInfo(createTestToiletInfo());
+
+        List<ToiletInfoResponse> disabledToiletInfoList = toiletInfoService.getDisabledToiletList();
+        ToiletInfoResponse disabledToiletInfo = disabledToiletInfoList.get(0);
+
+        assertTrue((disabledToiletInfo.toiletInfoFemaleDisabledToiletsNumber()
+                + disabledToiletInfo.toiletInfoMaleDisabledToiletsNumber()
+                + disabledToiletInfo.toiletInfoMaleDisabledUrinalsNumber()) > 0);
+    }
 
     // 테스트용 RequestCreateInfo 객체 생성
     public RequestCreateInfo createTestToiletInfo() {
@@ -121,6 +162,5 @@ class ToiletInfoServiceTest {
                 .toiletLocationId(toiletInfoResponse.toiletLocationId())
                 .build();
     }
-
 
 }
