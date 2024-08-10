@@ -19,6 +19,7 @@ public class AddonMapper {
 
 	public AddonCreateResponse toDto(Addon addon) {
 		return AddonCreateResponse.builder()
+			.addonId(addon.getAddonId())
 			.userEmail(addon.getUserEmail())
 			.toiletLocationId(addon.getToiletLocationId())
 			.isBookmarked(addon.isBookmarked())

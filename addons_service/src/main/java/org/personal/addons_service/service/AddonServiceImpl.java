@@ -34,12 +34,6 @@ public class AddonServiceImpl implements AddonService {
 		Addon addon = addonMapper.toEntity(request);
 		Addon savedAddon = addonRepository.save(addon);
 
-		return AddonCreateResponse.builder()
-			.addonId(savedAddon.getAddonId())
-			.memoContent(savedAddon.getMemoContent())
-			.isBookmarked(savedAddon.isBookmarked())
-			.userEmail(savedAddon.getUserEmail())
-			.toiletLocationId(savedAddon.getToiletLocationId())
-			.build();
+		return addonMapper.toDto(savedAddon);
 	}
 }
