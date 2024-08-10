@@ -10,6 +10,8 @@ import org.personal.locations_service.response.LocationResponse;
 import org.personal.locations_service.service.LocationService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,13 +30,21 @@ public class LocationController {
     }
 
     @GetMapping("/{toiletName}")
-    public LocationResponse get(@PathVariable String toiletName){
-        return locationService.get(toiletName);
+    public ResponseEntity<LocationResponse> get(@PathVariable String toiletName){
+        LocationResponse response = locationService.get(toiletName);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
     }
 
     @GetMapping
-    public List<LocationResponse> getList(@RequestBody @Valid LocationMarker request) {
-        return locationService.getList(request);
+    public ResponseEntity<List<LocationResponse>> getList(@RequestBody @Valid LocationMarker request) {
+        List<LocationResponse> response = locationService.getList(request);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(response);
     }
 
     @PatchMapping("/{locationId}")
