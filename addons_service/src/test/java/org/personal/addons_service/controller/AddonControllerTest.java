@@ -135,6 +135,7 @@ public class AddonControllerTest {
 
 		// then
 		resultActions.andExpect(status().isConflict())
+			.andExpect(jsonPath("$.errorCode").value("DUPLICATED_ADDON_CREATE"))
 			.andExpect(jsonPath("$.message").value(AddonErrorResult.DUPLICATED_ADDON_CREATE.getMessage()));
 	}
 }

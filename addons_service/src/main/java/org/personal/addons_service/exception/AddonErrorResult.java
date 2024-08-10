@@ -10,7 +10,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum AddonErrorResult {
 
-	DUPLICATED_ADDON_CREATE(HttpStatus.BAD_REQUEST, "중복된 애드온 Request 입니다."),
+	DUPLICATED_ADDON_CREATE(HttpStatus.CONFLICT, "중복된 애드온 Request 입니다."),
 	;
 
 	private final HttpStatus httpStatus;
