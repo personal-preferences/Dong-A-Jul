@@ -79,8 +79,15 @@ class ToiletInfoServiceTest {
     @DisplayName("화장실 정보 리스트 조회")
     void getToiletInfoList(){
 
-        ToiletInfoResponse info1 = toiletInfoService.createToiletInfo(createTestToiletInfo());
-        ToiletInfoResponse info2 = toiletInfoService.createToiletInfo(createTestToiletInfo());
+        RequestCreateInfo info1 = RequestCreateInfo.builder()
+                .toiletLocationId(1L)
+                .build();
+        RequestCreateInfo info2 = RequestCreateInfo.builder()
+                .toiletLocationId(2L)
+                .build();
+        toiletInfoService.createToiletInfo(info1);
+        toiletInfoService.createToiletInfo(info2);
+
         List<Long> idList = Arrays.asList(info1.toiletLocationId(), info2.toiletLocationId());
 
         List<ToiletInfoResponse> getInfoList = toiletInfoService.getToiletInfoList(idList);

@@ -53,7 +53,26 @@ class infoControllerTest {
     }
 
     @Test
-    @DisplayName("정보 추가 실패 - locationId 없는 경우")
+    @DisplayName("정보 등록 실패 - 이미 정보가 존재하는 경우")
+    void addDuplicateKeyInfo() throws Exception {
+
+        RequestCreateInfo origin = RequestCreateInfo.builder()
+                .toiletLocationId(1L)
+                .build();
+        toiletInfoService.createToiletInfo(origin);
+
+        String json = objectMapper.writeValueAsString(origin);
+
+        mockMvc.perform(post("/info/add")
+                        .contentType(APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andDo(print());
+    }
+
+
+    @Test
+    @DisplayName("정보 등록 실패 - locationId 없는 경우")
     void addInfoNoLocationId() throws Exception {
 
         RequestCreateInfo request = RequestCreateInfo.builder().toiletLocationId(null).build();
@@ -62,7 +81,8 @@ class infoControllerTest {
         mockMvc.perform(post("/info/add")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andDo(print());
     }
 
     @Test
