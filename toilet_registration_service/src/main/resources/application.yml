@@ -1,18 +1,8 @@
 server:
   port: 8765
+
 spring:
   application:
     name: user_service
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: shindaeyeong
-    password:
-  jpa:
-    show-sql: true
-    database: postgresql
-    properties:
-      hibernate:
-        ddl-auto: none
-        format_sql: true
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+  profiles:
+    active: h2 #,postgresql # 기본 프로파일을 h2와 postgresql로 설정합니다.
