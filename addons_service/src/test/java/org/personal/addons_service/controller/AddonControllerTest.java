@@ -48,7 +48,7 @@ public class AddonControllerTest {
 	}
 
 	@Test
-	public void 애드온생성실패_필수값누락오류() throws Exception {
+	public void 애드온생성실패__toiletLocationId누락오류() throws Exception {
 
 		// given
 		final String url = "/addons";
@@ -67,7 +67,63 @@ public class AddonControllerTest {
 		);
 
 		// then
-		resultActions.andExpect(status().isBadRequest());
+		resultActions.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.errorCode").value("VALIDATION_ERROR"))
+			.andExpect(jsonPath("$.message").value("DTO 객체 @Valid 유효성 검사 실패"))
+			.andExpect(jsonPath("$.fieldErrors.toiletLocationId").value("must not be null"));
+	}
+
+	@Test
+	public void 애드온생성실패_userEmail누락오류() throws Exception {
+
+		// given
+		final String url = "/addons";
+		CreateAddonRequest request = CreateAddonRequest.builder()
+			.userEmail(null)  // userEmail 필수값 누락
+			.toiletLocationId(1L)  // 정상값
+			.memoContent("Test memo")
+			.isBookmarked(false)
+			.build();
+
+		// when
+		final ResultActions resultActions = mockMvc.perform(
+			MockMvcRequestBuilders.post(url)
+				.content(gson.toJson(request))
+				.contentType(MediaType.APPLICATION_JSON)
+		);
+
+		// then
+		resultActions.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.errorCode").value("VALIDATION_ERROR"))
+			.andExpect(jsonPath("$.message").value("DTO 객체 @Valid 유효성 검사 실패"))
+			.andExpect(jsonPath("$.fieldErrors.userEmail").value("must not be blank"));
+	}
+
+	@Test
+	public void 애드온생성실패_필수값누락오류() throws Exception {
+
+		// given
+		final String url = "/addons";
+		CreateAddonRequest request = CreateAddonRequest.builder()
+			.userEmail(null)  // 필수값 누락
+			.toiletLocationId(null)  // 필수값 누락
+			.memoContent("Test memo")
+			.isBookmarked(false)
+			.build();
+
+		// when
+		final ResultActions resultActions = mockMvc.perform(
+			MockMvcRequestBuilders.post(url)
+				.content(gson.toJson(request))
+				.contentType(MediaType.APPLICATION_JSON)
+		);
+
+		// then
+		resultActions.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.errorCode").value("VALIDATION_ERROR"))
+			.andExpect(jsonPath("$.message").value("DTO 객체 @Valid 유효성 검사 실패"))
+			.andExpect(jsonPath("$.fieldErrors.userEmail").value("must not be blank"))
+			.andExpect(jsonPath("$.fieldErrors.toiletLocationId").value("must not be null"));
 	}
 
 	@Test
