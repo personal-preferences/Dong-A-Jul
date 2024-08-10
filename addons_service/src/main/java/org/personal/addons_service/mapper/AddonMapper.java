@@ -2,7 +2,7 @@ package org.personal.addons_service.mapper;
 
 import org.personal.addons_service.domain.Addon;
 import org.personal.addons_service.request.CreateAddonRequest;
-import org.personal.addons_service.response.AddonResponse;
+import org.personal.addons_service.response.AddonCreateResponse;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -17,8 +17,8 @@ public class AddonMapper {
 			.build();
 	}
 
-	public AddonResponse toDto(Addon addon) {
-		return AddonResponse.builder()
+	public AddonCreateResponse toDto(Addon addon) {
+		return AddonCreateResponse.builder()
 			.userEmail(addon.getUserEmail())
 			.toiletLocationId(addon.getToiletLocationId())
 			.isBookmarked(addon.isBookmarked())

@@ -14,7 +14,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.personal.addons_service.domain.Addon;
 import org.personal.addons_service.exception.AddonErrorResult;
 import org.personal.addons_service.exception.AddonException;
+import org.personal.addons_service.exception.GlobalExceptionHandler;
 import org.personal.addons_service.request.CreateAddonRequest;
+import org.personal.addons_service.response.AddonCreateResponse;
 import org.personal.addons_service.service.AddonServiceImpl;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -41,11 +43,12 @@ public class AddonControllerTest {
 	public void init() {
 		gson = new Gson();
 		mockMvc = MockMvcBuilders.standaloneSetup(addonController)
+			.setControllerAdvice(new GlobalExceptionHandler())
 			.build();
 	}
 
 	@Test
-	public void 애드온생성실패_필수값누락() throws Exception {
+	public void 애드온생성실패_필수값누락오류() throws Exception {
 
 		// given
 		final String url = "/addons";
@@ -79,6 +82,16 @@ public class AddonControllerTest {
 			.isBookmarked(false)
 			.build();
 
+		AddonCreateResponse expectedResponse = AddonCreateResponse.builder()
+			.addonId(1L)
+			.userEmail("test@example.com")
+			.toiletLocationId(1L)
+			.memoContent("Test memo")
+			.isBookmarked(false)
+			.build();
+
+		when(addonService.createAddon(any(CreateAddonRequest.class))).thenReturn(expectedResponse);
+
 		// when
 		final ResultActions resultActions = mockMvc.perform(
 			MockMvcRequestBuilders.post(url)
@@ -87,7 +100,14 @@ public class AddonControllerTest {
 		);
 
 		// then
-		resultActions.andExpect(status().isCreated());
+		resultActions
+			.andExpect(status().isCreated())
+			.andExpect(header().string("Location", "/addons/1"))
+			.andExpect(jsonPath("$.addonId").value(1))
+			.andExpect(jsonPath("$.userEmail").value("test@example.com"))
+			.andExpect(jsonPath("$.toiletLocationId").value(1))
+			.andExpect(jsonPath("$.memoContent").value("Test memo"))
+			.andExpect(jsonPath("$.isBookmarked").value(false));
 	}
 
 	@Test
@@ -103,8 +123,8 @@ public class AddonControllerTest {
 			.build();
 
 		// 중복 예외를 던지도록 서비스 계층을 모킹
-		doThrow(new AddonException(AddonErrorResult.DUPLICATED_ADDON_CREATE))
-			.when(addonService).createAddon(any(CreateAddonRequest.class));
+		when(addonService.createAddon(any(CreateAddonRequest.class)))
+			.thenThrow(new AddonException(AddonErrorResult.DUPLICATED_ADDON_CREATE));
 
 		// when
 		final ResultActions resultActions = mockMvc.perform(
@@ -114,7 +134,8 @@ public class AddonControllerTest {
 		);
 
 		// then
-		resultActions.andExpect(status().isConflict());
+		resultActions.andExpect(status().isConflict())
+			.andExpect(jsonPath("$.message").value(AddonErrorResult.DUPLICATED_ADDON_CREATE.getMessage()));
 	}
 }
 
