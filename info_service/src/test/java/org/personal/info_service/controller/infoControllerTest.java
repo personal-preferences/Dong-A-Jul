@@ -66,7 +66,7 @@ class infoControllerTest {
         mockMvc.perform(post("/info/add")
                         .contentType(APPLICATION_JSON)
                         .content(json))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isConflict())
                 .andDo(print());
     }
 

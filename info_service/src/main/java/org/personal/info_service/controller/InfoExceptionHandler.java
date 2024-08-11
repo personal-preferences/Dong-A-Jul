@@ -22,11 +22,11 @@ public class InfoExceptionHandler {
     }
 
     @ExceptionHandler(DuplicateKeyException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.CONFLICT)
     @ResponseBody
     public ErrorResponse handleDuplicateException(DuplicateKeyException ex) {
         return ErrorResponse.builder()
-                .code(HttpStatus.BAD_REQUEST.value())
+                .code(HttpStatus.CONFLICT.value())
                 .message(ex.getMessage())
                 .build();
     }
