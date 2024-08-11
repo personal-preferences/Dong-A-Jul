@@ -175,7 +175,7 @@ class LocationControllerTest {
     }
 
     @Test
-    @DisplayName("지도 범위 내에 있는 화장실 여러개 조회 시 위도 경도는 범위 내의 값이어야 한다.")
+    @DisplayName("지도 범위 내에 있는 화장실 여러개 조회 시 - 위도 경도는 범위 내의 값이어야 한다.")
     void getLocationList_ShouldValidateCoordinates() throws Exception {
         // given
         List<Location> locationList = IntStream.range(0, 30)
@@ -190,10 +190,10 @@ class LocationControllerTest {
         locationRepository.saveAll(locationList);
 
         LocationMarker request = LocationMarker.builder()
-                .northEastLatitude(-91f)
-                .northEastLongitude(-181f)
-                .southWestLatitude(91f)
-                .southWestLongitude(181f)
+                .southWestLatitude(30.23f)
+                .northEastLatitude(15.23f)
+                .southWestLongitude(62.99f)
+                .northEastLongitude(37.99f)
                 .build();
 
         String json = objectMapper.writeValueAsString(request);
@@ -204,20 +204,12 @@ class LocationControllerTest {
                         .content(json))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("400"))
-                .andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
-                .andExpect(jsonPath("$.validation.northEastLatitude")
-                                .value("위도는 -90보다 크거나 같아야 합니다."))
-                .andExpect(jsonPath("$.validation.northEastLongitude")
-                                .value("경도는 -180보다 크거나 같아야 합니다."))
-                .andExpect(jsonPath("$.validation.southWestLatitude")
-                                .value("위도는 90보다 작거나 같아야 합니다."))
-                .andExpect(jsonPath("$.validation.southWestLongitude")
-                                .value("경도는 180보다 작거나 같아야 합니다."))
+                .andExpect(jsonPath("$.message").value("북동쪽 좌표는 남서쪽 좌표보다 커야 합니다."))
                 .andDo(print());
     }
 
     @Test
-    @DisplayName("지도 범위 내에 있는 화장실 여러개 조회 시 위도 경도는 필수 값이어야 한다.")
+    @DisplayName("지도 범위 내에 있는 화장실 여러개 조회 시 - 위도 경도는 필수 값이어야 한다.")
     void getLocationList_ShouldRequireLatitudeAndLongitude() throws Exception {
         // given
         List<Location> locationList = IntStream.range(0, 30)
@@ -250,6 +242,48 @@ class LocationControllerTest {
                         .value("서남쪽 위도를 입력하세요."))
                 .andExpect(jsonPath("$.validation.southWestLongitude")
                         .value("서남쪽 경도를 입력하세요."))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("지도 범위 내에 있는 화장실 여러개 조회 시 - 북동쪽 좌표는 남서쪽 좌표보다 커야 한다.")
+    void getLocationList_ShouldNorthEastGreaterThanSouthWest() throws Exception {
+        // given
+        List<Location> locationList = IntStream.range(0, 30)
+                .mapToObj(i -> Location.builder()
+                        .name("홍대 화장실" + i)
+                        .roadAddress("서울 마포구 서교동 1길" + i)
+                        .jibunAddress("서울 마포구 동교동 150-1" + i)
+                        .latitude(10.23f + i)
+                        .longitude(32.99f + i)
+                        .build())
+                .toList();
+        locationRepository.saveAll(locationList);
+
+        LocationMarker request = LocationMarker.builder()
+                .northEastLatitude(-91f)
+                .northEastLongitude(-181f)
+                .southWestLatitude(91f)
+                .southWestLongitude(181f)
+                .build();
+
+        String json = objectMapper.writeValueAsString(request);
+
+        // expected
+        mockMvc.perform(get("/locations")
+                        .contentType(APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.code").value("400"))
+                .andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+                .andExpect(jsonPath("$.validation.northEastLatitude")
+                        .value("위도는 -90보다 크거나 같아야 합니다."))
+                .andExpect(jsonPath("$.validation.northEastLongitude")
+                        .value("경도는 -180보다 크거나 같아야 합니다."))
+                .andExpect(jsonPath("$.validation.southWestLatitude")
+                        .value("위도는 90보다 작거나 같아야 합니다."))
+                .andExpect(jsonPath("$.validation.southWestLongitude")
+                        .value("경도는 180보다 작거나 같아야 합니다."))
                 .andDo(print());
     }
 
