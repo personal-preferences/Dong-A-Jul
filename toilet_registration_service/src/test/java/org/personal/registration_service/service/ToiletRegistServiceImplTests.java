@@ -17,7 +17,7 @@ import org.personal.registration_service.response.ToiletRegistResponse;
 import org.personal.registration_service.service.impl.ToiletRegistServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
-class ToiletRegistServiceTests {
+class ToiletRegistServiceImplTests {
 
 	@InjectMocks
 	private ToiletRegistServiceImpl target;
