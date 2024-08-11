@@ -11,6 +11,8 @@ public class InvalidRequest extends LocationException {
         super(MESSAGE);
     }
 
+    public InvalidRequest(String message) {super(message);}
+
     public InvalidRequest(String filedName, String message) {
         super(MESSAGE);
         addValidation(filedName, message);
