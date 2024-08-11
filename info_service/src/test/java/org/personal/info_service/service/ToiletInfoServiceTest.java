@@ -59,7 +59,8 @@ class ToiletInfoServiceTest {
 
         toiletInfoService.deleteToiletinfo(deleteId);
 
-        ToiletInfo deletedInfo = toiletInfoRepository.findByToiletInfoId(deleteInfo.toiletInfoId());
+        ToiletInfo deletedInfo = toiletInfoRepository.findByToiletInfoId(deleteInfo.toiletInfoId())
+                .orElseThrow(IllegalArgumentException::new);
 
         assertTrue(deletedInfo.isDeleted());
     }
