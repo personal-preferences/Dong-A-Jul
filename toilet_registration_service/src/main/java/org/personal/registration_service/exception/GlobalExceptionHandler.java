@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -81,16 +79,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			.body(new ErrorResponse(errorResult.name(), errorResult.getMessage()));
 	}
 
-	private ResponseEntity<ErrorResponse> makeErrorResponseEntity(final ToiletRegistErrorResult errorResult, final String message) {
-		return ResponseEntity.status(errorResult.getHttpStatus())
-			.body(new ErrorResponse(errorResult.name(), message));
-	}
-
-	@Getter
-	@RequiredArgsConstructor
-	static class ErrorResponse {
-		private final String code;
-		private final String message;
+	record ErrorResponse(String code, String message) {
 	}
 
 }

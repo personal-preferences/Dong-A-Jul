@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ToiletRegistRepository extends JpaRepository<ToiletRegist, Long> {
 
-	ToiletRegist findByToiletRegistLatitudeAndToiletRegistLongitude(Double v, Double v1);
+	ToiletRegist findByToiletRegistLatitudeAndToiletRegistLongitude(Double latitude, Double longitude);
 }
 
