@@ -1,4 +1,4 @@
-package org.personal.registration_service.service;
+package org.personal.registration_service.service.Impl;
 
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.junit.jupiter.api.Assertions.*;
