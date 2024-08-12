@@ -30,12 +30,6 @@ public class ToiletRegistServiceImpl implements ToiletRegistService {
 
 		final ToiletRegist savedToiletRegist = toiletRegistRepository.save(toiletRegist);
 
-		return ToiletRegistResponse.builder()
-			.toiletRegistId(savedToiletRegist.getToiletRegistId())
-			.toiletRegistDate(savedToiletRegist.getToiletRegistDate())
-			.toiletRegistIsApproved(savedToiletRegist.getToiletRegistIsApproved())
-			.toiletRegistLatitude(savedToiletRegist.getToiletRegistLatitude())
-			.toiletRegistLongitude(savedToiletRegist.getToiletRegistLongitude())
-			.build();
+		return ToiletRegistResponse.of(savedToiletRegist);
 	}
 }
