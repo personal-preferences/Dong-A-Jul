@@ -15,6 +15,7 @@ public enum ToiletRegistErrorResult {
 	UNKNOWN_EXCEPTION(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 오류가 발생했습니다."),
 	INVALID_ARGUMENT(HttpStatus.BAD_REQUEST, "잘못된 인자가 제공되었습니다."),
 	NO_SUCH_ELEMENT(HttpStatus.NOT_FOUND, "해당 요소를 찾을 수 없습니다."),
+	ALREADY_REGISTERED_TOILET(HttpStatus.BAD_REQUEST, "이미 등록 신청 처리된 화장실입니다."),
 	ENTITY_NOT_FOUND(HttpStatus.NOT_FOUND, "요청된 엔티티를 찾을 수 없습니다.");
 	;
 

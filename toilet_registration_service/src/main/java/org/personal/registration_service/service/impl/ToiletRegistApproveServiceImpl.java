@@ -26,6 +26,11 @@ public class ToiletRegistApproveServiceImpl implements ToiletRegistApproveServic
 		final ToiletRegist toiletRegist = toiletRegistRepository.findById(request.toiletRegistId())
 		.orElseThrow(() -> new ToiletRegistException(ToiletRegistErrorResult.ENTITY_NOT_FOUND));
 
+		// 이미 등록 처리된 화장실인지 확인
+		if (toiletRegist.getToiletRegistConfirmedDate() != null) {
+			throw new ToiletRegistException(ToiletRegistErrorResult.ALREADY_REGISTERED_TOILET);
+		}
+
 		toiletRegist.update(request.toiletRegistIsApproved(), LocalDateTime.now());
 		toiletRegistRepository.save(toiletRegist);
 

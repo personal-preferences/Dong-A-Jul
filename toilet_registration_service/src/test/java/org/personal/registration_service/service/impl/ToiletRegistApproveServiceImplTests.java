@@ -43,6 +43,20 @@ class ToiletRegistApproveServiceImplTests {
 	}
 
 	@Test
+	public void 화장실등록실패_이미처리된신청임(){
+		// given
+		ToiletRegist mockToiletRegist = mock(ToiletRegist.class);
+		doReturn(Optional.of(mockToiletRegist)).when(toiletRegistRepository).findById(1L);
+		doReturn(LocalDateTime.now().toString()).when(mockToiletRegist).getToiletRegistConfirmedDate();
+
+		// when & then
+		assertThatThrownBy(() -> target.updateToiletRegistApprove(requestReject()))
+			.isInstanceOf(ToiletRegistException.class)
+			.hasMessageContaining(  "이미 등록 신청 처리된 화장실입니다.");
+
+	}
+
+	@Test
 	public void 화장실등록성공_반려됨(){
 		// given
 		ToiletRegist mockToiletRegist = mock(ToiletRegist.class);
