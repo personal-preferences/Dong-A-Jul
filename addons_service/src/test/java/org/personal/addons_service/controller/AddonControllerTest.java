@@ -13,6 +13,7 @@ import org.personal.addons_service.exception.AddonErrorResult;
 import org.personal.addons_service.exception.AddonException;
 import org.personal.addons_service.exception.GlobalExceptionHandler;
 import org.personal.addons_service.request.CreateAddonRequest;
+import org.personal.addons_service.request.GetAddonRequest;
 import org.personal.addons_service.response.AddonResponse;
 import org.personal.addons_service.service.AddonServiceImpl;
 import org.springframework.http.MediaType;
@@ -25,6 +26,12 @@ import com.google.gson.Gson;
 
 @ExtendWith(MockitoExtension.class)
 public class AddonControllerTest {
+
+	private static final String BASE_URL = "/addons";
+	private static final String CREATE_URL = BASE_URL + "/create";
+	private static final String GET_URL = BASE_URL + "/get";
+	private static final String TEST_USER_EMAIL = "test@example.com";
+	private static final Long TEST_TOILET_LOCATION_ID = 1L;
 
 	@Mock
 	private AddonServiceImpl addonService;
@@ -46,9 +53,8 @@ public class AddonControllerTest {
 	public void 애드온생성실패__toiletLocationId누락오류() throws Exception {
 
 		// given
-		final String url = "/addons";
 		CreateAddonRequest request = CreateAddonRequest.builder()
-			.userEmail("test@example.com")
+			.userEmail(TEST_USER_EMAIL)
 			.toiletLocationId(null)
 			.memoContent("Test memo")
 			.isBookmarked(false)
@@ -56,13 +62,14 @@ public class AddonControllerTest {
 
 		// when
 		final ResultActions resultActions = mockMvc.perform(
-			MockMvcRequestBuilders.post(url)
+			MockMvcRequestBuilders.post(CREATE_URL)
 				.content(gson.toJson(request))
 				.contentType(MediaType.APPLICATION_JSON)
 		);
 
 		// then
-		resultActions.andExpect(status().isBadRequest())
+		resultActions
+			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.errorCode").value("VALIDATION_ERROR"))
 			.andExpect(jsonPath("$.message").value("DTO 객체 @Valid 유효성 검사 실패"))
 			.andExpect(jsonPath("$.fieldErrors.toiletLocationId").value("must not be null"));
@@ -72,23 +79,23 @@ public class AddonControllerTest {
 	public void 애드온생성실패_userEmail누락오류() throws Exception {
 
 		// given
-		final String url = "/addons";
 		CreateAddonRequest request = CreateAddonRequest.builder()
 			.userEmail(null)  // userEmail 필수값 누락
-			.toiletLocationId(1L)  // 정상값
+			.toiletLocationId(TEST_TOILET_LOCATION_ID)  // 정상값
 			.memoContent("Test memo")
 			.isBookmarked(false)
 			.build();
 
 		// when
 		final ResultActions resultActions = mockMvc.perform(
-			MockMvcRequestBuilders.post(url)
+			MockMvcRequestBuilders.post(CREATE_URL)
 				.content(gson.toJson(request))
 				.contentType(MediaType.APPLICATION_JSON)
 		);
 
 		// then
-		resultActions.andExpect(status().isBadRequest())
+		resultActions
+			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.errorCode").value("VALIDATION_ERROR"))
 			.andExpect(jsonPath("$.message").value("DTO 객체 @Valid 유효성 검사 실패"))
 			.andExpect(jsonPath("$.fieldErrors.userEmail").value("must not be blank"));
@@ -98,7 +105,6 @@ public class AddonControllerTest {
 	public void 애드온생성실패_필수값누락오류() throws Exception {
 
 		// given
-		final String url = "/addons";
 		CreateAddonRequest request = CreateAddonRequest.builder()
 			.userEmail(null)  // 필수값 누락
 			.toiletLocationId(null)  // 필수값 누락
@@ -108,13 +114,14 @@ public class AddonControllerTest {
 
 		// when
 		final ResultActions resultActions = mockMvc.perform(
-			MockMvcRequestBuilders.post(url)
+			MockMvcRequestBuilders.post(CREATE_URL)
 				.content(gson.toJson(request))
 				.contentType(MediaType.APPLICATION_JSON)
 		);
 
 		// then
-		resultActions.andExpect(status().isBadRequest())
+		resultActions
+			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.errorCode").value("VALIDATION_ERROR"))
 			.andExpect(jsonPath("$.message").value("DTO 객체 @Valid 유효성 검사 실패"))
 			.andExpect(jsonPath("$.fieldErrors.userEmail").value("must not be blank"))
@@ -125,18 +132,17 @@ public class AddonControllerTest {
 	public void 애드온생성성공() throws Exception {
 
 		// given
-		final String url = "/addons";
 		CreateAddonRequest request = CreateAddonRequest.builder()
-			.userEmail("test@example.com")
-			.toiletLocationId(1L)
+			.userEmail(TEST_USER_EMAIL)
+			.toiletLocationId(TEST_TOILET_LOCATION_ID)
 			.memoContent("Test memo")
 			.isBookmarked(false)
 			.build();
 
 		AddonResponse expectedResponse = AddonResponse.builder()
 			.addonId(1L)
-			.userEmail("test@example.com")
-			.toiletLocationId(1L)
+			.userEmail(TEST_USER_EMAIL)
+			.toiletLocationId(TEST_TOILET_LOCATION_ID)
 			.memoContent("Test memo")
 			.isBookmarked(false)
 			.build();
@@ -145,7 +151,7 @@ public class AddonControllerTest {
 
 		// when
 		final ResultActions resultActions = mockMvc.perform(
-			MockMvcRequestBuilders.post(url)
+			MockMvcRequestBuilders.post(CREATE_URL)
 				.content(gson.toJson(request))
 				.contentType(MediaType.APPLICATION_JSON)
 		);
@@ -153,10 +159,10 @@ public class AddonControllerTest {
 		// then
 		resultActions
 			.andExpect(status().isCreated())
-			.andExpect(header().string("Location", "/addons/1"))
+			.andExpect(header().string("Location", BASE_URL + "/1"))
 			.andExpect(jsonPath("$.addonId").value(1))
-			.andExpect(jsonPath("$.userEmail").value("test@example.com"))
-			.andExpect(jsonPath("$.toiletLocationId").value(1))
+			.andExpect(jsonPath("$.userEmail").value(TEST_USER_EMAIL))
+			.andExpect(jsonPath("$.toiletLocationId").value(TEST_TOILET_LOCATION_ID))
 			.andExpect(jsonPath("$.memoContent").value("Test memo"))
 			.andExpect(jsonPath("$.isBookmarked").value(false));
 	}
@@ -165,10 +171,9 @@ public class AddonControllerTest {
 	public void 애드온생성실패_중복생성() throws Exception {
 
 		// given
-		final String url = "/addons";
 		CreateAddonRequest request = CreateAddonRequest.builder()
-			.userEmail("test@example.com")
-			.toiletLocationId(1L)
+			.userEmail(TEST_USER_EMAIL)
+			.toiletLocationId(TEST_TOILET_LOCATION_ID)
 			.memoContent("Test memo")
 			.isBookmarked(true)
 			.build();
@@ -179,18 +184,72 @@ public class AddonControllerTest {
 
 		// when
 		final ResultActions resultActions = mockMvc.perform(
-			MockMvcRequestBuilders.post(url)
+			MockMvcRequestBuilders.post(CREATE_URL)
 				.content(gson.toJson(request))
 				.contentType(MediaType.APPLICATION_JSON)
 		);
 
 		// then
-		resultActions.andExpect(status().isConflict())
+		resultActions
+			.andExpect(status().isConflict())
 			.andExpect(jsonPath("$.errorCode").value("DUPLICATED_ADDON_CREATE"))
 			.andExpect(jsonPath("$.message").value(AddonErrorResult.DUPLICATED_ADDON_CREATE.getMessage()));
 	}
+
+	@Test
+	public void 애드온조회성공() throws Exception {
+
+		// given
+		GetAddonRequest request = new GetAddonRequest(TEST_USER_EMAIL, TEST_TOILET_LOCATION_ID);
+
+		AddonResponse expectedResponse = AddonResponse.builder()
+			.addonId(1L)
+			.userEmail(TEST_USER_EMAIL)
+			.toiletLocationId(TEST_TOILET_LOCATION_ID)
+			.memoContent("Test memo")
+			.isBookmarked(false)
+			.build();
+
+		when(addonService.getAddon(any(GetAddonRequest.class))).thenReturn(expectedResponse);
+
+		// when
+		final ResultActions resultActions = mockMvc.perform(
+			MockMvcRequestBuilders.post(GET_URL)
+				.content(gson.toJson(request))
+				.contentType(MediaType.APPLICATION_JSON)
+		);
+
+		// then
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.addonId").value(1))
+			.andExpect(jsonPath("$.userEmail").value(TEST_USER_EMAIL))
+			.andExpect(jsonPath("$.toiletLocationId").value(TEST_TOILET_LOCATION_ID))
+			.andExpect(jsonPath("$.memoContent").value("Test memo"))
+			.andExpect(jsonPath("$.isBookmarked").value(false));
+	}
+
+	@Test
+	public void 애드온조회실패_ADDON_NOT_FOUND() throws Exception {
+
+		// given
+		GetAddonRequest request = new GetAddonRequest(TEST_USER_EMAIL, TEST_TOILET_LOCATION_ID);
+
+		// 애드온을 찾을 수 없을 때 예외를 던지도록 서비스 계층 모킹
+		when(addonService.getAddon(any(GetAddonRequest.class)))
+			.thenThrow(new AddonException(AddonErrorResult.ADDON_NOT_FOUND));
+
+		// when
+		final ResultActions resultActions = mockMvc.perform(
+			MockMvcRequestBuilders.post(GET_URL)
+				.content(gson.toJson(request))
+				.contentType(MediaType.APPLICATION_JSON)
+		);
+
+		// then
+		resultActions
+			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.errorCode").value("ADDON_NOT_FOUND"))
+			.andExpect(jsonPath("$.message").value(AddonErrorResult.ADDON_NOT_FOUND.getMessage()));
+	}
 }
-
-
-
-
