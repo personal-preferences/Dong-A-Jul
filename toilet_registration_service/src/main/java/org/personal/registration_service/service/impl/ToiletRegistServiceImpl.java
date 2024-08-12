@@ -17,24 +17,20 @@ public class ToiletRegistServiceImpl implements ToiletRegistService {
 
 	private final ToiletRegistRepository toiletRegistRepository;
 
-	public ToiletRegistResponse addToiletRegist(final Double latitude, final Double Longitude){
+	public ToiletRegistResponse addToiletRegist(final Double latitude, final Double longitude){
 
-		final ToiletRegist result = toiletRegistRepository.findByToiletRegistLatitudeAndToiletRegistLongitude(latitude, Longitude);
+		final ToiletRegist result = toiletRegistRepository.findByToiletRegistLatitudeAndToiletRegistLongitude(latitude, longitude);
 		if(result != null){
 			throw new ToiletRegistException(ToiletRegistErrorResult.DUPLICATED_TOILET_REGIST_REGISTER);
 		}
 
 		final ToiletRegist toiletRegist = ToiletRegist.builder()
-			.toiletRegistLatitude(37.123456)
-			.toiletRegistLongitude(127.123456)
+			.toiletRegistLatitude(latitude)
+			.toiletRegistLongitude(longitude)
 			.build();
 
 		final ToiletRegist savedToiletRegist = toiletRegistRepository.save(toiletRegist);
 
-		return ToiletRegistResponse.builder()
-			.toiletRegistId(savedToiletRegist.getToiletRegistId())
-			.toiletRegistLatitude(savedToiletRegist.getToiletRegistLatitude())
-			.toiletRegistLongitude(savedToiletRegist.getToiletRegistLongitude())
-			.build();
+		return ToiletRegistResponse.of(savedToiletRegist);
 	}
 }

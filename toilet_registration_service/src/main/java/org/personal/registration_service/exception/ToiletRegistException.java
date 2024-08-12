@@ -6,8 +6,13 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
 public class ToiletRegistException extends RuntimeException {
 
 	private final ToiletRegistErrorResult errorResult;
+
+	public ToiletRegistException(ToiletRegistErrorResult errorResult) {
+		super(errorResult.getMessage());  // RuntimeException의 메시지 필드를 설정
+		this.errorResult = errorResult;
+	}
+
 }

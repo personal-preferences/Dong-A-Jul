@@ -9,10 +9,10 @@ public record ToiletRegistRequest(
 	String toiletRegistDate,
 	Boolean toiletRegistIsApproved,
 
-	@NotNull
+	@NotNull(message = "위도는 필수 값입니다.")
 	Double toiletRegistLatitude,
 
-	@NotNull
+	@NotNull(message = "경도는 필수 값입니다.")
 	Double toiletRegistLongitude
 
 ) {

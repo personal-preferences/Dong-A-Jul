@@ -1,5 +1,7 @@
 package org.personal.registration_service.response;
 
+import org.personal.registration_service.domain.ToiletRegist;
+
 import lombok.Builder;
 
 @Builder
@@ -37,4 +39,13 @@ public record ToiletRegistResponse(
 	// Integer toiletRegistFemaleChildToiletsNumber,
 	// String userEmail
 ) {
+	public static ToiletRegistResponse of(ToiletRegist savedToiletRegist) {
+		return ToiletRegistResponse.builder()
+			.toiletRegistId(savedToiletRegist.getToiletRegistId())
+			.toiletRegistDate(savedToiletRegist.getToiletRegistDate())
+			.toiletRegistIsApproved(savedToiletRegist.getToiletRegistIsApproved())
+			.toiletRegistLatitude(savedToiletRegist.getToiletRegistLatitude())
+			.toiletRegistLongitude(savedToiletRegist.getToiletRegistLongitude())
+			.build();
+	}
 }
