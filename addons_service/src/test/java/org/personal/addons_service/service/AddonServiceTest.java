@@ -48,7 +48,7 @@ public class AddonServiceTest {
 			.build();
 	}
 	@Test
-	@DisplayName("중복 시 실패")
+	@DisplayName("등록 실패_DUPLICATED")
 	public void testCreateAddonAlreadyExists() {
 
 		// given
@@ -67,6 +67,25 @@ public class AddonServiceTest {
 		// then
 		assertThat(result.getErrorResult()).isEqualTo(AddonErrorResult.DUPLICATED_ADDON_CREATE);
 	}
+
+	@Test
+	@DisplayName("조회 실패_NOT FOUND")
+	public void testGetAddonNotFound() {
+
+		// given
+		GetAddonRequest request = new GetAddonRequest(userEmail, locationId);
+
+		doReturn(Optional.empty()).when(addonRepository).findByUserEmailAndToiletLocationId(userEmail, locationId);
+
+		// when
+		AddonException result = assertThrows(AddonException.class, () -> addonService.getAddon(request));
+
+		// then
+		assertThat(result.getErrorResult()).isEqualTo(AddonErrorResult.ADDON_NOT_FOUND);
+		verify(addonRepository, times(1)).findByUserEmailAndToiletLocationId(userEmail, locationId);
+		verify(addonMapper, never()).toDto(any(Addon.class));
+	}
+
 
 	@Test
 	@DisplayName("등록 성공")
@@ -101,8 +120,6 @@ public class AddonServiceTest {
 		verify(addonMapper, times(1)).toEntity(request);  // toEntity 호출 확인
 		verify(addonRepository, times(1)).save(newAddon);
 	}
-
-
 
 	@Test
 	@DisplayName("조회 성공")
@@ -144,12 +161,6 @@ public class AddonServiceTest {
 		assertEquals(expectedResponse.userEmail(), actualResponse.userEmail());
 		assertEquals(expectedResponse.toiletLocationId(), actualResponse.toiletLocationId());
 	}
-
-
-
-
-
-
 
 
 
