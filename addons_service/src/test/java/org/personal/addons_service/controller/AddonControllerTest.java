@@ -1,9 +1,11 @@
 package org.personal.addons_service.controller;
 
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,6 +16,7 @@ import org.personal.addons_service.exception.AddonException;
 import org.personal.addons_service.exception.GlobalExceptionHandler;
 import org.personal.addons_service.request.CreateAddonRequest;
 import org.personal.addons_service.request.GetAddonRequest;
+import org.personal.addons_service.request.UpdateAddonRequest;
 import org.personal.addons_service.response.AddonResponse;
 import org.personal.addons_service.service.AddonServiceImpl;
 import org.springframework.http.MediaType;
@@ -31,7 +34,9 @@ public class AddonControllerTest {
 	private static final String CREATE_URL = BASE_URL + "/create";
 	private static final String GET_URL = BASE_URL + "/get";
 	private static final String TEST_USER_EMAIL = "test@example.com";
+	private static final String WRONG_USER_EMAIL = "wrong@example.com";
 	private static final Long TEST_TOILET_LOCATION_ID = 1L;
+	private static final Long TEST_ADDON_ID = 1L;
 
 	@Mock
 	private AddonServiceImpl addonService;
@@ -252,4 +257,98 @@ public class AddonControllerTest {
 			.andExpect(jsonPath("$.errorCode").value("ADDON_NOT_FOUND"))
 			.andExpect(jsonPath("$.message").value(AddonErrorResult.ADDON_NOT_FOUND.getMessage()));
 	}
+
+	@Test
+	@DisplayName("수정 성공")
+	public void testUpdateAddonSuccessfully() throws Exception {
+
+		// given
+		UpdateAddonRequest request = UpdateAddonRequest.builder()
+			.memoContent("Updated memo")
+			.isBookmarked(true)
+			.build();
+
+		AddonResponse expectedResponse = AddonResponse.builder()
+			.addonId(TEST_ADDON_ID)
+			.memoContent("Updated memo")
+			.isBookmarked(true)
+			.userEmail(TEST_USER_EMAIL)
+			.toiletLocationId(TEST_TOILET_LOCATION_ID)
+			.build();
+
+		when(addonService.updateAddon(TEST_ADDON_ID, TEST_USER_EMAIL, request)).thenReturn(expectedResponse);
+
+		// when
+		final ResultActions resultActions = mockMvc.perform(patch(BASE_URL + "/" + TEST_ADDON_ID)
+			.header("userEmail", TEST_USER_EMAIL)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(gson.toJson(request)));
+
+		// then
+		resultActions
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.addonId").value(TEST_ADDON_ID))
+			.andExpect(jsonPath("$.memoContent").value("Updated memo"))
+			.andExpect(jsonPath("$.isBookmarked").value(true))
+			.andExpect(jsonPath("$.userEmail").value(TEST_USER_EMAIL))
+			.andExpect(jsonPath("$.toiletLocationId").value(TEST_TOILET_LOCATION_ID));
+
+		verify(addonService, times(1)).updateAddon(TEST_ADDON_ID, TEST_USER_EMAIL, request);
+	}
+
+	@Test
+	@DisplayName("수정 실패_UNAUTHORIZED")
+	public void testUpdateAddonUnauthorized() throws Exception {
+
+		// given
+		UpdateAddonRequest request = UpdateAddonRequest.builder()
+			.memoContent("Updated memo")
+			.isBookmarked(true)
+			.build();
+
+		when(addonService.updateAddon(TEST_ADDON_ID, WRONG_USER_EMAIL, request))
+			.thenThrow(new AddonException(AddonErrorResult.UNAUTHORIZED_ACCESS));
+
+		// when
+		final ResultActions resultActions = mockMvc.perform(patch(BASE_URL + "/" + TEST_ADDON_ID)
+			.header("userEmail", WRONG_USER_EMAIL)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(gson.toJson(request)));
+
+		// then
+		resultActions
+			.andExpect(status().isUnauthorized())
+			.andExpect(jsonPath("$.errorCode").value("UNAUTHORIZED_ACCESS"))
+			.andExpect(jsonPath("$.message").value(AddonErrorResult.UNAUTHORIZED_ACCESS.getMessage()));
+	}
+
+	@Test
+	@DisplayName("수정 실패_NOT FOUND")
+	public void testUpdateAddonNotFound() throws Exception {
+
+		// given
+		UpdateAddonRequest request = UpdateAddonRequest.builder()
+			.memoContent("Updated memo")
+			.isBookmarked(true)
+			.build();
+
+		when(addonService.updateAddon(TEST_ADDON_ID, TEST_USER_EMAIL, request))
+			.thenThrow(new AddonException(AddonErrorResult.ADDON_NOT_FOUND));
+
+		// when
+		final ResultActions resultActions = mockMvc.perform(patch(BASE_URL + "/" + TEST_ADDON_ID)
+			.header("userEmail", TEST_USER_EMAIL)
+			.contentType(MediaType.APPLICATION_JSON)
+			.content(gson.toJson(request)));
+
+		// then
+		resultActions
+			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.errorCode").value("ADDON_NOT_FOUND"))
+			.andExpect(jsonPath("$.message").value(AddonErrorResult.ADDON_NOT_FOUND.getMessage()));
+	}
+
+
+
+
 }

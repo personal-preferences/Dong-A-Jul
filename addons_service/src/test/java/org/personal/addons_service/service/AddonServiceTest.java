@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -20,6 +21,7 @@ import org.personal.addons_service.mapper.AddonMapper;
 import org.personal.addons_service.repository.AddonRepository;
 import org.personal.addons_service.request.CreateAddonRequest;
 import org.personal.addons_service.request.GetAddonRequest;
+import org.personal.addons_service.request.UpdateAddonRequest;
 import org.personal.addons_service.response.AddonResponse;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,6 +38,7 @@ public class AddonServiceTest {
 
 	private final String userEmail = "test@example.com";
 	private final Long locationId = 1L;
+	private final Long addonId = 1L;
 	private Addon existingAddon;
 
 	@BeforeEach
@@ -43,8 +46,8 @@ public class AddonServiceTest {
 		existingAddon = Addon.builder()
 			.memoContent("Existing memo")
 			.isBookmarked(true)
-			.userEmail("test@example.com")
-			.toiletLocationId(1L)
+			.userEmail(userEmail)
+			.toiletLocationId(locationId)
 			.build();
 	}
 	@Test
@@ -161,6 +164,86 @@ public class AddonServiceTest {
 		assertEquals(expectedResponse.userEmail(), actualResponse.userEmail());
 		assertEquals(expectedResponse.toiletLocationId(), actualResponse.toiletLocationId());
 	}
+
+
+	@Test
+	@DisplayName("수정 성공")
+	public void testUpdateAddonSuccessfully() {
+
+		// given
+		UpdateAddonRequest request = UpdateAddonRequest.builder()
+			.memoContent("Updated memo")
+			.isBookmarked(false)
+			.build();
+
+		Addon updatedAddon = existingAddon.toBuilder()
+			.memoContent("Updated memo")
+			.isBookmarked(false)
+			.build();
+
+		doReturn(Optional.of(existingAddon)).when(addonRepository).findById(addonId);
+		doReturn(updatedAddon).when(addonRepository).save(any(Addon.class));
+		doReturn(new AddonResponse(addonId, "Updated memo", false, userEmail, 1L))
+			.when(addonMapper).toDto(updatedAddon);
+
+		// when
+		AddonResponse response = addonService.updateAddon(addonId, userEmail, request);
+
+		// then
+		ArgumentCaptor<Addon> captor = ArgumentCaptor.forClass(Addon.class);
+		verify(addonRepository).save(captor.capture());
+		Addon capturedAddon = captor.getValue();
+
+		assertThat(capturedAddon.getMemoContent()).isEqualTo("Updated memo");
+		assertThat(capturedAddon.isBookmarked()).isEqualTo(false);
+		assertThat(response.memoContent()).isEqualTo("Updated memo");
+		assertThat(response.isBookmarked()).isEqualTo(false);
+	}
+
+	@Test
+	@DisplayName("수정 실패_잘못된 사용자")
+	public void testUpdateAddonUnauthorized() {
+
+		// given
+		UpdateAddonRequest request = UpdateAddonRequest.builder()
+			.memoContent("Updated memo")
+			.isBookmarked(false)
+			.build();
+
+		when(addonRepository.findById(addonId)).thenReturn(Optional.of(existingAddon));
+
+		// when
+		AddonException exception = assertThrows(AddonException.class, () ->
+			addonService.updateAddon(addonId, "wronguser@example.com", request));
+
+		// then
+		assertThat(exception.getErrorResult()).isEqualTo(AddonErrorResult.UNAUTHORIZED_ACCESS);
+		verify(addonRepository, times(1)).findById(addonId);
+		verify(addonRepository, never()).save(any(Addon.class));
+	}
+
+	@Test
+	@DisplayName("수정 실패_Addon NOT FOUND")
+	public void testUpdateAddonNotFound() {
+
+		// given
+		UpdateAddonRequest request = UpdateAddonRequest.builder()
+			.memoContent("Updated memo")
+			.isBookmarked(false)
+			.build();
+
+		when(addonRepository.findById(addonId)).thenReturn(Optional.empty());
+
+		// when
+		AddonException exception = assertThrows(AddonException.class, () ->
+			addonService.updateAddon(addonId, userEmail, request));
+
+		// then
+		assertThat(exception.getErrorResult()).isEqualTo(AddonErrorResult.ADDON_NOT_FOUND);
+		verify(addonRepository, times(1)).findById(addonId);
+		verify(addonRepository, never()).save(any(Addon.class));
+	}
+
 
 
 

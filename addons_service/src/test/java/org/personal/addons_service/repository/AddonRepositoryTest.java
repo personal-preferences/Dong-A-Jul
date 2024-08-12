@@ -77,5 +77,35 @@ public class AddonRepositoryTest {
 		assertFalse(retrievedAddon.isPresent());
 	}
 
+	@Test
+	public void testUpdateAddon() {
+
+		// given
+		Addon addon = Addon.builder()
+			.memoContent("Original memo")
+			.isBookmarked(true)
+			.userEmail("test@example.com")
+			.toiletLocationId(1L)
+			.build();
+
+		Addon savedAddon = addonRepository.save(addon);
+
+		// when
+		savedAddon = savedAddon.toBuilder()
+			.memoContent("Updated memo")
+			.isBookmarked(false)
+			.build();
+
+		Addon updatedAddon = addonRepository.save(savedAddon);
+
+		// then
+		Optional<Addon> retrievedAddon = addonRepository.findById(updatedAddon.getAddonId());
+		assertTrue(retrievedAddon.isPresent());
+		assertEquals("Updated memo", retrievedAddon.get().getMemoContent());
+		assertFalse(retrievedAddon.get().isBookmarked());
+		assertEquals("test@example.com", retrievedAddon.get().getUserEmail());
+		assertEquals(1L, retrievedAddon.get().getToiletLocationId());
+	}
+
 
 }
