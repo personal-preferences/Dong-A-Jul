@@ -6,6 +6,8 @@ import org.personal.registration_service.common.ToiletRegistErrorResult;
 import org.personal.registration_service.exception.ToiletRegistException;
 import org.personal.registration_service.request.ToiletRegistApproveRequest;
 import org.personal.registration_service.response.ToiletRegistApproveResponse;
+import org.personal.registration_service.service.ToiletRegistApproveService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +25,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/approves")
 public class ToiletRegistApproveController {
 
+	final private ToiletRegistApproveService toiletRegistApproveService;
+
 	@PatchMapping
 	public ResponseEntity<ToiletRegistApproveResponse> toiletRegistApprove(
 		@RequestHeader(value = USER_ID_HEADER, required = true) final String userId,
@@ -37,6 +41,8 @@ public class ToiletRegistApproveController {
 			throw new ToiletRegistException(ToiletRegistErrorResult.NOT_ADMIN);
 		}
 
-		return null;
+		ToiletRegistApproveResponse response = toiletRegistApproveService.updateToiletRegistApprove(request);
+
+		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 }

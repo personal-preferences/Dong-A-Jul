@@ -79,6 +79,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			.body(new ErrorResponse(errorResult.name(), errorResult.getMessage()));
 	}
 
+	private ResponseEntity<ErrorResponse> makeErrorResponseEntity(final ToiletRegistErrorResult errorResult, final String message) {
+		return ResponseEntity.status(errorResult.getHttpStatus())
+			.body(new ErrorResponse(errorResult.name(), errorResult.getMessage()));
+	}
+
 	record ErrorResponse(String code, String message) {
 	}
 
