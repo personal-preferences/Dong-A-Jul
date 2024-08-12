@@ -7,9 +7,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.personal.registration_service.exception.GlobalExceptionHandler;
 import org.personal.registration_service.request.ToiletRegistApproveRequest;
+import org.personal.registration_service.service.impl.ToiletRegistApproveServiceImpl;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -24,6 +26,9 @@ class ToiletRegistApproveControllerTests {
 
 	@InjectMocks
 	private ToiletRegistApproveController target;
+
+	@Mock
+	private ToiletRegistApproveServiceImpl toiletRegistApproveService;
 
 	private ObjectMapper objectMapper;
 	private MockMvc mockMvc;
