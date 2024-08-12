@@ -68,7 +68,7 @@ public class UserController {
     }
 
     @PutMapping("/password")
-    public ResponseEntity putUserPassword(@RequestBody@Validated RequestUpdatePassword requestUpdatePassword
+    public ResponseEntity<Void> putUserPassword(@RequestBody@Validated RequestUpdatePassword requestUpdatePassword
                                           ,Errors errors){
         if (errors.hasErrors()){
             throw new InvalidRequestException(responseValidationErrors(errors));
@@ -78,13 +78,14 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity deleteUser(@PathVariable Long userId){
+    public ResponseEntity<Void> deleteUser(@PathVariable Long userId){
 
         userService.deleteUser(userId);
         return ResponseEntity.ok().build();
     }
 
     private String responseValidationErrors(Errors errors) {
+
         StringBuilder returnValue= new StringBuilder();
         for (int i = 0; i < errors.getAllErrors().size(); i++) {
             returnValue.append(errors.getAllErrors().get(i).getDefaultMessage()).append("\n");
