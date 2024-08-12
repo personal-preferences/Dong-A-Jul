@@ -82,7 +82,6 @@ public class AddonServiceTest {
 			locationId
 		);
 
-		// 반환할 Addon 객체 생성
 		Addon newAddon = Addon.builder()
 			.addonId(1L)
 			.memoContent("New memo")
@@ -91,15 +90,19 @@ public class AddonServiceTest {
 			.toiletLocationId(locationId)
 			.build();
 
-		doReturn(newAddon).when(addonRepository).save(any(Addon.class));
+		when(addonMapper.toEntity(request)).thenReturn(newAddon);
+		when(addonRepository.save(any(Addon.class))).thenReturn(newAddon);
 
 		// when
 		assertDoesNotThrow(() -> addonService.createAddon(request));
 
 		// then
 		verify(addonRepository, times(1)).findByUserEmailAndToiletLocationId(userEmail, locationId);
-		verify(addonRepository, times(1)).save(any(Addon.class));
+		verify(addonMapper, times(1)).toEntity(request);  // toEntity 호출 확인
+		verify(addonRepository, times(1)).save(newAddon);
 	}
+
+
 
 	@Test
 	@DisplayName("조회 성공")
