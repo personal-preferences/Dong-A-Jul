@@ -1,4 +1,4 @@
-package org.personal.registration_service.service;
+package org.personal.registration_service.service.impl;
 
 import static org.assertj.core.api.AssertionsForClassTypes.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -14,7 +14,6 @@ import org.personal.registration_service.domain.ToiletRegist;
 import org.personal.registration_service.exception.ToiletRegistException;
 import org.personal.registration_service.repository.ToiletRegistRepository;
 import org.personal.registration_service.response.ToiletRegistResponse;
-import org.personal.registration_service.service.impl.ToiletRegistServiceImpl;
 
 @ExtendWith(MockitoExtension.class)
 class ToiletRegistServiceImplTests {
@@ -22,28 +21,32 @@ class ToiletRegistServiceImplTests {
 	@InjectMocks
 	private ToiletRegistServiceImpl target;
 	@Mock
-	private ToiletRegistRepository toileRegistRepository;
+	private ToiletRegistRepository toiletRegistRepository;
 
 	private final Double lat = 37.123456;
 	private final Double lng = 127.123456;
 
 	@Test
-	public void 화장실등록신청실패_이미존재함(){
+	public void 화장실등록신청실패_이미존재함() {
 		// given
-		doReturn(ToiletRegist.builder().build()).when(toileRegistRepository).findByToiletRegistLatitudeAndToiletRegistLongitude(lat,lng);
+		// 스텁이 올바르게 작동하도록 설정
+		doReturn(ToiletRegist.builder().build())
+			.when(toiletRegistRepository)
+			.findByToiletRegistLatitudeAndToiletRegistLongitude(lat, lng);
 
 		// when
-		final ToiletRegistException result = assertThrows(ToiletRegistException.class, () -> target.addToiletRegist(lat, lng));
+		final ToiletRegistException result = assertThrows(ToiletRegistException.class,
+			() -> target.addToiletRegist(lat, lng));
 
 		// then
 		assertThat(result.getErrorResult()).isEqualTo(ToiletRegistErrorResult.DUPLICATED_TOILET_REGIST_REGISTER);
 	}
 
 	@Test
-	public void 화장실등록신청성공(){
+	public void 화장실등록신청성공() {
 		// given
-		doReturn(null).when(toileRegistRepository).findByToiletRegistLatitudeAndToiletRegistLongitude(lat,lng);
-		doReturn(toiletRegist()).when(toileRegistRepository).save(any(ToiletRegist.class));
+		doReturn(null).when(toiletRegistRepository).findByToiletRegistLatitudeAndToiletRegistLongitude(lat, lng);
+		doReturn(toiletRegist()).when(toiletRegistRepository).save(any(ToiletRegist.class));
 
 		// when
 		final ToiletRegistResponse result = target.addToiletRegist(lat, lng);
@@ -55,14 +58,14 @@ class ToiletRegistServiceImplTests {
 		assertThat(result.toiletRegistLongitude()).isEqualTo(lng);
 
 		// verity
-		verify(toileRegistRepository, times(1)).findByToiletRegistLatitudeAndToiletRegistLongitude(lat, lng);
-		verify(toileRegistRepository, times(1)).save(any(ToiletRegist.class));
+		verify(toiletRegistRepository, times(1)).findByToiletRegistLatitudeAndToiletRegistLongitude(lat, lng);
+		verify(toiletRegistRepository, times(1)).save(any(ToiletRegist.class));
 
 	}
 
 	private ToiletRegist toiletRegist() {
 		return ToiletRegist.builder()
-			.toiletRegistId(1L) 		// Mockito를 사용하여 save 메서드를 모킹(mocking)할 때, ID가 자동으로 설정되지 않아 설정해줌.
+			.toiletRegistId(1L)        // Mockito를 사용하여 save 메서드를 모킹(mocking)할 때, ID가 자동으로 설정되지 않아 설정해줌.
 			.toiletRegistLatitude(37.123456)
 			.toiletRegistLongitude(127.123456)
 			.build();

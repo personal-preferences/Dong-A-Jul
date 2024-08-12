@@ -4,7 +4,6 @@ import org.personal.registration_service.common.ToiletRegistErrorResult;
 import org.personal.registration_service.domain.ToiletRegist;
 import org.personal.registration_service.exception.ToiletRegistException;
 import org.personal.registration_service.repository.ToiletRegistRepository;
-import org.personal.registration_service.request.ToiletRegistRequest;
 import org.personal.registration_service.response.ToiletRegistResponse;
 import org.personal.registration_service.service.ToiletRegistService;
 import org.springframework.stereotype.Service;
@@ -20,6 +19,7 @@ public class ToiletRegistServiceImpl implements ToiletRegistService {
 	public ToiletRegistResponse addToiletRegist(final Double latitude, final Double longitude){
 
 		final ToiletRegist result = toiletRegistRepository.findByToiletRegistLatitudeAndToiletRegistLongitude(latitude, longitude);
+
 		if(result != null){
 			throw new ToiletRegistException(ToiletRegistErrorResult.DUPLICATED_TOILET_REGIST_REGISTER);
 		}
