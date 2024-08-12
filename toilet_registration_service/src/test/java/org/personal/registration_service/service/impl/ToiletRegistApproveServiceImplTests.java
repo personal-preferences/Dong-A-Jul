@@ -13,7 +13,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.personal.registration_service.common.DateParsing;
 import org.personal.registration_service.common.ToiletRegistErrorResult;
 import org.personal.registration_service.domain.ToiletRegist;
 import org.personal.registration_service.exception.ToiletRegistException;
@@ -90,7 +89,6 @@ class ToiletRegistApproveServiceImplTests {
 		return ToiletRegistApproveRequest.builder()
 			.toiletRegistId(1L)
 			.toiletRegistIsApproved(false)
-			.toiletRegistConfirmedDate(DateParsing.LdtToStr(LocalDateTime.now()))
 			.build();
 	}
 
@@ -98,7 +96,6 @@ class ToiletRegistApproveServiceImplTests {
 		return ToiletRegistApproveRequest.builder()
 			.toiletRegistId(1L)
 			.toiletRegistIsApproved(true)
-			.toiletRegistConfirmedDate(DateParsing.LdtToStr(LocalDateTime.now()))
 			.build();
 	}
 

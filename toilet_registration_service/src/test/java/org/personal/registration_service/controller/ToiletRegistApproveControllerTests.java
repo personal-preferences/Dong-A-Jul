@@ -90,7 +90,6 @@ class ToiletRegistApproveControllerTests {
 		return ToiletRegistApproveRequest.builder()
 			.toiletRegistId(1L)
 			.toiletRegistIsApproved(false)
-			.toiletRegistConfirmedDate(null)
 			.build();
 	}
 
