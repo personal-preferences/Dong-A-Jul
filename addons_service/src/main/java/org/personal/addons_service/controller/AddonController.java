@@ -1,6 +1,7 @@
 package org.personal.addons_service.controller;
 
 import org.personal.addons_service.request.CreateAddonRequest;
+import org.personal.addons_service.request.GetAddonRequest;
 import org.personal.addons_service.response.AddonResponse;
 import org.personal.addons_service.service.AddonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +25,18 @@ public class AddonController {
 		this.addonService = addonService;
 	}
 
-	@PostMapping
+	@PostMapping("/create")
 	public ResponseEntity<?> createAddon(@RequestBody @Valid CreateAddonRequest request) {
 		AddonResponse response = addonService.createAddon(request);
 		return ResponseEntity.status(HttpStatus.CREATED)
 			.header("Location", "/addons/" + response.addonId())
+			.body(response);
+	}
+
+	@PostMapping("/get")	// 조회지만 이메일도 개인정보라고 생각해서 일단은 POST로 ,,,
+	public ResponseEntity<?> getAddon(@RequestBody GetAddonRequest request) {
+		AddonResponse response = addonService.getAddon(request);
+		return ResponseEntity.status(HttpStatus.OK)
 			.body(response);
 	}
 
