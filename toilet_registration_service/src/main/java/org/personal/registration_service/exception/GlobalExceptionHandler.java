@@ -1,6 +1,7 @@
 package org.personal.registration_service.exception;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.personal.registration_service.common.ToiletRegistErrorResult;
@@ -51,6 +52,24 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return this.makeErrorResponseEntity(exception.getErrorResult());
 	}
 
+	@ExceptionHandler({IllegalArgumentException.class})
+	public ResponseEntity<ErrorResponse> handleIllegalArgumentException(final IllegalArgumentException exception) {
+		log.warn("IllegalArgumentException occur: ", exception);
+		return this.makeErrorResponseEntity(ToiletRegistErrorResult.INVALID_ARGUMENT, exception.getMessage());
+	}
+
+	@ExceptionHandler({NoSuchElementException.class})
+	public ResponseEntity<ErrorResponse> handleNoSuchElementException(final NoSuchElementException exception) {
+		log.warn("NoSuchElementException occur: ", exception);
+		return this.makeErrorResponseEntity(ToiletRegistErrorResult.NO_SUCH_ELEMENT, exception.getMessage());
+	}
+
+	@ExceptionHandler({javax.persistence.EntityNotFoundException.class})
+	public ResponseEntity<ErrorResponse> handleEntityNotFoundException(final javax.persistence.EntityNotFoundException exception) {
+		log.warn("EntityNotFoundException occur: ", exception);
+		return this.makeErrorResponseEntity(ToiletRegistErrorResult.ENTITY_NOT_FOUND, exception.getMessage());
+	}
+
 	@ExceptionHandler({Exception.class})
 	public ResponseEntity<ErrorResponse> handleException(final Exception exception) {
 		log.warn("Exception occur: ", exception);
@@ -60,6 +79,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	private ResponseEntity<ErrorResponse> makeErrorResponseEntity(final ToiletRegistErrorResult errorResult) {
 		return ResponseEntity.status(errorResult.getHttpStatus())
 			.body(new ErrorResponse(errorResult.name(), errorResult.getMessage()));
+	}
+
+	private ResponseEntity<ErrorResponse> makeErrorResponseEntity(final ToiletRegistErrorResult errorResult, final String message) {
+		return ResponseEntity.status(errorResult.getHttpStatus())
+			.body(new ErrorResponse(errorResult.name(), message));
 	}
 
 	@Getter
