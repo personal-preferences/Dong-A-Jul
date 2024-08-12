@@ -16,8 +16,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.personal.addons_service.domain.Addon;
 import org.personal.addons_service.exception.AddonErrorResult;
 import org.personal.addons_service.exception.AddonException;
+import org.personal.addons_service.mapper.AddonMapper;
 import org.personal.addons_service.repository.AddonRepository;
 import org.personal.addons_service.request.CreateAddonRequest;
+import org.personal.addons_service.request.GetAddonRequest;
+import org.personal.addons_service.response.AddonResponse;
 
 @ExtendWith(MockitoExtension.class)
 public class AddonServiceTest {
@@ -27,6 +30,9 @@ public class AddonServiceTest {
 
 	@InjectMocks
 	private AddonServiceImpl addonService;
+
+	@Mock
+	private AddonMapper addonMapper;
 
 	private final String userEmail = "test@example.com";
 	private final Long locationId = 1L;
@@ -94,6 +100,49 @@ public class AddonServiceTest {
 		verify(addonRepository, times(1)).findByUserEmailAndToiletLocationId(userEmail, locationId);
 		verify(addonRepository, times(1)).save(any(Addon.class));
 	}
+
+	@Test
+	@DisplayName("조회 성공")
+	public void testGetAddonSuccessfully() {
+
+		// given
+		Addon addon = Addon.builder()
+			.addonId(1L)
+			.memoContent("Memo content")
+			.isBookmarked(false)
+			.userEmail(userEmail)
+			.toiletLocationId(locationId)
+			.build();
+
+		GetAddonRequest request = new GetAddonRequest(userEmail, locationId);
+
+		AddonResponse expectedResponse = AddonResponse.builder()
+			.addonId(1L)
+			.memoContent("Memo content")
+			.isBookmarked(false)
+			.userEmail(userEmail)
+			.toiletLocationId(locationId)
+			.build();
+
+		when(addonRepository.findByUserEmailAndToiletLocationId(userEmail, locationId))
+			.thenReturn(Optional.of(addon));
+		when(addonMapper.toDto(addon)).thenReturn(expectedResponse);
+
+		// when
+		AddonResponse actualResponse = addonService.getAddon(request);
+
+		// then
+		verify(addonRepository, times(1)).findByUserEmailAndToiletLocationId(userEmail, locationId);
+		verify(addonMapper, times(1)).toDto(any(Addon.class));
+
+		assertEquals(expectedResponse.addonId(), actualResponse.addonId());
+		assertEquals(expectedResponse.memoContent(), actualResponse.memoContent());
+		assertEquals(expectedResponse.isBookmarked(), actualResponse.isBookmarked());
+		assertEquals(expectedResponse.userEmail(), actualResponse.userEmail());
+		assertEquals(expectedResponse.toiletLocationId(), actualResponse.toiletLocationId());
+	}
+
+
 
 
 
