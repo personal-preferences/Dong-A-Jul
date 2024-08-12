@@ -3,7 +3,6 @@ package org.personal.user_service.user.service;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.personal.user_service.config.GetUserInfo;
 import org.personal.user_service.config.JWTUtil;
 import org.personal.user_service.user.domain.Token;
 import org.personal.user_service.user.exception.InvalidRequestException;
@@ -30,16 +29,13 @@ public class LoginServiceImpl implements LoginService{
     private final UserService userService;
     private final JWTUtil jwtUtil;
     private final RefreshRepository refreshRepository;
-    private final GetUserInfo getUserInfo;
-
 
     @Autowired
-    public LoginServiceImpl(PasswordEncoder passwordEncoder, UserService userService, JWTUtil jwtUtil, RefreshRepository refreshRepository, GetUserInfo getUserInfo) {
+    public LoginServiceImpl(PasswordEncoder passwordEncoder, UserService userService, JWTUtil jwtUtil, RefreshRepository refreshRepository) {
         this.passwordEncoder = passwordEncoder;
         this.userService = userService;
         this.jwtUtil = jwtUtil;
         this.refreshRepository = refreshRepository;
-        this.getUserInfo = getUserInfo;
     }
 
 
@@ -68,36 +64,48 @@ public class LoginServiceImpl implements LoginService{
     @Transactional(readOnly = false)
     public void logout(HttpServletRequest req) {
         String refresh = null;
+
         try {
-            Cookie[] cookies = req.getCookies();
-            for(Cookie cookie : cookies){
-                if(cookie.getName().equals("refresh")){
-                    refresh = cookie.getValue();
-                }
-            }
+            // refresh가 쿠키에 담겨있는지 확인하고 담는 로직
+            refresh = findRefresh(req);
         }catch (NullPointerException e){
             throwRefreshIsNull();
         }
-        System.out.println("refresh = " + refresh);
-        if (refresh==null)
-            throwRefreshIsNull();
 
         Optional<Token> tokenOpt = refreshRepository.findByToken(refresh);
+
         try {
             tokenOpt.ifPresent(refreshRepository::delete);
-
         }catch (Exception e){
             throw new InvalidRequestException("refresh 토큰 유효하지 않음");
         }
+    }
 
+    private String findRefresh(HttpServletRequest req) {
+
+        String refresh = null;
+        Cookie[] cookies = req.getCookies();
+        for(Cookie cookie : cookies){
+            if(cookie.getName().equals("refresh")){
+                refresh = cookie.getValue();
+                break;
+            }
+        }
+
+        if (refresh==null)
+            throwRefreshIsNull();
+
+        return  refresh;
     }
 
     private static void throwRefreshIsNull() {
+
         throw new NotFoundException("refresh 없음");
     }
 
     @Override
     public ResponseToken processOAuth2User(OAuth2User oAuth2User) {
+
         // 사용자 정보 매핑
         Map<String, Object> attributes = oAuth2User.getAttributes();
 
@@ -107,19 +115,21 @@ public class LoginServiceImpl implements LoginService{
 
         String nickname = (String) profile.get("nickname");
         String email = (String) account.get("email");
-        String role = "ROLE_USER"; // 기본 역할을 설정합니다. 필요에 따라 다르게 설정할 수 있습니다.
+        String role = "ROLE_USER"; // default: user
 
-        // 사용자 정보를 DB에 저장하는 로직을 추가합니다.
         // 카카오 회원 초기 비밀번호는 12341234입니다.
         RequestRegist requestRegistUser = new RequestRegist(email,nickname,"12341234","ROLE_USER");
-        System.out.println("requestRegistUser = " + requestRegistUser);
 
         userService.registKakaoUser(requestRegistUser);
 
-        // JWT 토큰을 생성합니다.
+        // JWT 토큰을 생성 후 전달
+        return createTokens(email, nickname, role);
+    }
+
+    private ResponseToken createTokens(String email, String nickname, String role) {
+
         String accessToken = jwtUtil.createJwt("access", email, nickname, role, 86000000L);
         String refreshToken = jwtUtil.createJwt("refresh", email, nickname, role, 860000000L);
-
         return new ResponseToken(accessToken, refreshToken);
     }
 

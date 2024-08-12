@@ -7,6 +7,7 @@ import org.personal.user_service.user.exception.NotFoundException;
 import org.personal.user_service.user.request.RequestUpdatePassword;
 import org.personal.user_service.user.response.ResponseUser;
 import org.personal.user_service.user.request.RequestRegist;
+import org.personal.user_service.user.response.ResponseUserDetail;
 import org.personal.user_service.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -58,6 +59,12 @@ public class UserController {
 
         ResponseUser user = userService.getUser(userId);
         return ResponseEntity.ok(user);
+    }
+
+    @GetMapping("/info")
+    public ResponseEntity<ResponseUser> getMyInfo(){
+        ResponseUser responseUser = userService.getMyInfo();
+        return ResponseEntity.ok(responseUser);
     }
 
     @PutMapping("/password")
