@@ -7,6 +7,7 @@ import org.personal.addons_service.mapper.AddonMapper;
 import org.personal.addons_service.repository.AddonRepository;
 import org.personal.addons_service.request.CreateAddonRequest;
 import org.personal.addons_service.request.GetAddonRequest;
+import org.personal.addons_service.request.UpdateAddonRequest;
 import org.personal.addons_service.response.AddonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -45,6 +46,25 @@ public class AddonServiceImpl implements AddonService {
 			.orElseThrow(() -> new AddonException(AddonErrorResult.ADDON_NOT_FOUND));
 
 		return addonMapper.toDto(addon);
+	}
 
+	@Override
+	public AddonResponse updateAddon(Long addonId, String userEmail, UpdateAddonRequest request) {
+
+		Addon addon = addonRepository.findById(addonId)
+			.orElseThrow(() -> new AddonException(AddonErrorResult.ADDON_NOT_FOUND));
+
+		if (!addon.getUserEmail().equals(userEmail)) {
+			throw new AddonException(AddonErrorResult.UNAUTHORIZED_ACCESS);
+		}
+
+		Addon updatedAddon = addon.toBuilder()
+			.memoContent(request.memoContent() != null ? request.memoContent() : addon.getMemoContent())
+			.isBookmarked(request.isBookmarked() != null ? request.isBookmarked() : addon.isBookmarked())
+			.build();
+
+		Addon savedAddon = addonRepository.save(updatedAddon);
+
+		return addonMapper.toDto(savedAddon);
 	}
 }
