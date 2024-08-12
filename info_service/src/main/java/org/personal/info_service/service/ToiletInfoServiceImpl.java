@@ -6,9 +6,11 @@ import org.personal.info_service.mapper.ToiletInfoMapper;
 import org.personal.info_service.repository.ToiletInfoRepository;
 import org.personal.info_service.request.RequestCreateInfo;
 import org.personal.info_service.response.ToiletInfoResponse;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,6 +23,11 @@ public class ToiletInfoServiceImpl implements ToiletInfoService {
     @Override
     public ToiletInfoResponse createToiletInfo(RequestCreateInfo toiletInfo) {
 
+        toiletInfoRepository.findByToiletLocationId(toiletInfo.toiletLocationId())
+                .ifPresent(existingInfo -> {
+                    throw new DuplicateKeyException("화장실 정보가 이미 존재합니다.");
+                });
+
         ToiletInfo requestInfo = toiletInfoMapper.convertRequestCreateInfoToToiletInfo(toiletInfo);
 
         toiletInfoRepository.save(requestInfo);
@@ -31,14 +38,11 @@ public class ToiletInfoServiceImpl implements ToiletInfoService {
     @Override
     public ToiletInfoResponse updateToiletInfo(RequestCreateInfo modifyToiletInfo) {
 
-        ToiletInfo savedInfo = toiletInfoRepository.findByToiletLocationId(modifyToiletInfo.toiletLocationId());
-
-        if(savedInfo == null){
-            throw new IllegalArgumentException("화장실 정보가 존재하지 않습니다.");
-        }
+        ToiletInfo savedInfo = toiletInfoRepository.findByToiletLocationId(modifyToiletInfo.toiletLocationId())
+                .orElseThrow(() -> new IllegalArgumentException("화장실 정보가 존재하지 않습니다."));
 
         ToiletInfo updateInfo = toiletInfoMapper.convertRequestCreateInfoToToiletInfo(modifyToiletInfo);
-        updateInfo.setToiletInfoId(savedInfo.getToiletInfoId());
+        updateInfo.updateInfoId(savedInfo.getToiletInfoId());
         toiletInfoRepository.save(updateInfo);
 
         return toiletInfoMapper.convertToiletInfoToResponse(updateInfo);
@@ -46,13 +50,10 @@ public class ToiletInfoServiceImpl implements ToiletInfoService {
 
     @Override
     public void deleteToiletinfo(Long locationId) {
-        ToiletInfo savedInfo = toiletInfoRepository.findByToiletLocationId(locationId);
+        ToiletInfo savedInfo = toiletInfoRepository.findByToiletLocationId(locationId)
+                .orElseThrow(() -> new IllegalArgumentException("화장실 정보가 존재하지 않습니다."));
 
-        if(savedInfo == null){
-            throw new IllegalArgumentException();
-        }
-
-        savedInfo.setDeleted(true);
+        savedInfo.updateDeleted(true);
         toiletInfoRepository.save(savedInfo);
     }
 

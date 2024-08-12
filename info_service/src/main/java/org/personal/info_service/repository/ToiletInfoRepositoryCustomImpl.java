@@ -15,10 +15,11 @@ public class ToiletInfoRepositoryCustomImpl implements ToiletInfoRepositoryCusto
 
     private final JPAQueryFactory jpaQueryFactory;
 
-    private QToiletInfo toilet = QToiletInfo.toiletInfo;
-
     @Override
     public ToiletInfo findToiletInfo(Long locationId){
+
+        QToiletInfo toilet = QToiletInfo.toiletInfo;
+
         return jpaQueryFactory.selectFrom(toilet)
                 .where(toilet.toiletLocationId.eq(locationId))
                 .fetchOne();
@@ -26,6 +27,9 @@ public class ToiletInfoRepositoryCustomImpl implements ToiletInfoRepositoryCusto
 
     @Override
     public List<ToiletInfo> findToiletInfoList(List<Long> locationIds) {
+
+        QToiletInfo toilet = QToiletInfo.toiletInfo;
+
         return jpaQueryFactory
                 .selectFrom(toilet)
                 .where(toilet.toiletLocationId.in(locationIds))
@@ -34,6 +38,7 @@ public class ToiletInfoRepositoryCustomImpl implements ToiletInfoRepositoryCusto
 
     @Override
     public List<ToiletInfo> findAllWithDisabledToilets() {
+
         QToiletInfo toiletInfo = QToiletInfo.toiletInfo;
 
         return jpaQueryFactory
