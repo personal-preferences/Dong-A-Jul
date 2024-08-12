@@ -6,7 +6,8 @@ import org.personal.addons_service.exception.AddonException;
 import org.personal.addons_service.mapper.AddonMapper;
 import org.personal.addons_service.repository.AddonRepository;
 import org.personal.addons_service.request.CreateAddonRequest;
-import org.personal.addons_service.response.AddonCreateResponse;
+import org.personal.addons_service.request.GetAddonRequest;
+import org.personal.addons_service.response.AddonResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,7 @@ public class AddonServiceImpl implements AddonService {
 
 
 	@Override
-	public AddonCreateResponse createAddon(CreateAddonRequest request) {
+	public AddonResponse createAddon(CreateAddonRequest request) {
 
 		addonRepository.findByUserEmailAndToiletLocationId(request.userEmail(), request.toiletLocationId())
 			.ifPresent(existingAddon -> {
@@ -35,5 +36,15 @@ public class AddonServiceImpl implements AddonService {
 		Addon savedAddon = addonRepository.save(addon);
 
 		return addonMapper.toDto(savedAddon);
+	}
+
+	@Override
+	public AddonResponse getAddon(GetAddonRequest request) {
+
+		Addon addon = addonRepository.findByUserEmailAndToiletLocationId(request.userEmail(), request.toiletLocationId())
+			.orElseThrow(() -> new AddonException(AddonErrorResult.ADDON_NOT_FOUND));
+
+		return addonMapper.toDto(addon);
+
 	}
 }

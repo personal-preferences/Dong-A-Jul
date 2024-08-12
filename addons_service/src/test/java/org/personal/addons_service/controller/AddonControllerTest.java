@@ -3,29 +3,24 @@ package org.personal.addons_service.controller;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import java.util.Optional;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.personal.addons_service.domain.Addon;
 import org.personal.addons_service.exception.AddonErrorResult;
 import org.personal.addons_service.exception.AddonException;
 import org.personal.addons_service.exception.GlobalExceptionHandler;
 import org.personal.addons_service.request.CreateAddonRequest;
-import org.personal.addons_service.response.AddonCreateResponse;
+import org.personal.addons_service.response.AddonResponse;
 import org.personal.addons_service.service.AddonServiceImpl;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 
 @ExtendWith(MockitoExtension.class)
@@ -138,7 +133,7 @@ public class AddonControllerTest {
 			.isBookmarked(false)
 			.build();
 
-		AddonCreateResponse expectedResponse = AddonCreateResponse.builder()
+		AddonResponse expectedResponse = AddonResponse.builder()
 			.addonId(1L)
 			.userEmail("test@example.com")
 			.toiletLocationId(1L)
