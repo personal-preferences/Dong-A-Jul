@@ -70,6 +70,7 @@ class ToiletRegistControllerTests {
 		// when
 		final ResultActions resultActions = mockMvc.perform(
 			MockMvcRequestBuilders.post(url)
+				.header(USER_ID_HEADER, "")
 				.content(gson.toJson(toiletRegistRequest(lat, lng)))
 				.contentType(MediaType.APPLICATION_JSON)
 		);
@@ -153,6 +154,7 @@ class ToiletRegistControllerTests {
 		assertThat(response.toiletRegistLatitude()).isEqualTo(lat);
 		assertThat(response.toiletRegistLongitude()).isEqualTo(lng);
 	}
+
 	private ToiletRegistRequest toiletRegistRequest(final Double lat, final Double lng){
 		return ToiletRegistRequest.builder()
 			.toiletRegistLatitude(lat)

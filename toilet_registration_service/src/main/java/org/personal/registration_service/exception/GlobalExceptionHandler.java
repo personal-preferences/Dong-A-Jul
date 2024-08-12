@@ -62,8 +62,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return this.makeErrorResponseEntity(ToiletRegistErrorResult.NO_SUCH_ELEMENT, exception.getMessage());
 	}
 
-	@ExceptionHandler({javax.persistence.EntityNotFoundException.class})
-	public ResponseEntity<ErrorResponse> handleEntityNotFoundException(final javax.persistence.EntityNotFoundException exception) {
+	@ExceptionHandler({jakarta.persistence.EntityNotFoundException.class})
+	public ResponseEntity<ErrorResponse> handleEntityNotFoundException(final jakarta.persistence.EntityNotFoundException exception) {
 		log.warn("EntityNotFoundException occur: ", exception);
 		return this.makeErrorResponseEntity(ToiletRegistErrorResult.ENTITY_NOT_FOUND, exception.getMessage());
 	}

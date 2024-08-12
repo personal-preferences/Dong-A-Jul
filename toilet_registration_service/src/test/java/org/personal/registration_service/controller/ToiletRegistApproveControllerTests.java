@@ -48,6 +48,7 @@ class ToiletRegistApproveControllerTests {
 
 		// when
 		final ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.patch(url)
+			.header(USER_ID_HEADER, "")
 			.content(gson.toJson(toiletRegistRequest()))
 			.contentType(MediaType.APPLICATION_JSON));
 
