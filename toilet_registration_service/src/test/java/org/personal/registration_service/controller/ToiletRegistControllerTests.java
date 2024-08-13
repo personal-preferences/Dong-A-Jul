@@ -103,7 +103,7 @@ class ToiletRegistControllerTests {
 		final String url = "/toiletregists";
 		doThrow(new ToiletRegistException(ToiletRegistErrorResult.DUPLICATED_TOILET_REGIST_REGISTER))
 			.when(toiletRegistService)
-			.addToiletRegist(lat, lng);
+			.addToiletRegist(toiletRegistRequest(lat, lng));
 
 		// when
 		final ResultActions resultActions = mockMvc.perform(
@@ -130,7 +130,7 @@ class ToiletRegistControllerTests {
 			.toiletRegistLongitude(lng)
 			.build();
 
-		doReturn(toiletRegistResponse).when(toiletRegistService).addToiletRegist(lat, lng);
+		doReturn(toiletRegistResponse).when(toiletRegistService).addToiletRegist(toiletRegistRequest(lat, lng));
 
 		// when
 		final ResultActions resultActions = mockMvc.perform(

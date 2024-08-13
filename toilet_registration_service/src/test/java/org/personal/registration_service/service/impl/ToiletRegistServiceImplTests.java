@@ -13,6 +13,7 @@ import org.personal.registration_service.common.ToiletRegistErrorResult;
 import org.personal.registration_service.domain.ToiletRegist;
 import org.personal.registration_service.exception.ToiletRegistException;
 import org.personal.registration_service.repository.ToiletRegistRepository;
+import org.personal.registration_service.request.ToiletRegistRequest;
 import org.personal.registration_service.response.ToiletRegistResponse;
 
 @ExtendWith(MockitoExtension.class)
@@ -36,7 +37,7 @@ class ToiletRegistServiceImplTests {
 
 		// when
 		final ToiletRegistException result = assertThrows(ToiletRegistException.class,
-			() -> target.addToiletRegist(lat, lng));
+			() -> target.addToiletRegist(toiletRegistRequest(lat, lng)));
 
 		// then
 		assertThat(result.getErrorResult()).isEqualTo(ToiletRegistErrorResult.DUPLICATED_TOILET_REGIST_REGISTER);
@@ -49,7 +50,7 @@ class ToiletRegistServiceImplTests {
 		doReturn(toiletRegist()).when(toiletRegistRepository).save(any(ToiletRegist.class));
 
 		// when
-		final ToiletRegistResponse result = target.addToiletRegist(lat, lng);
+		final ToiletRegistResponse result = target.addToiletRegist(toiletRegistRequest(lat, lng));
 
 		// then
 		assertThat(result).isNotNull();
@@ -68,6 +69,13 @@ class ToiletRegistServiceImplTests {
 			.toiletRegistId(1L)        // Mockito를 사용하여 save 메서드를 모킹(mocking)할 때, ID가 자동으로 설정되지 않아 설정해줌.
 			.toiletRegistLatitude(37.123456)
 			.toiletRegistLongitude(127.123456)
+			.build();
+	}
+
+	private ToiletRegistRequest toiletRegistRequest(final Double lat, final Double lng){
+		return ToiletRegistRequest.builder()
+			.toiletRegistLatitude(lat)
+			.toiletRegistLongitude(lng)
 			.build();
 	}
 }

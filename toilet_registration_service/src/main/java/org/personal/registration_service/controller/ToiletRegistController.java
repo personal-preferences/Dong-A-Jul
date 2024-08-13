@@ -35,7 +35,7 @@ public class ToiletRegistController {
 		}
 
 		ToiletRegistResponse response = toiletregistService
-			.addToiletRegist(request.toiletRegistLatitude(), request.toiletRegistLongitude());
+			.addToiletRegist(request);
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 }
