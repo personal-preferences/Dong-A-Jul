@@ -39,7 +39,7 @@ public class LocationController {
     }
 
     @GetMapping
-    public ResponseEntity<List<LocationResponse>> getList(@RequestBody @Valid LocationMarker request) {
+    public ResponseEntity<List<LocationResponse>> getList(@ModelAttribute @Valid LocationMarker request) {
         request.validate();
         List<LocationResponse> response = locationService.getList(request);
 
