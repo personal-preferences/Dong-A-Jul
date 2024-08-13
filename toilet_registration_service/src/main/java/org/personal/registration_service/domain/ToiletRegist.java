@@ -135,8 +135,8 @@ public class ToiletRegist {
 		}
 	}
 
-	public void update(Boolean isApprived, LocalDateTime confirmedTime) {
-		this.toiletRegistIsApproved = isApprived;
+	public void update(Boolean isApproved, LocalDateTime confirmedTime) {
+		this.toiletRegistIsApproved = isApproved;
 		this.toiletRegistConfirmedDate = DateParsing.LdtToStr(confirmedTime);
 	}
 }
