@@ -1,6 +1,7 @@
 package org.personal.registration_service.exception;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 import org.personal.registration_service.common.ToiletRegistErrorResult;
@@ -15,8 +16,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -51,6 +50,24 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return this.makeErrorResponseEntity(exception.getErrorResult());
 	}
 
+	@ExceptionHandler({IllegalArgumentException.class})
+	public ResponseEntity<ErrorResponse> handleIllegalArgumentException(final IllegalArgumentException exception) {
+		log.warn("IllegalArgumentException occur: ", exception);
+		return this.makeErrorResponseEntity(ToiletRegistErrorResult.INVALID_ARGUMENT, exception.getMessage());
+	}
+
+	@ExceptionHandler({NoSuchElementException.class})
+	public ResponseEntity<ErrorResponse> handleNoSuchElementException(final NoSuchElementException exception) {
+		log.warn("NoSuchElementException occur: ", exception);
+		return this.makeErrorResponseEntity(ToiletRegistErrorResult.NO_SUCH_ELEMENT, exception.getMessage());
+	}
+
+	@ExceptionHandler({jakarta.persistence.EntityNotFoundException.class})
+	public ResponseEntity<ErrorResponse> handleEntityNotFoundException(final jakarta.persistence.EntityNotFoundException exception) {
+		log.warn("EntityNotFoundException occur: ", exception);
+		return this.makeErrorResponseEntity(ToiletRegistErrorResult.ENTITY_NOT_FOUND, exception.getMessage());
+	}
+
 	@ExceptionHandler({Exception.class})
 	public ResponseEntity<ErrorResponse> handleException(final Exception exception) {
 		log.warn("Exception occur: ", exception);
@@ -62,11 +79,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 			.body(new ErrorResponse(errorResult.name(), errorResult.getMessage()));
 	}
 
-	@Getter
-	@RequiredArgsConstructor
-	static class ErrorResponse {
-		private final String code;
-		private final String message;
+	private ResponseEntity<ErrorResponse> makeErrorResponseEntity(final ToiletRegistErrorResult errorResult, final String message) {
+		return ResponseEntity.status(errorResult.getHttpStatus())
+			.body(new ErrorResponse(errorResult.name(), errorResult.getMessage()));
+	}
+
+	record ErrorResponse(String code, String message) {
 	}
 
 }

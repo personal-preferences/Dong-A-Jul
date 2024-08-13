@@ -70,6 +70,7 @@ class ToiletRegistControllerTests {
 		// when
 		final ResultActions resultActions = mockMvc.perform(
 			MockMvcRequestBuilders.post(url)
+				.header(USER_ID_HEADER, "")
 				.content(gson.toJson(toiletRegistRequest(lat, lng)))
 				.contentType(MediaType.APPLICATION_JSON)
 		);
@@ -102,7 +103,7 @@ class ToiletRegistControllerTests {
 		final String url = "/toiletregists";
 		doThrow(new ToiletRegistException(ToiletRegistErrorResult.DUPLICATED_TOILET_REGIST_REGISTER))
 			.when(toiletRegistService)
-			.addToiletRegist(lat, lng);
+			.addToiletRegist(toiletRegistRequest(lat, lng));
 
 		// when
 		final ResultActions resultActions = mockMvc.perform(
@@ -129,7 +130,7 @@ class ToiletRegistControllerTests {
 			.toiletRegistLongitude(lng)
 			.build();
 
-		doReturn(toiletRegistResponse).when(toiletRegistService).addToiletRegist(lat, lng);
+		doReturn(toiletRegistResponse).when(toiletRegistService).addToiletRegist(toiletRegistRequest(lat, lng));
 
 		// when
 		final ResultActions resultActions = mockMvc.perform(
@@ -153,6 +154,7 @@ class ToiletRegistControllerTests {
 		assertThat(response.toiletRegistLatitude()).isEqualTo(lat);
 		assertThat(response.toiletRegistLongitude()).isEqualTo(lng);
 	}
+
 	private ToiletRegistRequest toiletRegistRequest(final Double lat, final Double lng){
 		return ToiletRegistRequest.builder()
 			.toiletRegistLatitude(lat)

@@ -3,6 +3,7 @@ package org.personal.registration_service.domain;
 import java.time.LocalDateTime;
 
 import org.personal.registration_service.common.DateParsing;
+import org.personal.registration_service.request.ToiletRegistRequest;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -55,6 +56,7 @@ public class ToiletRegist {
 
 	@Column(name = "toilet_regist_longitude", nullable = false)
 	private Double toiletRegistLongitude;
+
 	//
 	// @Column(name = "toilet_regist_management_agency")
 	// private String toiletRegistManagementAgency;
@@ -125,6 +127,15 @@ public class ToiletRegist {
 	// @Column(name = "user_email")
 	// private String userEmail;
 
+	@Builder
+	public static ToiletRegist of(ToiletRegistRequest request) {
+		return ToiletRegist.builder()
+			.toiletRegistLatitude(request.toiletRegistLatitude())
+			.toiletRegistLongitude(request.toiletRegistLongitude())
+			.toiletRegistIsApproved(false) // 기본값
+			.build();
+	}
+
 	@PrePersist		//엔티티가 처음 저장될 때 기본값을 설정
 	protected void onCreate() {
 		if (toiletRegistDate == null) {
@@ -133,5 +144,10 @@ public class ToiletRegist {
 		if (toiletRegistIsApproved == null) {
 			toiletRegistIsApproved = false;
 		}
+	}
+
+	public void update(Boolean isApproved, LocalDateTime confirmedTime) {
+		this.toiletRegistIsApproved = isApproved;
+		this.toiletRegistConfirmedDate = DateParsing.LdtToStr(confirmedTime);
 	}
 }

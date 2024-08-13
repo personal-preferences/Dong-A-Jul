@@ -2,6 +2,8 @@ package org.personal.registration_service.controller;
 
 import static org.personal.registration_service.common.Constants.*;
 
+import org.personal.registration_service.common.ToiletRegistErrorResult;
+import org.personal.registration_service.exception.ToiletRegistException;
 import org.personal.registration_service.request.ToiletRegistRequest;
 import org.personal.registration_service.response.ToiletRegistResponse;
 import org.personal.registration_service.service.ToiletRegistService;
@@ -25,11 +27,15 @@ public class ToiletRegistController {
 
 	@PostMapping
 	public ResponseEntity<ToiletRegistResponse> addToiletRegist(
-		@RequestHeader(USER_ID_HEADER) final String userId,
-		@RequestBody @Valid final ToiletRegistRequest toiletRegistRequest){
+		@RequestHeader(value = USER_ID_HEADER, required = true) final String userId,
+		@RequestBody @Valid final ToiletRegistRequest request) {
 
-			ToiletRegistResponse response = toiletregistService
-				.addToiletRegist(toiletRegistRequest.toiletRegistLatitude(), toiletRegistRequest.toiletRegistLongitude());
-			return ResponseEntity.status(HttpStatus.CREATED).body(response);
+		if (userId == null || userId.isEmpty()) {
+			throw new ToiletRegistException(ToiletRegistErrorResult.MISSING_HEADER);
+		}
+
+		ToiletRegistResponse response = toiletregistService
+			.addToiletRegist(request);
+		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 }
