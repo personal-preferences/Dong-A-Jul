@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -151,19 +153,16 @@ class LocationControllerTest {
                 .toList();
         locationRepository.saveAll(locationList);
 
-        LocationMarker request = LocationMarker.builder()
-                .southWestLatitude(10.23f)
-                .northEastLatitude(15.23f)
-                .southWestLongitude(32.99f)
-                .northEastLongitude(37.99f)
-                .build();
-
-        String json = objectMapper.writeValueAsString(request);
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("southWestLatitude", "10.23");
+        params.add("northEastLatitude", "15.23");
+        params.add("southWestLongitude", "32.99");
+        params.add("northEastLongitude", "37.99");
 
         // expected
         mockMvc.perform(get("/locations")
-                        .contentType(APPLICATION_JSON)
-                        .content(json))
+                        .params(params)
+                        .contentType(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()", is(6)))
                 .andExpect(jsonPath("$[0].name").value("홍대 화장실0"))
@@ -189,19 +188,16 @@ class LocationControllerTest {
                 .toList();
         locationRepository.saveAll(locationList);
 
-        LocationMarker request = LocationMarker.builder()
-                .southWestLatitude(30.23f)
-                .northEastLatitude(15.23f)
-                .southWestLongitude(62.99f)
-                .northEastLongitude(37.99f)
-                .build();
-
-        String json = objectMapper.writeValueAsString(request);
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("southWestLatitude", "30.23");
+        params.add("northEastLatitude", "15.23");
+        params.add("southWestLongitude", "62.99");
+        params.add("northEastLongitude", "37.99");
 
         // expected
         mockMvc.perform(get("/locations")
-                        .contentType(APPLICATION_JSON)
-                        .content(json))
+                        .params(params)
+                        .contentType(APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.message").value("북동쪽 좌표는 남서쪽 좌표보다 커야 합니다."))
@@ -223,14 +219,12 @@ class LocationControllerTest {
                 .toList();
         locationRepository.saveAll(locationList);
 
-        LocationMarker request = LocationMarker.builder().build();
-
-        String json = objectMapper.writeValueAsString(request);
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
 
         // expected
         mockMvc.perform(get("/locations")
-                        .contentType(APPLICATION_JSON)
-                        .content(json))
+                        .params(params)
+                        .contentType(APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
@@ -239,9 +233,9 @@ class LocationControllerTest {
                 .andExpect(jsonPath("$.validation.northEastLongitude")
                         .value("북동쪽 경도를 입력하세요."))
                 .andExpect(jsonPath("$.validation.southWestLatitude")
-                        .value("서남쪽 위도를 입력하세요."))
+                        .value("남서쪽 위도를 입력하세요."))
                 .andExpect(jsonPath("$.validation.southWestLongitude")
-                        .value("서남쪽 경도를 입력하세요."))
+                        .value("남서쪽 경도를 입력하세요."))
                 .andDo(print());
     }
 
@@ -260,59 +254,27 @@ class LocationControllerTest {
                 .toList();
         locationRepository.saveAll(locationList);
 
-        LocationMarker request = LocationMarker.builder()
-                .northEastLatitude(-91f)
-                .northEastLongitude(-181f)
-                .southWestLatitude(91f)
-                .southWestLongitude(181f)
-                .build();
-
-        String json = objectMapper.writeValueAsString(request);
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("southWestLatitude", "91");
+        params.add("northEastLatitude", "-91");
+        params.add("southWestLongitude", "181");
+        params.add("northEastLongitude", "-181");
 
         // expected
         mockMvc.perform(get("/locations")
-                        .contentType(APPLICATION_JSON)
-                        .content(json))
+                        .params(params)
+                        .contentType(APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.code").value("400"))
                 .andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
-                .andExpect(jsonPath("$.validation.northEastLatitude")
-                        .value("위도는 -90보다 크거나 같아야 합니다."))
-                .andExpect(jsonPath("$.validation.northEastLongitude")
-                        .value("경도는 -180보다 크거나 같아야 합니다."))
                 .andExpect(jsonPath("$.validation.southWestLatitude")
-                        .value("위도는 90보다 작거나 같아야 합니다."))
+                        .value("남서쪽 위도는 90보다 작거나 같아야 합니다."))
+                .andExpect(jsonPath("$.validation.northEastLatitude")
+                        .value("북동쪽 위도는 -90보다 크거나 같아야 합니다."))
                 .andExpect(jsonPath("$.validation.southWestLongitude")
-                        .value("경도는 180보다 작거나 같아야 합니다."))
-                .andDo(print());
-    }
-
-    @Test
-    @DisplayName("페이지를 0으로 요청하면 첫 페이지를 가져온다.")
-    void getLocationListByPage0() throws Exception {
-        // given
-        List<Location> requestLocationList = IntStream.range(0, 30)
-                .mapToObj(i -> Location.builder()
-                        .name("홍대 화장실" + i)
-                        .roadAddress("서울 마포구 서교동 1길" + i)
-                        .jibunAddress("서울 마포구 동교동 150-1" + i)
-                        .latitude(10.23f + i)
-                        .longitude(32.99f + i)
-                        .build())
-                .toList();
-
-        locationRepository.saveAll(requestLocationList);
-
-        // expected
-        mockMvc.perform(get("/locations?page=0&size=10")
-                        .contentType(APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", is(10)))
-                .andExpect(jsonPath("$[0].name").value("홍대 화장실29"))
-                .andExpect(jsonPath("$[0].roadAddress").value("서울 마포구 서교동 1길29"))
-                .andExpect(jsonPath("$[0].jibunAddress").value("서울 마포구 동교동 150-129"))
-                .andExpect(jsonPath("$[0].latitude").value("39.23"))
-                .andExpect(jsonPath("$[0].longitude").value("61.99"))
+                        .value("남서쪽 경도는 180보다 작거나 같아야 합니다."))
+                .andExpect(jsonPath("$.validation.northEastLongitude")
+                        .value("북동쪽 경도는 -180보다 크거나 같아야 합니다."))
                 .andDo(print());
     }
 
