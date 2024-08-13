@@ -1,5 +1,5 @@
 <template>
-  <div class="toilet-details">
+  <div class="toilet-details" v-if="toiletInfo">
     <h2>부가정보</h2>
 
     <div class="info-group">
@@ -138,4 +138,33 @@ const getDisabledToiletsNumber = () => {
   if (maleDisabledToilets === null && femaleDisabledToilets === null) return '정보 없음'
   return (maleDisabledToilets || 0) + (femaleDisabledToilets || 0)
 }
+
+
+// const toiletInfo = ref({
+//     "toiletInfoId": 1,
+//     "isDeleted": false,
+//     "toiletInfoManagementAgency": "Public Agency",
+//     "toiletInfoPhoneNumber": "123-456-7890",
+//     "toiletInfoOpeningHours": "09:00 - 18:00",
+//     "toiletInfoOpeningHoursDetails": "Open all week except holidays",
+//     "toiletInfoInstallationYearMonth": "2024-07",
+//     "toiletInfoOwnershipType": "Public",
+//     "toiletInfoWasteDisposalMethod": "Sewage",
+//     "toiletInfoSafetyFacilityInstallationIsRequired": true,
+//     "toiletInfoEmergencyBellIsInstalled": true,
+//     "toiletInfoEmergencyBellLocation": "Near entrance",
+//     "toiletInfoEntranceCCTVIsInstalled": true,
+//     "toiletInfoDiaperChangingTableIsAvailable": true,
+//     "toiletInfoDiaperChangingTableLocation": "Corner near entrance",
+//     "toiletInfoMaleToiletsNumber": 3,
+//     "toiletInfoMaleUrinalsNumber": 4,
+//     "toiletInfoMaleDisabledToiletsNumber": 1,
+//     "toiletInfoMaleDisabledUrinalsNumber": 1,
+//     "toiletInfoMaleChildToiletsNumber": 1,
+//     "toiletInfoMaleChildUrinalsNumber": 1,
+//     "toiletInfoFemaleToiletsNumber": 4,
+//     "toiletInfoFemaleDisabledToiletsNumber": 1,
+//     "toiletInfoFemaleChildToiletsNumber": 1,
+//     "toiletLocationId": 1
+// })
 </script>
