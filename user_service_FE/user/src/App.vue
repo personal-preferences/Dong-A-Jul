@@ -21,27 +21,25 @@ import axios from '@/assets/axios';  // Axios 인스턴스를 import
 
 const email = ref('');
 const password = ref('');
-// const router = useRouter();
 
+// 로그인 핸들러
 const handleLogin = async () => {
-  
-  console.log(email, password);
-try {
-  
-  const response = await axios.post('/login', 
-      {
-          userEmail: email.value,
-          userPassword: password.value
-      }
-  );
-  
-  localStorage.setItem('access', response.data.access);
-  document.cookie = `refresh=${response.data.refresh}; path=/; HttpOnly; Secure; SameSite=Strict;`;
+  try {
+    const response = await axios.post('/login', {
+        userEmail: email.value,
+        userPassword: password.value
+    });
+    
+    // access token 처리
+    const access = response.headers['access'];
+    console.log('access token:', access);
+    localStorage.setItem('access', access);
 
-  // router.push('/dashboard');
-} catch (error) {
-  console.error('로그인 실패:', error);
-}
+    // refresh token은 쿠키로 처리되므로, 클라이언트에서 직접 접근하지 않습니다.
+    console.log('로그인 성공! 필요한 요청에서 자동으로 쿠키를 사용합니다.');
+
+  } catch (error) {
+    console.error('로그인 실패:', error);
+  }
 };
 </script>
-
