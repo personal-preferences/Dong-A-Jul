@@ -101,4 +101,27 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
             return Optional.empty();
         }
     }
+
+    @Override
+    public Optional<ReviewSummary> getReviewSummaryByUserId(Long userId) {
+        QReview review = QReview.review;
+
+        JPQLQuery<Tuple> query = jpaQueryFactory
+                .select(review.reviewScore.avg(), review.count())
+                .from(review)
+                .where(review.userId.eq(userId), review.reviewIsDeleted.eq(Boolean.FALSE));
+
+        Tuple result = query.fetchOne();
+
+        if (result != null) {
+            Double averageScore = result.get(0, Double.class);
+            long reviewCount = result.get(1, Long.class);
+
+            averageScore = (averageScore != null) ? averageScore : 0.0;
+
+            return Optional.of(new ReviewSummary(averageScore, reviewCount, userId));
+        } else {
+            return Optional.empty();
+        }
+    }
 }

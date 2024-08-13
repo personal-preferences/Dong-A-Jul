@@ -5,12 +5,12 @@ import lombok.Builder;
 public record ReviewSummary(
         Double averageScore,
         Long reviewCount,
-        Long locationId
+        Long id
 ) {
     @Builder
-    public ReviewSummary(Double averageScore, Long reviewCount, Long locationId) {
+    public ReviewSummary(Double averageScore, Long reviewCount, Long id) {
         this.averageScore = averageScore;
         this.reviewCount = reviewCount;
-        this.locationId = locationId;
+        this.id = id;
     }
 }

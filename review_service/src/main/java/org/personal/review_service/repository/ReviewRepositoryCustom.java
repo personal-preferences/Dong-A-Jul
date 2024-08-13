@@ -17,4 +17,6 @@ public interface ReviewRepositoryCustom {
     Page<Review> findReviewsByLocationId(Long locationId, Pageable pageable);
 
     Optional<ReviewSummary> getReviewSummaryByLocationId(Long locationId);
+
+    Optional<ReviewSummary> getReviewSummaryByUserId(Long userId);
 }

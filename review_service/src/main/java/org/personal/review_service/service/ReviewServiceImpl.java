@@ -78,6 +78,12 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
+    public ReviewSummary getReviewSummaryByUserId(Long userId) {
+        return reviewRepository.getReviewSummaryByUserId(userId)
+                .orElseThrow(() -> new ReviewNotFoundException("다음 회원 ID에 알맞는 리뷰를 찾지 못했습니다: " + userId));
+    }
+
+    @Override
     public Boolean deleteReviewByReviewId(Long reviewId) {
         Review review = reviewRepository.findByReviewId(reviewId)
                 .orElseThrow(() -> new ReviewNotFoundException("다음 리뷰 ID에 알맞는 리뷰를 찾지 못했습니다: " + reviewId));

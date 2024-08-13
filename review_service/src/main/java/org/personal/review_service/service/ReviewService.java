@@ -19,4 +19,6 @@ public interface ReviewService {
     Boolean deleteReviewByReviewId(Long reviewId);
 
     ReviewSummary getReviewSummaryByLocationId(Long locationId);
+
+    ReviewSummary getReviewSummaryByUserId(Long userId);
 }

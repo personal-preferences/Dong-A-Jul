@@ -71,10 +71,17 @@ public class ReviewController {
         }
     }
 
-    @GetMapping("/summary/{locationId}")
+    @GetMapping("/location/{locationId}/summary")
     public ResponseEntity<ReviewSummary> getReviewSummaryByLocationId(
             @PathVariable Long locationId) {
         ReviewSummary reviewSummary = reviewService.getReviewSummaryByLocationId(locationId);
+        return new ResponseEntity<>(reviewSummary, HttpStatus.OK);
+    }
+
+    @GetMapping("/user/{userId}/summary")
+    public ResponseEntity<ReviewSummary> getReviewSummaryByUserId(
+            @PathVariable Long userId) {
+        ReviewSummary reviewSummary = reviewService.getReviewSummaryByUserId(userId);
         return new ResponseEntity<>(reviewSummary, HttpStatus.OK);
     }
 
