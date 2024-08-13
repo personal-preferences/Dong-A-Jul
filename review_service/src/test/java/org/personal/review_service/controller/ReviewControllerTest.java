@@ -23,6 +23,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
+import static org.personal.review_service.common.Constants.PAGE_SIZE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -111,7 +112,7 @@ class ReviewControllerTest {
 
         // 정렬된 리스트 (ASC 정렬 기준, direction에 맞춤)
         List<ReviewResponse> reviewResponses = Arrays.asList(reviewResponse2, reviewResponse1);
-        Page<ReviewResponse> reviewResponsePage = new PageImpl<>(reviewResponses, PageRequest.of(Integer.parseInt(page), 10, Sort.by(Sort.Order.by(sort).with(Sort.Direction.fromString(direction)))), reviewResponses.size());
+        Page<ReviewResponse> reviewResponsePage = new PageImpl<>(reviewResponses, PageRequest.of(Integer.parseInt(page), PAGE_SIZE, Sort.by(Sort.Order.by(sort).with(Sort.Direction.fromString(direction)))), reviewResponses.size());
 
         when(reviewService.getReviewListByUserId(eq(1L), any(Pageable.class))).thenReturn(reviewResponsePage);
 
@@ -162,7 +163,7 @@ class ReviewControllerTest {
 
         // 정렬된 리스트 (DESC 정렬 기준, reviewScore 기준)
         List<ReviewResponse> reviewResponses = Arrays.asList(reviewResponse2, reviewResponse1);
-        Page<ReviewResponse> reviewResponsePage = new PageImpl<>(reviewResponses, PageRequest.of(Integer.parseInt(page), 10, Sort.by(Sort.Order.by(sort).with(Sort.Direction.fromString(direction)))), reviewResponses.size());
+        Page<ReviewResponse> reviewResponsePage = new PageImpl<>(reviewResponses, PageRequest.of(Integer.parseInt(page), PAGE_SIZE, Sort.by(Sort.Order.by(sort).with(Sort.Direction.fromString(direction)))), reviewResponses.size());
 
         when(reviewService.getReviewListByLocationId(eq(1L), any(Pageable.class))).thenReturn(reviewResponsePage);
 
@@ -191,7 +192,7 @@ class ReviewControllerTest {
         ResultActions result = mockMvc.perform(get("/reviews/location/{locationId}", 1L)
                 .param("sort", "reviewScore")
                 .param("direction", "DESC")
-                .param("page", "0")
+                .param("page", "1")
                 .contentType(MediaType.APPLICATION_JSON));
 
         // then

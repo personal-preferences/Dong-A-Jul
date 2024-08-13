@@ -10,12 +10,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static org.personal.review_service.common.Constants.PAGE_SIZE;
 
 @RestController
 @RequestMapping("/reviews")
@@ -48,12 +51,8 @@ public class ReviewController {
     @GetMapping("/user/{userId}")
     public ResponseEntity<Page<ReviewResponse>> getReviewListByUserId(
             @PathVariable Long userId,
-            @RequestParam(defaultValue = "reviewRegisteredDate") String sort,
-            @RequestParam(defaultValue = "DESC") String direction,
-            @RequestParam(defaultValue = "0") int page) {
+            @PageableDefault(size = PAGE_SIZE, sort = "reviewRegisteredDate", direction = Sort.Direction.DESC) Pageable pageable) {
         try {
-            Sort.Direction sortDirection = Sort.Direction.fromString(direction);
-            Pageable pageable = PageRequest.of(page, 10, Sort.by(sortDirection, sort));
             Page<ReviewResponse> reviewResponses = reviewService.getReviewListByUserId(userId, pageable);
             return new ResponseEntity<>(reviewResponses, HttpStatus.OK);
         } catch (ReviewNotFoundException e) {
@@ -61,16 +60,12 @@ public class ReviewController {
         }
     }
 
+
     @GetMapping("/location/{locationId}")
     public ResponseEntity<Page<ReviewResponse>> getReviewListByLocationId(
             @PathVariable Long locationId,
-            @RequestParam(defaultValue = "reviewRegisteredDate") String sort,
-            @RequestParam(defaultValue = "DESC") String direction,
-            @RequestParam(defaultValue = "0") int page
-    ) {
+            @PageableDefault(size = PAGE_SIZE, sort = "reviewRegisteredDate", direction = Sort.Direction.DESC) Pageable pageable) {
         try {
-            Sort.Direction sortDirection = Sort.Direction.fromString(direction);
-            Pageable pageable = PageRequest.of(page, 10, Sort.by(sortDirection, sort));
             Page<ReviewResponse> reviewResponses = reviewService.getReviewListByLocationId(locationId, pageable);
             return new ResponseEntity<>(reviewResponses, HttpStatus.OK);
         } catch (ReviewNotFoundException e) {
