@@ -1,8 +1,9 @@
 <template>
+  <!-- 리뷰 헤더 -->
   <div class="review-header">
-<!-- 리뷰 헤더 -->
-    <div class="order">
-<!--  정렬 기준 선택(드롭다운)  -->
+    <ReviewSummary :type="'locationId'" :id="props.id"/>
+    <!--  정렬 기준 선택(드롭다운)  -->
+    <div class="review-order">
     </div>
   </div>
   <div class="review-list">
@@ -11,33 +12,27 @@
     </div>
     <div v-else>
       <div v-for="(review, index) in copyReviews" :key="index" class="review-item">
-        <p v-if="review.reviewIsDeleted" class="deleted-review">작성자에 의해 삭제된 리뷰입니다.</p>
-        <div v-else>
-          <Review :review="review"/>
-        </div>
-        <hr />
+        <Review :review="review"/>
       </div>
     </div>
   </div>
-  <div class="select-page">
-<!-- 페이지 선택 or 드래그 처리 -->
+  <!-- 페이지 선택 or 드래그 처리 -->
+  <div class="pagenation-container">
   </div>
 </template>
 
 <script setup>
 import axios from 'axios';
-import { ref, onMounted } from 'vue';
-import { format } from 'date-fns';
+import {ref, onMounted} from 'vue';
+import {format} from 'date-fns';
 import Review from "@/components/review/Review.vue";
-// import { useRoute } from 'vue-router';
+import ReviewSummary from "@/components/review/ReviewSummary.vue";
 
-// List로 받아오는 재사용성을 고려하여 userId, locationId 조회 둘 다 활용될 수 있도록 type 추가.
-// type과 id를 받아오는 방식으로 설계
-// const type = useRoute().params.type;
-// const id = useRoute().params.id;
-
-const type = "locationId"
-const id = 1;
+// 재사용성을 고려하여 userId, locationId 조회 둘 다 활용될 수 있도록 type 추가.
+const props = defineProps({
+  type: String,
+  id: Number
+})
 
 const reviews = [];
 const copyReviews = ref([{}]);
@@ -45,8 +40,7 @@ const loadingState = ref(true);
 
 onMounted(async () => {
   try {
-    const response = await axios.get(`/api/reviews/${type}/${id}`);
-    loadingState.value = false;
+    const response = await axios.get(`/api/reviews/${props.type}/${props.id}`);
     reviews.value = response.data.ReviewResponse;
 
     for (let i = 0; i < reviews.value.length; i++) {
@@ -71,15 +65,15 @@ onMounted(async () => {
 
   } catch (error) {
     console.error("Error fetching reviews:", error);
+  } finally {
+    loadingState.value = false;
   }
 });
 </script>
 
 <style scoped>
 .review-item {
-}
-
-.deleted-review {
-  color: dimgray;
+  border-bottom: 1px solid;
+  padding: 10px;
 }
 </style>
