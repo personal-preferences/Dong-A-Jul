@@ -13,10 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
+import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -85,11 +87,9 @@ public class UserController {
     }
 
     private String responseValidationErrors(Errors errors) {
-
-        StringBuilder returnValue= new StringBuilder();
-        for (int i = 0; i < errors.getAllErrors().size(); i++) {
-            returnValue.append(errors.getAllErrors().get(i).getDefaultMessage()).append("\n");
-        }
-        return returnValue.toString();
+        return errors.getAllErrors().stream()
+                .map(ObjectError::getDefaultMessage)
+                .collect(Collectors.joining("\n"));
     }
+
 }
