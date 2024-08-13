@@ -8,6 +8,8 @@ import org.personal.review_service.repository.ReviewRepository;
 import org.personal.review_service.request.ReviewCreate;
 import org.personal.review_service.response.ReviewResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -48,29 +50,25 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<ReviewResponse> getReviewListByUserId(Long userId) {
-        List<Review> reviewList = reviewRepository.findReviewsByUserId(userId);
+    public Page<ReviewResponse> getReviewListByUserId(Long userId, Pageable pageable) {
+        Page<Review> reviewList = reviewRepository.findReviewsByUserId(userId, pageable);
 
         if (reviewList.isEmpty()) {
             throw new ReviewNotFoundException("다음 회원 ID에 알맞는 리뷰를 찾지 못했습니다: " + userId);
         }
 
-        return reviewList.stream()
-                .map(reviewResponseBuilder::build)
-                .collect(Collectors.toList());
+        return reviewList.map(reviewResponseBuilder::build);
     }
 
     @Override
-    public List<ReviewResponse> getReviewListByLocationId(Long locationId) {
-        List<Review> reviewList = reviewRepository.findReviewsByLocationId(locationId);
+    public Page<ReviewResponse> getReviewListByLocationId(Long locationId, Pageable pageable) {
+        Page<Review> reviewList = reviewRepository.findReviewsByLocationId(locationId, pageable);
 
         if (reviewList.isEmpty()) {
             throw new ReviewNotFoundException("다음 위치 ID에 알맞는 리뷰를 찾지 못했습니다: " + locationId);
         }
 
-        return reviewList.stream()
-                .map(reviewResponseBuilder::build)
-                .collect(Collectors.toList());
+        return reviewList.map(reviewResponseBuilder::build);
     }
 
 

@@ -1,6 +1,8 @@
 package org.personal.review_service.repository;
 
 import org.personal.review_service.domain.Review;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
@@ -9,7 +11,7 @@ public interface ReviewRepositoryCustom {
 
     Optional<Review> findByReviewId(Long reviewId);
 
-    List<Review> findReviewsByUserId(Long userId);
+    Page<Review> findReviewsByUserId(Long userId, Pageable pageable);
 
-    List<Review> findReviewsByLocationId(Long locationId);
+    Page<Review> findReviewsByLocationId(Long locationId, Pageable pageable);
 }

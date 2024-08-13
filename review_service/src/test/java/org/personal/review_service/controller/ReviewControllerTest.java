@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.*;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -20,9 +21,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
+import static org.personal.review_service.common.Constants.PAGE_SIZE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -86,7 +87,7 @@ class ReviewControllerTest {
     @DisplayName("리뷰 단일 조회 - 예외 발생")
     void getReviewNotFound() throws Exception {
         // given
-        when(reviewService.getReview(anyLong())).thenThrow(new ReviewNotFoundException("Review not found"));
+        when(reviewService.getReview(anyLong())).thenThrow(new ReviewNotFoundException("해당 리뷰를 찾을 수 없습니다."));
 
         // when
         ResultActions result = mockMvc.perform(get("/reviews/{reviewId}", 1L)
@@ -100,21 +101,33 @@ class ReviewControllerTest {
     @Test
     @DisplayName("리뷰 회원ID로 조회")
     void getReviewListByUserId() throws Exception {
+        // 정렬 및 페이지 관련 파라미터 정의
+        String sort = "reviewRegisteredDate";
+        String direction = "ASC";
+        String page = "0";
+
         // given
-        ReviewResponse reviewResponse1 = new ReviewResponse(1L, "저에게 큰 도움이 되었습니다!", 5, "2024-01-01 12:00:00", false, 1L, 1L);
-        ReviewResponse reviewResponse2 = new ReviewResponse(2L, "좋은 장소입니다!", 4, "2024-01-02 14:00:00", false, 1L, 2L);
-        List<ReviewResponse> reviewResponses = Arrays.asList(reviewResponse1, reviewResponse2);
-        when(reviewService.getReviewListByUserId(anyLong())).thenReturn(reviewResponses);
+        ReviewResponse reviewResponse1 = new ReviewResponse(1L, "저에게 큰 도움이 되었습니다!", 5, "2024-01-03 14:00:00", false, 1L, 1L);
+        ReviewResponse reviewResponse2 = new ReviewResponse(2L, "좋은 장소입니다!", 4, "2024-01-02 12:00:00", false, 1L, 2L);
+
+        // 정렬된 리스트 (ASC 정렬 기준, direction에 맞춤)
+        List<ReviewResponse> reviewResponses = Arrays.asList(reviewResponse2, reviewResponse1);
+        Page<ReviewResponse> reviewResponsePage = new PageImpl<>(reviewResponses, PageRequest.of(Integer.parseInt(page), PAGE_SIZE, Sort.by(Sort.Order.by(sort).with(Sort.Direction.fromString(direction)))), reviewResponses.size());
+
+        when(reviewService.getReviewListByUserId(eq(1L), any(Pageable.class))).thenReturn(reviewResponsePage);
 
         // when
         ResultActions result = mockMvc.perform(get("/reviews/user/{userId}", 1L)
+                .param("sort", sort)
+                .param("direction", direction)
+                .param("page", page)
                 .contentType(MediaType.APPLICATION_JSON));
 
         // then
         result.andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2))) // 리스트 크기 확인
-                .andExpect(jsonPath("$[0].reviewId").value(reviewResponse1.reviewId()))
-                .andExpect(jsonPath("$[1].reviewId").value(reviewResponse2.reviewId()))
+                .andExpect(jsonPath("$.content", hasSize(2)))
+                .andExpect(jsonPath("$.content[0].reviewId").value(reviewResponse2.reviewId()))  // ASC이므로 reviewResponse2가 첫번째로 나와야 함
+                .andExpect(jsonPath("$.content[1].reviewId").value(reviewResponse1.reviewId()))  // reviewResponse1가 두번째
                 .andDo(print());
     }
 
@@ -122,10 +135,13 @@ class ReviewControllerTest {
     @DisplayName("리뷰 회원ID로 조회 - 예외 발생")
     void getReviewListByUserIdNotFound() throws Exception {
         // given
-        when(reviewService.getReviewListByUserId(anyLong())).thenThrow(new ReviewNotFoundException("No reviews found for user"));
+        when(reviewService.getReviewListByUserId(eq(1L), any(Pageable.class))).thenThrow(new ReviewNotFoundException("유저에 해당하는 리뷰를 찾을 수 없습니다."));
 
         // when
         ResultActions result = mockMvc.perform(get("/reviews/user/{userId}", 1L)
+                .param("sort", "reviewRegisteredDate")
+                .param("direction", "DESC")
+                .param("page", "0")
                 .contentType(MediaType.APPLICATION_JSON));
 
         // then
@@ -136,21 +152,33 @@ class ReviewControllerTest {
     @Test
     @DisplayName("리뷰 위치ID로 조회")
     void getReviewListByLocationId() throws Exception {
+        // 정렬 및 페이지 관련 파라미터 정의
+        String sort = "reviewScore";
+        String direction = "DESC";
+        String page = "0";
+
         // given
-        ReviewResponse reviewResponse1 = new ReviewResponse(1L, "저에게 큰 도움이 되었습니다!", 5, "2024-01-01 12:00:00", false, 1L, 1L);
-        ReviewResponse reviewResponse2 = new ReviewResponse(2L, "좋은 장소입니다!", 4, "2024-01-02 14:00:00", false, 2L, 1L);
-        List<ReviewResponse> reviewResponses = Arrays.asList(reviewResponse1, reviewResponse2);
-        when(reviewService.getReviewListByLocationId(anyLong())).thenReturn(reviewResponses);
+        ReviewResponse reviewResponse1 = new ReviewResponse(1L, "저에게 큰 도움이 되었습니다!", 4, "2024-01-01 12:00:00", false, 1L, 1L);
+        ReviewResponse reviewResponse2 = new ReviewResponse(2L, "좋은 장소입니다!", 5, "2024-01-02 14:00:00", false, 2L, 1L);
+
+        // 정렬된 리스트 (DESC 정렬 기준, reviewScore 기준)
+        List<ReviewResponse> reviewResponses = Arrays.asList(reviewResponse2, reviewResponse1);
+        Page<ReviewResponse> reviewResponsePage = new PageImpl<>(reviewResponses, PageRequest.of(Integer.parseInt(page), PAGE_SIZE, Sort.by(Sort.Order.by(sort).with(Sort.Direction.fromString(direction)))), reviewResponses.size());
+
+        when(reviewService.getReviewListByLocationId(eq(1L), any(Pageable.class))).thenReturn(reviewResponsePage);
 
         // when
         ResultActions result = mockMvc.perform(get("/reviews/location/{locationId}", 1L)
+                .param("sort", sort)
+                .param("direction", direction)
+                .param("page", page)
                 .contentType(MediaType.APPLICATION_JSON));
 
         // then
         result.andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2))) // 리스트 크기 확인
-                .andExpect(jsonPath("$[0].reviewId").value(reviewResponse1.reviewId()))
-                .andExpect(jsonPath("$[1].reviewId").value(reviewResponse2.reviewId()))
+                .andExpect(jsonPath("$.content", hasSize(2)))
+                .andExpect(jsonPath("$.content[0].reviewId").value(reviewResponse2.reviewId()))  // DESC이므로 reviewResponse2가 첫번째로 나와야 함
+                .andExpect(jsonPath("$.content[1].reviewId").value(reviewResponse1.reviewId()))  // reviewResponse1가 두번째
                 .andDo(print());
     }
 
@@ -158,10 +186,13 @@ class ReviewControllerTest {
     @DisplayName("리뷰 위치ID로 조회 - 예외 발생")
     void getReviewListByLocationIdNotFound() throws Exception {
         // given
-        when(reviewService.getReviewListByLocationId(anyLong())).thenThrow(new ReviewNotFoundException("No reviews found for location"));
+        when(reviewService.getReviewListByLocationId(eq(1L), any(Pageable.class))).thenThrow(new ReviewNotFoundException("위치에 해당하는 리뷰를 찾을 수 없습니다."));
 
         // when
         ResultActions result = mockMvc.perform(get("/reviews/location/{locationId}", 1L)
+                .param("sort", "reviewScore")
+                .param("direction", "DESC")
+                .param("page", "1")
                 .contentType(MediaType.APPLICATION_JSON));
 
         // then
@@ -188,7 +219,7 @@ class ReviewControllerTest {
     @DisplayName("리뷰 삭제 - 예외 발생")
     void deleteReviewNotFound() throws Exception {
         // given
-        when(reviewService.deleteReviewByReviewId(anyLong())).thenThrow(new ReviewNotFoundException("Review not found"));
+        when(reviewService.deleteReviewByReviewId(anyLong())).thenThrow(new ReviewNotFoundException("해당 리뷰를 찾을 수 없습니다."));
 
         // when
         ResultActions result = mockMvc.perform(delete("/reviews/{reviewId}", 1L)

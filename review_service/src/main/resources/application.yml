@@ -1,5 +1,26 @@
 spring:
   application:
     name: review_service
+  datasource:
+    url: jdbc:postgresql://localhost:5432/daj-review
+    username: postgres
+    password: postgres
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true
+        default-page-size: 10
+
 server:
   port: 8085
+

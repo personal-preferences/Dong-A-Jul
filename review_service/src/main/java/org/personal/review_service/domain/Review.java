@@ -24,7 +24,7 @@ public class Review {
     @Column(name = "review_score", nullable = false)
     private Integer reviewScore;
 
-    @Column(name = "review_registred_date", nullable = false)
+    @Column(name = "review_registered_date", nullable = false)
     private String reviewRegisteredDate;
 
     @Column(name = "review_is_deleted", nullable = false)
