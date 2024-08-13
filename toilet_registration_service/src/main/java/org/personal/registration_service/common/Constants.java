@@ -10,4 +10,5 @@ public final class Constants {
 	public final static String ADMIN = "admin";
 	public final static String APPROVE = "approve";
 	public final static String REJECT = "reject";
+	public final static int PAGE_SIZE = 10;
 }
