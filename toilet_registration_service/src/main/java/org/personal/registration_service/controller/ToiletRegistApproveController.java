@@ -8,6 +8,7 @@ import org.personal.registration_service.request.ToiletRegistApproveRequest;
 import org.personal.registration_service.response.ToiletRegistApproveResponse;
 import org.personal.registration_service.response.ToiletRegistResponse;
 import org.personal.registration_service.service.ToiletRegistApproveService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,5 +54,11 @@ public class ToiletRegistApproveController {
 	public ResponseEntity<ToiletRegistResponse> getToiletRegist(@RequestParam long toiletRegistId){
 		ToiletRegistResponse response = toiletRegistApproveService.getToiletRegist(toiletRegistId);
 		return ResponseEntity.status(HttpStatus.OK).body(response);
+	}
+
+	@GetMapping
+	public ResponseEntity<Page<ToiletRegistResponse>> listToiletRegist(@RequestParam(defaultValue = "0") int pageNum){
+		Page<ToiletRegistResponse> responses = toiletRegistApproveService.listToiletRegist(pageNum);
+		return ResponseEntity.status(HttpStatus.OK).body(responses);
 	}
 }
