@@ -2,7 +2,10 @@ package org.personal.registration_service.controller;
 
 import static org.mockito.Mockito.*;
 import static org.personal.registration_service.common.Constants.*;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,6 +19,10 @@ import org.personal.registration_service.exception.ToiletRegistException;
 import org.personal.registration_service.request.ToiletRegistApproveRequest;
 import org.personal.registration_service.response.ToiletRegistResponse;
 import org.personal.registration_service.service.impl.ToiletRegistApproveServiceImpl;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
@@ -156,6 +163,36 @@ class ToiletRegistApproveControllerTests {
 
 		// then
 		resultActions.andExpect(status().isNotFound());
+	}
+
+	@Test
+	void 화장실등록신청전체조회성공() throws Exception {
+		// given
+		final String url = "/approves";
+		ToiletRegistResponse response1 = ToiletRegistResponse.builder()
+			.toiletRegistId(1L)
+			.toiletRegistToiletName("화장실 1")
+			.build();
+
+		ToiletRegistResponse response2 = ToiletRegistResponse.builder()
+			.toiletRegistId(2L)
+			.toiletRegistToiletName("화장실 2")
+			.build();
+
+		Pageable pageable = PageRequest.of(0, 10);
+		Page<ToiletRegistResponse> page = new PageImpl<>(Arrays.asList(response1, response2), pageable, 2);
+
+		when(toiletRegistApproveService.listToiletRegist(0)).thenReturn(page);
+
+		// when & then
+		mockMvc.perform(get(url) // 실제 엔드포인트로 변경하세요
+				.param("pageNum", "0")
+				.contentType(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.content[0].toiletRegistId").value(1L))
+			.andExpect(jsonPath("$.content[0].toiletRegistToiletName").value("화장실 1"))
+			.andExpect(jsonPath("$.content[1].toiletRegistId").value(2L))
+			.andExpect(jsonPath("$.content[1].toiletRegistToiletName").value("화장실 2"));
 	}
 
 	private ToiletRegistApproveRequest toiletRegistRequest() {
