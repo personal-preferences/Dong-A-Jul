@@ -1,6 +1,7 @@
 package org.personal.review_service.repository;
 
 import org.personal.review_service.domain.Review;
+import org.personal.review_service.response.ReviewSummary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -14,4 +15,6 @@ public interface ReviewRepositoryCustom {
     Page<Review> findReviewsByUserId(Long userId, Pageable pageable);
 
     Page<Review> findReviewsByLocationId(Long locationId, Pageable pageable);
+
+    Optional<ReviewSummary> getReviewSummaryByLocationId(Long locationId);
 }
