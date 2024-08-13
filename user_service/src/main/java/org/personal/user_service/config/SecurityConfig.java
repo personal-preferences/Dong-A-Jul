@@ -57,7 +57,7 @@ public class SecurityConfig {
                     @Override
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                         CorsConfiguration configuration = new CorsConfiguration();
-//                        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "https://daersh.netlify.app")); // 두 도메인 모두 허용
+                        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173")); // 두 도메인 모두 허용
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));
