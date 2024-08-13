@@ -1,5 +1,6 @@
 package org.personal.registration_service.controller;
 
+import static org.mockito.Mockito.*;
 import static org.personal.registration_service.common.Constants.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -9,8 +10,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.personal.registration_service.common.ToiletRegistErrorResult;
 import org.personal.registration_service.exception.GlobalExceptionHandler;
+import org.personal.registration_service.exception.ToiletRegistException;
 import org.personal.registration_service.request.ToiletRegistApproveRequest;
+import org.personal.registration_service.response.ToiletRegistResponse;
 import org.personal.registration_service.service.impl.ToiletRegistApproveServiceImpl;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -84,6 +88,74 @@ class ToiletRegistApproveControllerTests {
 
 		// then
 		resultActions.andExpect(status().isOk());
+	}
+
+	@Test
+	public void 특정화장실등록조회_성공() throws Exception {
+		// given
+		final String url = "/approves/1";
+
+		ToiletRegistResponse response = ToiletRegistResponse.builder()
+			.toiletRegistId(1L)
+			.toiletRegistDate("2023-01-01")
+			.toiletRegistIsApproved(true)
+			.toiletRegistConfirmedDate("2023-01-02")
+			.toiletRegistToiletName("예시 화장실")
+			.toiletRegistRoadNameAddress("서울특별시")
+			.toiletRegistNumberAddress("123-456")
+			.toiletRegistLatitude(37.5665)
+			.toiletRegistLongitude(126.9780)
+			.toiletRegistManagementAgency("관리기관")
+			.toiletRegistPhoneNumber("010-1234-5678")
+			.toiletRegistOpeningHours("09:00-18:00")
+			.toiletRegistOpeningHoursDetails("평일만 운영")
+			.toiletRegistInstallationYearMonth("2020-01")
+			.toiletRegistOwnershipType("공공")
+			.toiletRegistWasteDisposalMethod("하수")
+			.toiletInfoSafetyFacilityInstallationIsRequired(true)
+			.toiletRegistEmergencyBellIsInstalled(true)
+			.toiletRegistEmergencyBellLocation("입구 근처")
+			.toiletRegistEntranceCctvIsInstalled(true)
+			.toiletRegistDiaperChangingTableIsAvailable(true)
+			.toiletRegistDiaperChangingTableLocation("메인 홀 근처")
+			.toiletRegistMaleToiletsNumber(3)
+			.toiletRegistMaleUrinalsNumber(2)
+			.toiletRegistMaleDisabledToiletsNumber(1)
+			.toiletRegistMaleDisabledUrinalsNumber(1)
+			.toiletRegistMaleChildToiletsNumber(1)
+			.toiletRegistMaleChildUrinalsNumber(1)
+			.toiletRegistFemaleToiletsNumber(3)
+			.toiletRegistFemaleDisabledToiletsNumber(1)
+			.toiletRegistFemaleChildToiletsNumber(1)
+			.userEmail("user@example.com")
+			.build();
+
+		when(toiletRegistApproveService.getToiletRegist(1L)).thenReturn(response);
+
+		// when
+		final ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get(url)
+			.param("toiletRegistId", "1")
+			.contentType(MediaType.APPLICATION_JSON));
+
+		// then
+		resultActions.andExpect(status().isOk())
+			.andExpect(jsonPath("$.toiletRegistToiletName").value("예시 화장실"));
+	}
+
+	@Test
+	public void 특정화장실등록조회실패_존재하지않음() throws Exception {
+		// given
+		final String url = "/approves/1";
+		when(toiletRegistApproveService.getToiletRegist(1L))
+			.thenThrow(new ToiletRegistException(ToiletRegistErrorResult.ENTITY_NOT_FOUND));
+
+		// when
+		final ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get(url)
+			.param("toiletRegistId", "1")
+			.contentType(MediaType.APPLICATION_JSON));
+
+		// then
+		resultActions.andExpect(status().isNotFound());
 	}
 
 	private ToiletRegistApproveRequest toiletRegistRequest() {
