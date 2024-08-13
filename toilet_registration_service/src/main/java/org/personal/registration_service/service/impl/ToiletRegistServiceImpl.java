@@ -17,14 +17,8 @@ public class ToiletRegistServiceImpl implements ToiletRegistService {
 
 	private final ToiletRegistRepository toiletRegistRepository;
 
+	@Override
 	public ToiletRegistResponse addToiletRegist(ToiletRegistRequest request){
-
-		final ToiletRegist result = toiletRegistRepository.findByToiletRegistLatitudeAndToiletRegistLongitude(
-			request.toiletRegistLatitude(), request.toiletRegistLongitude());
-
-		if(result != null){
-			throw new ToiletRegistException(ToiletRegistErrorResult.DUPLICATED_TOILET_REGIST_REGISTER);
-		}
 
 		final ToiletRegist toiletRegist = ToiletRegist.of(request);
 

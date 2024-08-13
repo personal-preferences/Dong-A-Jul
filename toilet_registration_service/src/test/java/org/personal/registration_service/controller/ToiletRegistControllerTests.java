@@ -98,27 +98,6 @@ class ToiletRegistControllerTests {
 	}
 
 	@Test
-	public void 화장실등록신청등록실패_MemberService에서에러Throw() throws Exception {
-		// given
-		final String url = "/toiletregists";
-		doThrow(new ToiletRegistException(ToiletRegistErrorResult.DUPLICATED_TOILET_REGIST_REGISTER))
-			.when(toiletRegistService)
-			.addToiletRegist(toiletRegistRequest(lat, lng));
-
-		// when
-		final ResultActions resultActions = mockMvc.perform(
-			MockMvcRequestBuilders.post(url)
-				.header(USER_ID_HEADER, "12345")
-				.content(gson.toJson(toiletRegistRequest(lat, lng)))
-				.contentType(MediaType.APPLICATION_JSON)
-		);
-
-		// then
-		resultActions.andExpect(status().isBadRequest());
-
-	}
-
-	@Test
 	public void 화장실등록신청등록성공() throws Exception {
 		// given
 		final String url = "/toiletregists";

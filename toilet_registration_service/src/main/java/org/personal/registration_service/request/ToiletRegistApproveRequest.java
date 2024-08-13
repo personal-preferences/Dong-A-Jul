@@ -1,8 +1,6 @@
 package org.personal.registration_service.request;
 
-import jakarta.validation.constraints.AssertFalse;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Null;
 import lombok.Builder;
 
 @Builder
@@ -12,7 +10,7 @@ public record ToiletRegistApproveRequest(
 	Long toiletRegistId,
 
 	@NotNull(message = "승인 여부를 확인해주세요.")
-	Boolean toiletRegistIsApproved
+	Boolean isApproved
 ) {
 
 }

@@ -31,10 +31,10 @@ public class ToiletRegistApproveServiceImpl implements ToiletRegistApproveServic
 			throw new ToiletRegistException(ToiletRegistErrorResult.ALREADY_REGISTERED_TOILET);
 		}
 
-		toiletRegist.update(request.toiletRegistIsApproved(), LocalDateTime.now());
+		toiletRegist.update(request.isApproved(), LocalDateTime.now());
 		toiletRegistRepository.save(toiletRegist);
 
-		String status = request.toiletRegistIsApproved() ? APPROVE : REJECT;
+		String status = request.isApproved() ? APPROVE : REJECT;
 
 		return new ToiletRegistApproveResponse(status);
 	}
