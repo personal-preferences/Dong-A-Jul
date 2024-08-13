@@ -183,7 +183,6 @@ class ToiletRegistApproveServiceImplTests {
 		assertThat(exception.getErrorResult()).isEqualTo(ToiletRegistErrorResult.ENTITY_NOT_FOUND);
 	}
 
-
 	@Test
 	public void 화장실전체조회_성공() {
 		// given
@@ -233,6 +232,41 @@ class ToiletRegistApproveServiceImplTests {
 		assertThat(exception.getErrorResult()).isEqualTo(ToiletRegistErrorResult.ENTITY_NOT_FOUND);
 	}
 
+	@Test
+	public void 화장실전체조회정렬테스트() {
+		// given
+		ToiletRegist toiletRegist1 = ToiletRegist.builder()
+			.toiletRegistId(1L)
+			.toiletRegistToiletName("화장실 1")
+			.toiletRegistConfirmedDate("2024-08-13")
+			.build();
+
+		ToiletRegist toiletRegist2 = ToiletRegist.builder()
+			.toiletRegistId(2L)
+			.toiletRegistToiletName("화장실 2")
+			.toiletRegistConfirmedDate(null)
+			.build();
+
+		Pageable pageable = PageRequest.of(0, 10);
+		List<ToiletRegist> toiletRegistList = Arrays.asList(toiletRegist1, toiletRegist2);
+		Page<ToiletRegist> page = new PageImpl<>(toiletRegistList, pageable, toiletRegistList.size());
+
+		doReturn(page).when(toiletRegistRepository).findAllByPageable(pageable);
+
+		// when
+		Page<ToiletRegistResponse> result = target.listToiletRegist(0);
+
+		// then
+		assertThat(result).isNotNull();
+		assertThat(result.getContent().size()).isEqualTo(2);
+		assertThat(result.getContent().get(0).toiletRegistId()).isEqualTo(2L);
+		assertThat(result.getContent().get(0).toiletRegistConfirmedDate()).isEqualTo(null);
+		assertThat(result.getContent().get(0).toiletRegistToiletName()).isEqualTo("화장실 2");
+		assertThat(result.getContent().get(1).toiletRegistId()).isEqualTo(1L);
+		assertThat(result.getContent().get(1).toiletRegistToiletName()).isEqualTo("화장실 1");
+		assertThat(result.getContent().get(1).toiletRegistConfirmedDate()).isEqualTo("2024-08-13");
+	}
+
 	private ToiletRegistApproveRequest requestReject(){
 		return ToiletRegistApproveRequest.builder()
 			.toiletRegistId(1L)
@@ -246,5 +280,4 @@ class ToiletRegistApproveServiceImplTests {
 			.isApproved(true)
 			.build();
 	}
-
 }
