@@ -6,9 +6,11 @@ import static org.mockito.Mockito.*;
 import static org.personal.registration_service.common.Constants.*;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,6 +23,10 @@ import org.personal.registration_service.repository.ToiletRegistRepository;
 import org.personal.registration_service.request.ToiletRegistApproveRequest;
 import org.personal.registration_service.response.ToiletRegistApproveResponse;
 import org.personal.registration_service.response.ToiletRegistResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
 class ToiletRegistApproveServiceImplTests {
@@ -44,17 +50,16 @@ class ToiletRegistApproveServiceImplTests {
 	}
 
 	@Test
-	public void 화장실등록실패_이미처리된신청임(){
+	public void 화장실등록실패_이미처리된신청임() {
 		// given
 		ToiletRegist mockToiletRegist = mock(ToiletRegist.class);
-		doReturn(Optional.of(mockToiletRegist)).when(toiletRegistRepository).findById(1L);
-		doReturn(LocalDateTime.now().toString()).when(mockToiletRegist).getToiletRegistConfirmedDate();
+		when(toiletRegistRepository.findById(1L)).thenReturn(Optional.of(mockToiletRegist));
+		when(mockToiletRegist.getToiletRegistConfirmedDate()).thenReturn(LocalDateTime.now().toString());
 
 		// when & then
 		assertThatThrownBy(() -> target.updateToiletRegistApprove(requestReject()))
 			.isInstanceOf(ToiletRegistException.class)
-			.hasMessageContaining(  "이미 등록 신청 처리된 화장실입니다.");
-
+			.hasMessageContaining("이미 등록 신청 처리된 화장실입니다.");
 	}
 
 	@Test
@@ -125,7 +130,7 @@ class ToiletRegistApproveServiceImplTests {
 			.userEmail("user@example.com")
 			.build();
 
-		doReturn(Optional.of(mockToiletRegist)).when(toiletRegistRepository).findBytoiletRegistId(1L);
+		doReturn(Optional.of(mockToiletRegist)).when(toiletRegistRepository).findByToiletRegistId(1L);
 
 		// when
 		ToiletRegistResponse response = target.getToiletRegist(1L);
@@ -166,11 +171,61 @@ class ToiletRegistApproveServiceImplTests {
 	@Test
 	public void 화장실등록조회실패_등록된화장실없음() {
 		// given
-		doReturn(Optional.empty()).when(toiletRegistRepository).findBytoiletRegistId(1L);
+		doReturn(Optional.empty()).when(toiletRegistRepository).findByToiletRegistId(1L);
 
 		// when
 		ToiletRegistException exception = assertThrows(ToiletRegistException.class, () -> {
 			target.getToiletRegist(1L);
+		});
+
+		// then
+		assertThat(exception).isNotNull();
+		assertThat(exception.getErrorResult()).isEqualTo(ToiletRegistErrorResult.ENTITY_NOT_FOUND);
+	}
+
+
+	@Test
+	public void 화장실전체조회_성공() {
+		// given
+		ToiletRegist toiletRegist1 = ToiletRegist.builder()
+			.toiletRegistId(1L)
+			.toiletRegistToiletName("화장실 1")
+			.build();
+
+		ToiletRegist toiletRegist2 = ToiletRegist.builder()
+			.toiletRegistId(2L)
+			.toiletRegistToiletName("화장실 2")
+			.build();
+
+		Pageable pageable = PageRequest.of(0, 10);
+		List<ToiletRegist> toiletRegistList = Arrays.asList(toiletRegist1, toiletRegist2);
+		Page<ToiletRegist> page = new PageImpl<>(toiletRegistList, pageable, toiletRegistList.size());
+
+		doReturn(page).when(toiletRegistRepository).findAllByPageable(pageable);
+
+		// when
+		Page<ToiletRegistResponse> result = target.listToiletRegist(0);
+
+		// then
+		assertThat(result).isNotNull();
+		assertThat(result.getContent().size()).isEqualTo(2);
+		assertThat(result.getContent().get(0).toiletRegistId()).isEqualTo(1L);
+		assertThat(result.getContent().get(0).toiletRegistToiletName()).isEqualTo("화장실 1");
+		assertThat(result.getContent().get(1).toiletRegistId()).isEqualTo(2L);
+		assertThat(result.getContent().get(1).toiletRegistToiletName()).isEqualTo("화장실 2");
+	}
+
+	@Test
+	public void 화장실전체조회_실패_빈결과() {
+		// given
+		Pageable pageable = PageRequest.of(0, 10);
+		Page<ToiletRegist> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
+
+		doReturn(emptyPage).when(toiletRegistRepository).findAllByPageable(pageable);
+
+		// when
+		ToiletRegistException exception = assertThrows(ToiletRegistException.class, () -> {
+			target.listToiletRegist(0);
 		});
 
 		// then
