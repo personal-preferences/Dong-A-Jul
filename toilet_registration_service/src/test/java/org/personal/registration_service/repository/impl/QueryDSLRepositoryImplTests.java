@@ -16,10 +16,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import static org.mockito.Mockito.*;
+import static org.personal.registration_service.domain.QToiletRegist.*;
 
 @ExtendWith(MockitoExtension.class)
 class QueryDSLRepositoryImplTests {
@@ -49,10 +51,13 @@ class QueryDSLRepositoryImplTests {
 		List<ToiletRegist> toiletRegists = Arrays.asList(toiletRegist1, toiletRegist2);
 		Pageable pageable = PageRequest.of(0, 10);
 
-		// mocking
-		when(queryFactory.selectFrom(QToiletRegist.toiletRegist)).thenReturn(jpaQuery);
+		// 모의 데이터 설정
+		OrderSpecifier<?> orderSpecifier = QToiletRegist.toiletRegist.toiletRegistConfirmedDate.asc().nullsFirst();
+
+		when(queryFactory.selectFrom(toiletRegist)).thenReturn(jpaQuery);
 		when(jpaQuery.offset(pageable.getOffset())).thenReturn(jpaQuery);
 		when(jpaQuery.limit(pageable.getPageSize())).thenReturn(jpaQuery);
+		when(jpaQuery.orderBy(orderSpecifier)).thenReturn(jpaQuery);  // 명시적인 orderSpecifier 사용
 		when(jpaQuery.fetch()).thenReturn(toiletRegists);
 		when(jpaQuery.fetchCount()).thenReturn((long) toiletRegists.size());
 
@@ -72,10 +77,14 @@ class QueryDSLRepositoryImplTests {
 		Pageable pageable = PageRequest.of(0, 10);
 		List<ToiletRegist> emptyList = Arrays.asList();
 
+		// `OrderSpecifier` 명시적 생성
+		OrderSpecifier<?> orderSpecifier = QToiletRegist.toiletRegist.toiletRegistConfirmedDate.asc().nullsFirst();
+
 		// mocking
-		when(queryFactory.selectFrom(QToiletRegist.toiletRegist)).thenReturn(jpaQuery);
+		when(queryFactory.selectFrom(toiletRegist)).thenReturn(jpaQuery);
 		when(jpaQuery.offset(pageable.getOffset())).thenReturn(jpaQuery);
 		when(jpaQuery.limit(pageable.getPageSize())).thenReturn(jpaQuery);
+		when(jpaQuery.orderBy(orderSpecifier)).thenReturn(jpaQuery);  // 명시적으로 `orderSpecifier`를 사용
 		when(jpaQuery.fetch()).thenReturn(emptyList);
 		when(jpaQuery.fetchCount()).thenReturn(0L);
 
@@ -86,4 +95,5 @@ class QueryDSLRepositoryImplTests {
 		assertThat(result).isNotNull();
 		assertThat(result.getContent()).isEmpty();
 	}
+
 }
