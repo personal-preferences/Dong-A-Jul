@@ -41,5 +41,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private ROLE userRole;
 
-
+    public User deleteUser() {
+        this.userDeleteDate = LocalDateTime.now();
+        this.userIsDeleted = true;
+        return this;
+    }
 }

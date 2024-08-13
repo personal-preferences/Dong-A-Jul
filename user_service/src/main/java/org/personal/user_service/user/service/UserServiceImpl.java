@@ -97,8 +97,7 @@ public class UserServiceImpl implements UserService {
         // 회원 삭제
         User user = userRepository.findById(userId)
                 .orElseThrow(()->new NotFoundException("없는 회원번호"));
-        user.setUserDeleteDate(LocalDateTime.now());
-        user.setUserIsDeleted(true);
+        user.deleteUser();
 
         userRepository.save(user);
     }
