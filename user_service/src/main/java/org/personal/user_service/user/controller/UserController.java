@@ -7,15 +7,18 @@ import org.personal.user_service.user.exception.NotFoundException;
 import org.personal.user_service.user.request.RequestUpdatePassword;
 import org.personal.user_service.user.response.ResponseUser;
 import org.personal.user_service.user.request.RequestRegist;
+import org.personal.user_service.user.response.ResponseUserDetail;
 import org.personal.user_service.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
+import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -60,8 +63,14 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
+    @GetMapping("/info")
+    public ResponseEntity<ResponseUser> getMyInfo(){
+        ResponseUser responseUser = userService.getMyInfo();
+        return ResponseEntity.ok(responseUser);
+    }
+
     @PutMapping("/password")
-    public ResponseEntity putUserPassword(@RequestBody@Validated RequestUpdatePassword requestUpdatePassword
+    public ResponseEntity<Void> putUserPassword(@RequestBody@Validated RequestUpdatePassword requestUpdatePassword
                                           ,Errors errors){
         if (errors.hasErrors()){
             throw new InvalidRequestException(responseValidationErrors(errors));
@@ -71,17 +80,16 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity deleteUser(@PathVariable Long userId){
+    public ResponseEntity<Void> deleteUser(@PathVariable Long userId){
 
         userService.deleteUser(userId);
         return ResponseEntity.ok().build();
     }
 
     private String responseValidationErrors(Errors errors) {
-        StringBuilder returnValue= new StringBuilder();
-        for (int i = 0; i < errors.getAllErrors().size(); i++) {
-            returnValue.append(errors.getAllErrors().get(i).getDefaultMessage()).append("\n");
-        }
-        return returnValue.toString();
+        return errors.getAllErrors().stream()
+                .map(ObjectError::getDefaultMessage)
+                .collect(Collectors.joining("\n"));
     }
+
 }

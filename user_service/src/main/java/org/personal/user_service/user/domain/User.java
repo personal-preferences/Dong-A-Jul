@@ -18,7 +18,6 @@ import java.time.LocalDateTime;
 @ToString
 @Entity
 @Table(name = "user", schema = "public")
-@SQLDelete(sql = "UPDATE public.user SET user_is_deleted = true WHERE user_id = ?")
 @SQLRestriction("user_is_deleted = false")
 public class User {
 
@@ -41,4 +40,10 @@ public class User {
     @Column(name = "user_role")
     @Enumerated(EnumType.STRING)
     private ROLE userRole;
+
+    public User deleteUser() {
+        this.userDeleteDate = LocalDateTime.now();
+        this.userIsDeleted = true;
+        return this;
+    }
 }

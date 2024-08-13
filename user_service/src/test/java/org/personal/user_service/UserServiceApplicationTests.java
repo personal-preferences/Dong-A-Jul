@@ -10,6 +10,7 @@ import org.personal.user_service.config.DateParsing;
 import org.personal.user_service.user.domain.User;
 import org.personal.user_service.user.etc.ROLE;
 import org.personal.user_service.user.exception.InvalidRequestException;
+import org.personal.user_service.user.exception.NotFoundException;
 import org.personal.user_service.user.repository.UserRepository;
 import org.personal.user_service.user.request.RequestUpdatePassword;
 import org.personal.user_service.user.response.ResponseUser;
@@ -81,13 +82,13 @@ class UserServiceApplicationTests {
         when(userRepository.findAll()).thenReturn(Arrays.asList(user1, user2));
 
         // when
-        List<User> responseUserList = userService.getUserList();
+        List<ResponseUser> responseUserList = userService.getUserList();
 
         // then
         assertEquals(2, responseUserList.size());
 
         // user 1
-        ResponseUser responseUser1 = convertToResponseUser(responseUserList.get(0));
+        ResponseUser responseUser1 = responseUserList.get(0);
         assertEquals("user1@test.com", responseUser1.userEmail());
         assertEquals("user1", responseUser1.userNickName());
         assertEquals(DateParsing.LdtToStr(user1.getUserEnrollDate()), responseUser1.userEnrollDate());
@@ -96,7 +97,7 @@ class UserServiceApplicationTests {
         assertEquals("ROLE_USER", responseUser1.userRole().name());
 
         // user 2
-        ResponseUser responseUser2 = convertToResponseUser(responseUserList.get(1));
+        ResponseUser responseUser2 = responseUserList.get(1);
         assertEquals("user2@test.com", responseUser2.userEmail());
         assertEquals("user2", responseUser2.userNickName());
         assertEquals(DateParsing.LdtToStr(user2.getUserEnrollDate()), responseUser2.userEnrollDate());
@@ -112,7 +113,7 @@ class UserServiceApplicationTests {
         when(userRepository.findAll()).thenReturn(Collections.emptyList());
 
         // when
-        List<User> responseUserList = userService.getUserList();
+        List<ResponseUser> responseUserList = userService.getUserList();
 
         // then
         assertEquals(0, responseUserList.size());
@@ -210,12 +211,26 @@ class UserServiceApplicationTests {
 
     @Test
     @DisplayName("사용자 탈퇴")
-    public void testDeleteUser(){
+    public void testDeleteUser() {
         // given
+        User user1 = new User();
+        user1.setUserId(1L);
+        user1.setUserEmail("user1@test.com");
+        user1.setUserNickname("user1");
+        user1.setUserPassword("password");
+        user1.setUserEnrollDate(LocalDateTime.now());
+        user1.setUserRole(ROLE.ROLE_USER);
+
+        when(userRepository.findById(user1.getUserId())).thenReturn(Optional.of(user1));
+        when(userRepository.save(user1)).thenReturn(user1);
+
         // when
         userService.deleteUser(user1.getUserId());
+
         // then
-        verify(userRepository, times(1)).deleteById(user1.getUserId());
+        verify(userRepository, times(1)).findById(user1.getUserId());
+        verify(userRepository, times(1)).save(user1);
     }
-    
+
+
 }
