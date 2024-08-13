@@ -1,6 +1,9 @@
 package org.personal.addons_service.repository;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.personal.addons_service.domain.Addon;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,4 +38,74 @@ public class AddonRepositoryTest {
 		assertEquals("test@example.com", savedAddon.getUserEmail());
 		assertEquals(1L, savedAddon.getToiletLocationId());
 	}
+
+	@Test
+	public void testFindByUserEmailAndToiletLocationId() {
+
+		// given
+		Addon addon = Addon.builder()
+			.memoContent("Test memo")
+			.isBookmarked(true)
+			.userEmail("test@example.com")
+			.toiletLocationId(1L)
+			.build();
+
+		addonRepository.save(addon);
+
+		// when
+		Optional<Addon> retrievedAddon = addonRepository.findByUserEmailAndToiletLocationId("test@example.com", 1L);
+
+		// then
+		assertTrue(retrievedAddon.isPresent());
+		assertEquals(addon.getAddonId(), retrievedAddon.get().getAddonId());
+		assertEquals("Test memo", retrievedAddon.get().getMemoContent());
+		assertTrue(retrievedAddon.get().isBookmarked());
+		assertEquals("test@example.com", retrievedAddon.get().getUserEmail());
+		assertEquals(1L, retrievedAddon.get().getToiletLocationId());
+	}
+
+	@Test
+	public void testFindByUserEmailAndToiletLocationId_NotFound() {
+
+		// given
+		// No Addon is saved to the repository
+
+		// when
+		Optional<Addon> retrievedAddon = addonRepository.findByUserEmailAndToiletLocationId("nonexistent@example.com", 1L);
+
+		// then
+		assertFalse(retrievedAddon.isPresent());
+	}
+
+	@Test
+	public void testUpdateAddon() {
+
+		// given
+		Addon addon = Addon.builder()
+			.memoContent("Original memo")
+			.isBookmarked(true)
+			.userEmail("test@example.com")
+			.toiletLocationId(1L)
+			.build();
+
+		Addon savedAddon = addonRepository.save(addon);
+
+		// when
+		savedAddon = savedAddon.toBuilder()
+			.memoContent("Updated memo")
+			.isBookmarked(false)
+			.build();
+
+		Addon updatedAddon = addonRepository.save(savedAddon);
+
+		// then
+		Optional<Addon> retrievedAddon = addonRepository.findById(updatedAddon.getAddonId());
+		assertTrue(retrievedAddon.isPresent());
+		assertEquals("Updated memo", retrievedAddon.get().getMemoContent());
+		assertFalse(retrievedAddon.get().isBookmarked());
+		assertEquals("test@example.com", retrievedAddon.get().getUserEmail());
+		assertEquals(1L, retrievedAddon.get().getToiletLocationId());
+	}
+
+
 }

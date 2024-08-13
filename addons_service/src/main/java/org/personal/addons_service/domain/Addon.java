@@ -13,10 +13,8 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 @Table(name = "addon", schema = "public")
-@Builder
 public class Addon {
 
 	@Id
@@ -34,4 +32,13 @@ public class Addon {
 
 	@Column(name = "toilet_location_id", nullable = false)
 	private Long toiletLocationId;
+
+	@Builder(toBuilder = true)
+	public Addon(Long addonId, String memoContent, boolean isBookmarked, String userEmail, Long toiletLocationId) {
+		this.addonId = addonId;
+		this.memoContent = memoContent;
+		this.isBookmarked = isBookmarked;
+		this.userEmail = userEmail;
+		this.toiletLocationId = toiletLocationId;
+	}
 }
