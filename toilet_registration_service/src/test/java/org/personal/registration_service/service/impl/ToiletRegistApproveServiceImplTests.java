@@ -88,14 +88,14 @@ class ToiletRegistApproveServiceImplTests {
 	private ToiletRegistApproveRequest requestReject(){
 		return ToiletRegistApproveRequest.builder()
 			.toiletRegistId(1L)
-			.toiletRegistIsApproved(false)
+			.isApproved(false)
 			.build();
 	}
 
 	private ToiletRegistApproveRequest requestApprove(){
 		return ToiletRegistApproveRequest.builder()
 			.toiletRegistId(1L)
-			.toiletRegistIsApproved(true)
+			.isApproved(true)
 			.build();
 	}
 
