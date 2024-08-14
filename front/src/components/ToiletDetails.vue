@@ -2,6 +2,11 @@
   <div>
     <h2>Toilet Details</h2>
     <div v-if="toilet">
+      <p><strong>Toilet Name:</strong> {{ toilet.toiletRegistToiletName }}</p>
+      <p><strong>Road Name Address:</strong> {{ toilet.toiletRegistRoadNameAddress }}</p>
+      <p><strong>Number Address:</strong> {{ toilet.toiletRegistNumberAddress }}</p>
+      <p><strong>Latitude:</strong> {{ toilet.toiletRegistLatitude }}</p>
+      <p><strong>Longitude:</strong> {{ toilet.toiletRegistLongitude }}</p>
       <p><strong>Management Agency:</strong> {{ toilet.toiletRegistManagementAgency }}</p>
       <p><strong>Phone Number:</strong> {{ toilet.toiletRegistPhoneNumber }}</p>
       <p><strong>Opening Hours:</strong> {{ toilet.toiletRegistOpeningHours }}</p>
@@ -51,7 +56,7 @@ export default {
   methods: {
     async fetchToiletDetails() {
       try {
-        const response = await axios.get(`http://localhost:8765/approves?toiletRegistId=${this.id}`);
+        const response = await axios.get(`http://localhost:8765/approves/${this.id}`);
         this.toilet = response.data;
       } catch (error) {
         console.error("Error fetching toilet details:", error);
@@ -64,7 +69,7 @@ export default {
           isApproved: isApproved
         };
         const headers = {
-          'USER-ID-HEADER': 'admin_user_id' // 필요한 경우 사용자 ID 헤더를 설정합니다.
+          'USER-ID-HEADER': 'admin' // 필요한 경우 사용자 ID 헤더를 설정합니다.
         };
         const response = await axios.patch(`http://localhost:8765/approves`, request, { headers });
         console.log(`Toilet ${this.id} ${isApproved ? 'approved' : 'rejected'}`, response.data);
