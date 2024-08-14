@@ -51,7 +51,7 @@ export default {
   methods: {
     async fetchToiletDetails() {
       try {
-        const response = await axios.get(`http://localhost:8765/approves/${this.id}`);
+        const response = await axios.get(`http://localhost:8765/approves?toiletRegistId=${this.id}`);
         this.toilet = response.data;
       } catch (error) {
         console.error("Error fetching toilet details:", error);
