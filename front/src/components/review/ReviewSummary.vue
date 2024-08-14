@@ -1,8 +1,8 @@
 <template>
   <div class="review-summary">
     <div v-if="!loadingState">
-      <p>평균 점수: {{ copySummary.averageScore }}</p>
-      <p>총 리뷰 수: {{ copySummary.reviewCount }}</p>
+      <p>총 리뷰 수 {{ copySummary.reviewCount }}</p>
+      <p>평균 점수 {{ copySummary.averageScore }}</p>
     </div>
     <div v-else>
       <p>로딩 중...</p>
@@ -27,9 +27,9 @@ const loadingState = ref(true);
 
 onMounted(async () => {
   try {
-    const response = await axios.get(`/api/reviews/${props.type}/${props.id}/summary`);
-    loadingState.value = false;
-    summary.value = response.data.ReviewSummary;
+    console.log(`${import.meta.env.VITE_REVIEW_SERVICE_BASE_URL}/${props.type}/${props.id}/summary`);
+    const response = await axios.get(`${import.meta.env.VITE_REVIEW_SERVICE_BASE_URL}/${props.type}/${props.id}/summary`);
+    summary.value = response.data;
 
     copySummary.value = {
       averageScore: summary.value.averageScore,

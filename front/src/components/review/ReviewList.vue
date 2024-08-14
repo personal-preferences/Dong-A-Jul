@@ -1,7 +1,7 @@
 <template>
   <!-- 리뷰 헤더 -->
   <div class="review-header">
-    <ReviewSummary :type="'locationId'" :id="props.id"/>
+    <ReviewSummary :type="'location'" :id="props.id"/>
     <!--  정렬 기준 선택(드롭다운)  -->
     <div class="review-order">
     </div>
@@ -12,7 +12,7 @@
     </div>
     <div v-else>
       <div v-for="(review, index) in copyReviews" :key="index" class="review-item">
-        <Review :review="review"/>
+        <ReviewComponent :review="review"/>
       </div>
     </div>
   </div>
@@ -24,8 +24,8 @@
 <script setup>
 import axios from 'axios';
 import {ref, onMounted} from 'vue';
-import {format} from 'date-fns';
-import Review from "@/components/review/Review.vue";
+import { parse, format } from 'date-fns';
+import ReviewComponent from "@/components/review/ReviewComponent.vue";
 import ReviewSummary from "@/components/review/ReviewSummary.vue";
 
 // 재사용성을 고려하여 userId, locationId 조회 둘 다 활용될 수 있도록 type 추가.
@@ -40,8 +40,8 @@ const loadingState = ref(true);
 
 onMounted(async () => {
   try {
-    const response = await axios.get(`/api/reviews/${props.type}/${props.id}`);
-    reviews.value = response.data.ReviewResponse;
+    const response = await axios.get(`${import.meta.env.VITE_REVIEW_SERVICE_BASE_URL}/${props.type}/${props.id}`);
+    reviews.value = response.data.content;
 
     for (let i = 0; i < reviews.value.length; i++) {
       const reviewId = reviews.value[i].reviewId;
@@ -52,17 +52,19 @@ onMounted(async () => {
       const userId = reviews.value[i].userId;
       const locationId = reviews.value[i].locationId;
 
+      // 날짜 문자열을 Date 객체로 변환
+      const parsedDate = parse(reviewRegisteredDate, 'yyyy-MM-dd HH:mm:ss', new Date());
+
       copyReviews.value[i] = {
         reviewId: reviewId,
         reviewContent: reviewContent,
         reviewScore: reviewScore,
         reviewIsDeleted: reviewIsDeleted,
-        reviewRegisteredDate: format(new Date(reviewRegisteredDate[0], reviewRegisteredDate[1] - 1, reviewRegisteredDate[2], reviewRegisteredDate[3], reviewRegisteredDate[4], reviewRegisteredDate[5]), 'yyyy-MM-dd HH:mm:ss'),
+        reviewRegisteredDate: format(parsedDate, 'yyyy-MM-dd HH:mm:ss'),
         userId: userId,
         locationId: locationId
       };
     }
-
   } catch (error) {
     console.error("Error fetching reviews:", error);
   } finally {
@@ -73,7 +75,6 @@ onMounted(async () => {
 
 <style scoped>
 .review-item {
-  border-bottom: 1px solid;
-  padding: 10px;
+  padding: 1px;
 }
 </style>
