@@ -50,7 +50,7 @@ public class ToiletRegistApproveController {
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
-	@GetMapping("{toiletRegistId}")
+	@GetMapping
 	public ResponseEntity<ToiletRegistResponse> getToiletRegist(@RequestParam long toiletRegistId){
 		ToiletRegistResponse response = toiletRegistApproveService.getToiletRegist(toiletRegistId);
 		return ResponseEntity.status(HttpStatus.OK).body(response);
