@@ -248,7 +248,7 @@ class ToiletRegistApproveServiceImplTests {
 			.build();
 
 		Pageable pageable = PageRequest.of(0, 10);
-		List<ToiletRegist> toiletRegistList = Arrays.asList(toiletRegist1, toiletRegist2);
+		List<ToiletRegist> toiletRegistList = Arrays.asList(toiletRegist2, toiletRegist1);
 		Page<ToiletRegist> page = new PageImpl<>(toiletRegistList, pageable, toiletRegistList.size());
 
 		doReturn(page).when(toiletRegistRepository).findAllByPageable(pageable);
