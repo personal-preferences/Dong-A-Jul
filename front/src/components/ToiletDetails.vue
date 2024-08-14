@@ -32,7 +32,7 @@
       <p><strong>User Email:</strong> {{ toilet.userEmail }}</p>
       <p><strong>Confirmed Date:</strong> {{ toilet.toiletRegistConfirmedDate || 'Not Confirmed' }}</p>
 
-      <div v-if="!toilet.toiletRegistConfirmedDate">
+      <div v-if="toilet.toiletRegistConfirmedDate === null">
         <button @click="approveToilet(true)">Approve</button>
         <button @click="approveToilet(false)">Reject</button>
       </div>
@@ -44,45 +44,45 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from 'axios'
 
 export default {
   props: ['id'],
   data() {
     return {
-      toilet: null,
-    };
+      toilet: null
+    }
   },
   methods: {
     async fetchToiletDetails() {
       try {
-        const response = await axios.get(`http://localhost:8765/approves/${this.id}`);
-        this.toilet = response.data;
+        const response = await axios.get(`http://localhost:8765/approves/${this.id}`)
+        this.toilet = response.data
       } catch (error) {
-        console.error("Error fetching toilet details:", error);
+        console.error('Error fetching toilet details:', error)
       }
     },
     async approveToilet(isApproved) {
       try {
         const request = {
-          toiletRegistId: this.id,
+          toiletRegistId: Number(this.id), // 숫자형으로 변환
           isApproved: isApproved
-        };
+        }
         const headers = {
-          'ADMIN': 'admin' // 필요한 경우 사용자 ID 헤더를 설정합니다.
-        };
-        const response = await axios.patch(`http://localhost:8765/approves`, request, { headers });
-        console.log(`Toilet ${this.id} ${isApproved ? 'approved' : 'rejected'}`, response.data);
+          'X-USER-ID': 'admin' // 필요한 경우 사용자 ID 헤더를 설정합니다.
+        }
+        const response = await axios.patch(`http://localhost:8765/approves`, request, { headers })
+        console.log(`Toilet ${this.id} ${isApproved ? 'approved' : 'rejected'}`, response.data)
         // 승인 또는 반려 후 처리 (예: 메시지 표시 또는 페이지 리프레시)
       } catch (error) {
-        console.error(`Error ${isApproved ? 'approving' : 'rejecting'} toilet:`, error);
+        console.error(`Error ${isApproved ? 'approving' : 'rejecting'} toilet:`, error)
       }
-    },
+    }
   },
   mounted() {
-    this.fetchToiletDetails();
-  },
-};
+    this.fetchToiletDetails()
+  }
+}
 </script>
 
 <style scoped>
