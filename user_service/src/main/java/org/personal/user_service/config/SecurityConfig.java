@@ -32,20 +32,21 @@ public class SecurityConfig {
 
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
-    private final LoginService loginService;
 
 
     @Autowired
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil, OAuth2SuccessHandler oAuth2SuccessHandler, CustomOAuth2UserService customOAuth2UserService, LoginService loginService) {
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil,
+                          OAuth2SuccessHandler oAuth2SuccessHandler, CustomOAuth2UserService customOAuth2UserService){
+
         this.authenticationConfiguration = authenticationConfiguration;
         this.jwtUtil = jwtUtil;
         this.oAuth2SuccessHandler = oAuth2SuccessHandler;
         this.customOAuth2UserService = customOAuth2UserService;
-        this.loginService = loginService;
     }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration)throws Exception{
+
         return configuration.getAuthenticationManager();
     }
 
@@ -79,7 +80,9 @@ public class SecurityConfig {
         httpSecurity
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login/**").permitAll()
-                        .requestMatchers("/users").hasRole("ADMIN")
+//                        .requestMatchers("/users").hasRole("ADMIN")
+                        .requestMatchers("/users/info").hasAnyRole("ADMIN")
+
                         .anyRequest().permitAll()
                 );
 

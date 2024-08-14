@@ -114,9 +114,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = false)
-    public void registKakaoUser(RequestRegist requestRegistUser) {
+    public ResponseUserDetail registKakaoUser(RequestRegist requestRegistUser) {
         if (!userRepository.existsByUserEmail(requestRegistUser.userEmail()))
             registUser(requestRegistUser);
+        return convertToResponseUserDetail(userRepository.findByUserEmail(requestRegistUser.userEmail()));
     }
 
     @Override
