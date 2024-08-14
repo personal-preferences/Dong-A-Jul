@@ -20,4 +20,25 @@ instance.interceptors.request.use(config => {
   return Promise.reject(error);
 });
 
+// 응답 인터셉터: 406 응답 시 새 access token 처리
+instance.interceptors.response.use(response => {
+  return response;
+}, async error => {
+  const originalRequest = error.config;
+
+  // 406 상태코드 처리 (새로운 access token 수신 시)
+  if (error.response.status === 406 && error.response.headers['access']) {
+    const newAccessToken = error.response.headers['access'];
+    console.log(`new Access token: ${newAccessToken}`);
+    // 새로운 access token 저장
+    localStorage.setItem('access', newAccessToken);
+
+    // Authorization 헤더 갱신 및 요청 재시도
+    originalRequest.headers.Authorization = newAccessToken;
+    return instance(originalRequest);
+  }
+
+  return Promise.reject(error);
+});
+
 export default instance;

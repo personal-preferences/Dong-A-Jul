@@ -13,6 +13,11 @@
       <button type="submit">로그인</button>
     </form>
   </div>
+
+  <div>
+    <input type="button" @click="getUserInfo" value="asdf"/>  
+
+  </div>
 </template>
 
 <script setup>
@@ -21,6 +26,16 @@ import axios from '@/assets/axios';  // Axios 인스턴스를 import
 
 const email = ref('');
 const password = ref('');
+
+
+const getUserInfo = async ()=>{
+  try {
+    const response = await axios.get('/users/info');
+    console.log('User Info:', response.data);
+  } catch (error) {
+    console.error('User Info Fetch Error:', error);
+  }
+};
 
 // 로그인 핸들러
 const handleLogin = async () => {
@@ -40,6 +55,8 @@ const handleLogin = async () => {
 
   } catch (error) {
     console.error('로그인 실패:', error);
+
   }
 };
+
 </script>
