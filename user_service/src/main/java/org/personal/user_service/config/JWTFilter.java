@@ -110,7 +110,7 @@ public class JWTFilter extends OncePerRequestFilter {
             }
 
             User user = getUserFromToken(refreshToken);
-            String newAccessToken = jwtUtil.createJwt("access", user.getUserEmail(), user.getUserNickname(), user.getUserRole().name(), TOKENTIME.REFRESH.label());
+            String newAccessToken = jwtUtil.createJwt("access", user.getUserEmail(), user.getUserNickname(), user.getUserRole().name(), TOKENTIME.ACCESS.label());
             response.addHeader("access", "Bearer " + newAccessToken);
             authenticateUser(user);
             System.out.println("새로운 access 토큰 반환");
