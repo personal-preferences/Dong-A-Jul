@@ -51,14 +51,23 @@ public class UserServiceImpl implements UserService {
             if(userRepository.existsByUserNickname(requestRegist.userNickname())){
                 throw new InvalidRequestException("닉네임 중복");
             }
-            User user = new User();
-            user.setUserEmail(requestRegist.userEmail());
-            user.setUserNickname(requestRegist.userNickname());
-            user.setUserPassword(bCryptPasswordEncoder.encode(requestRegist.userPassword()));
-            user.setUserRole(ROLE.valueOf(requestRegist.userRole()));
-            user.setUserEnrollDate(LocalDateTime.now());
-            user.setUserDeleteDate(null);
-            user.setUserIsDeleted(false);
+            User user = User.builder()
+                    .userEmail(requestRegist.userEmail())
+                    .userNickname(requestRegist.userNickname())
+                    .userPassword(bCryptPasswordEncoder.encode(requestRegist.userPassword()))
+                    .userRole(ROLE.ROLE_USER)
+                    .userEnrollDate(LocalDateTime.now())
+                    .userDeleteDate(null)
+                    .userIsDeleted(false)
+                    .build();
+
+//            user.setUserEmail(requestRegist.userEmail());
+//            user.setUserNickname(requestRegist.userNickname());
+//            user.setUserPassword(bCryptPasswordEncoder.encode(requestRegist.userPassword()));
+//            user.setUserRole(ROLE.valueOf(requestRegist.userRole()));
+//            user.setUserEnrollDate(LocalDateTime.now());
+//            user.setUserDeleteDate(null);
+//            user.setUserIsDeleted(false);
 
             userRepository.save(user);
         } catch (Exception e) {
@@ -134,7 +143,6 @@ public class UserServiceImpl implements UserService {
     private boolean isrequestRegistNull(RequestRegist requestRegist) {
 
         return requestRegist.userEmail() == null
-                || requestRegist.userRole() == null
                 || requestRegist.userNickname() == null
                 || requestRegist.userPassword() == null;
     }

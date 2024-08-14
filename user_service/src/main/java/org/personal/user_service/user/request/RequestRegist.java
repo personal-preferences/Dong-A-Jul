@@ -15,10 +15,11 @@ public record RequestRegist(
         String userNickname,
         @NotEmpty(message = "비밀번호 누락")
         @Size(min = 8,max = 15, message = "8자 이상, 15글자 이하의 비밀번호만 가능합니다.")
-        String userPassword,
-        @NotEmpty(message = "역할 누락")
-        @Pattern(regexp = "ROLE_USER|ROLE_ADMIN", message = "역할은 ROLE_USER 또는 ROLE_ADMIN만 가능합니다.")
-        String userRole
+        String userPassword
+//        ,
+//        @NotEmpty(message = "역할 누락")
+//        @Pattern(regexp = "ROLE_USER|ROLE_ADMIN", message = "역할은 ROLE_USER 또는 ROLE_ADMIN만 가능합니다.")
+//        String userRole
 )
 {
 

@@ -120,7 +120,7 @@ public class LoginServiceImpl implements LoginService{
         String role = "ROLE_USER"; // default: user
 
         // 카카오 회원 초기 비밀번호는 12341234입니다.
-        RequestRegist requestRegistUser = new RequestRegist(email,nickname,"12341234","ROLE_USER");
+        RequestRegist requestRegistUser = new RequestRegist(email,nickname,"12341234");
 
         ResponseUserDetail userDetail = userService.registKakaoUser(requestRegistUser);
 

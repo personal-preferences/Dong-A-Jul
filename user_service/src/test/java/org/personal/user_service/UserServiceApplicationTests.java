@@ -127,8 +127,7 @@ class UserServiceApplicationTests {
         RequestRegist requestRegist = new RequestRegist(
                 "register@test.com",
                 "register",
-                "1234",
-                ROLE.ROLE_USER.name()
+                "1234"
         );
         User user = new User();
         user.setUserEmail("register@test.com");
@@ -157,7 +156,6 @@ class UserServiceApplicationTests {
         RequestRegist requestRegist = new RequestRegist(
                 "register@test.com",
                 "register",
-                null,
                 null
         );
         User user = new User();
