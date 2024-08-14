@@ -54,9 +54,14 @@ public class JWTUtil {
 
     // 토큰 만료 시간 확인
     public boolean isExpired(String token){
-
-        return getPayload(token)
-                .getExpiration().before(new Date());
+        boolean isExpired;
+        try {
+            isExpired = getPayload(token)
+                    .getExpiration().before(new Date());
+            return isExpired;
+        }catch (Exception e){
+            return true;
+        }
     }
 
     // 로그인 성공 후 유저 정보를 토큰으로 만들어 반환하는 메서드

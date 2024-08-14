@@ -4,6 +4,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.personal.user_service.config.JWTUtil;
+import org.personal.user_service.config.TOKENTIME;
 import org.personal.user_service.user.domain.Token;
 import org.personal.user_service.user.exception.InvalidRequestException;
 import org.personal.user_service.user.exception.NotFoundException;
@@ -49,9 +50,9 @@ public class LoginServiceImpl implements LoginService{
         }
 
         String accessToken = jwtUtil.createJwt("access", responseUser.userEmail(), responseUser.userNickname(),
-                responseUser.userRole().name(),3600000L ); // 1시간
+                responseUser.userRole().name(), TOKENTIME.ACCESS.label()); // 1시간
         String refreshToken = jwtUtil.createJwt("refresh", responseUser.userEmail(), responseUser.userNickname(),
-                responseUser.userRole().name(),86400000L ); // 24시간
+                responseUser.userRole().name(),TOKENTIME.REFRESH.label() ); // 24시간
         response.addHeader("access", "Bearer " + accessToken);
         response.addCookie(createCookie("refresh",refreshToken));
 
@@ -128,8 +129,8 @@ public class LoginServiceImpl implements LoginService{
 
     private ResponseToken createTokens(String email, String nickname, String role) {
 
-        String accessToken = jwtUtil.createJwt("access", email, nickname, role, 86000000L);
-        String refreshToken = jwtUtil.createJwt("refresh", email, nickname, role, 860000000L);
+        String accessToken = jwtUtil.createJwt("access", email, nickname, role, TOKENTIME.ACCESS.label());
+        String refreshToken = jwtUtil.createJwt("refresh", email, nickname, role, TOKENTIME.REFRESH.label());
         return new ResponseToken(accessToken, refreshToken);
     }
 
