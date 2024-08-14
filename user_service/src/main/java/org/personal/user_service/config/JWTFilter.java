@@ -62,10 +62,6 @@ public class JWTFilter extends OncePerRequestFilter {
                 }
 
                 // 만약 엑세스 토큰 없다면 리프래시 토큰 검사 후 새로운 엑세스 토큰을 헤더에 담고 응답
-            } else if (refreshToken != null) {
-                System.out.println("3");
-                handleRefreshToken(refreshToken, request, response, filterChain);
-
             } else {
                 System.out.println("4");
                 // 둘다 없으면 다음으로 진행하여 Unauthorized로 진행
