@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,13 +52,13 @@ public class ToiletRegistApproveController {
 	}
 
 	@GetMapping("{toiletRegistId}")
-	public ResponseEntity<ToiletRegistResponse> getToiletRegist(@RequestParam long toiletRegistId){
+	public ResponseEntity<ToiletRegistResponse> getToiletRegist(@PathVariable long toiletRegistId){
 		ToiletRegistResponse response = toiletRegistApproveService.getToiletRegist(toiletRegistId);
 		return ResponseEntity.status(HttpStatus.OK).body(response);
 	}
 
-	@GetMapping
-	public ResponseEntity<Page<ToiletRegistResponse>> listToiletRegist(@RequestParam(defaultValue = "0") int pageNum){
+	@GetMapping("{pageNum}")
+	public ResponseEntity<Page<ToiletRegistResponse>> listToiletRegist(@PathVariable int pageNum){
 		Page<ToiletRegistResponse> responses = toiletRegistApproveService.listToiletRegist(pageNum);
 		return ResponseEntity.status(HttpStatus.OK).body(responses);
 	}
