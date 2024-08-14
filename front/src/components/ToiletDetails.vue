@@ -69,7 +69,7 @@ export default {
           isApproved: isApproved
         };
         const headers = {
-          'USER-ID-HEADER': 'admin' // 필요한 경우 사용자 ID 헤더를 설정합니다.
+          'ADMIN': 'admin' // 필요한 경우 사용자 ID 헤더를 설정합니다.
         };
         const response = await axios.patch(`http://localhost:8765/approves`, request, { headers });
         console.log(`Toilet ${this.id} ${isApproved ? 'approved' : 'rejected'}`, response.data);
