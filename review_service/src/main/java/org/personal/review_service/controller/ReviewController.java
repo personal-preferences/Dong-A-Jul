@@ -4,10 +4,10 @@ import jakarta.validation.Valid;
 import org.personal.review_service.exception.ReviewNotFoundException;
 import org.personal.review_service.request.ReviewCreate;
 import org.personal.review_service.response.ReviewResponse;
+import org.personal.review_service.response.ReviewSummary;
 import org.personal.review_service.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -15,8 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import static org.personal.review_service.common.Constants.PAGE_SIZE;
 
@@ -71,6 +69,20 @@ public class ReviewController {
         } catch (ReviewNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
+    }
+
+    @GetMapping("/location/{locationId}/summary")
+    public ResponseEntity<ReviewSummary> getReviewSummaryByLocationId(
+            @PathVariable Long locationId) {
+        ReviewSummary reviewSummary = reviewService.getReviewSummaryByLocationId(locationId);
+        return new ResponseEntity<>(reviewSummary, HttpStatus.OK);
+    }
+
+    @GetMapping("/user/{userId}/summary")
+    public ResponseEntity<ReviewSummary> getReviewSummaryByUserId(
+            @PathVariable Long userId) {
+        ReviewSummary reviewSummary = reviewService.getReviewSummaryByUserId(userId);
+        return new ResponseEntity<>(reviewSummary, HttpStatus.OK);
     }
 
     @DeleteMapping("/{reviewId}")

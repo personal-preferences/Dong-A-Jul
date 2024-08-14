@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.personal.review_service.exception.ReviewNotFoundException;
 import org.personal.review_service.request.ReviewCreate;
 import org.personal.review_service.response.ReviewResponse;
+import org.personal.review_service.response.ReviewSummary;
 import org.personal.review_service.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -197,6 +198,90 @@ class ReviewControllerTest {
 
         // then
         result.andExpect(status().isNoContent())
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("리뷰 요약 조회(위치)")
+    void getReviewSummaryByLocationId() throws Exception {
+        // given
+        Long locationId = 1L;
+        ReviewSummary reviewSummary = new ReviewSummary(4.5, 10L, locationId);
+
+        when(reviewService.getReviewSummaryByLocationId(locationId)).thenReturn(reviewSummary);
+
+        // when
+        ResultActions result = mockMvc.perform(get("/reviews/location/{locationId}/summary", locationId)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.averageScore").value(reviewSummary.averageScore()))
+                .andExpect(jsonPath("$.reviewCount").value(reviewSummary.reviewCount()))
+                .andExpect(jsonPath("$.id").value(reviewSummary.id()))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("리뷰 요약 조회(위치) - 데이터 없음")
+    void getReviewSummaryByLocationIdEmpty() throws Exception {
+        // given
+        Long locationId = 1L;
+        ReviewSummary emptyReviewSummary = new ReviewSummary(0.0, 0L, locationId);
+
+        when(reviewService.getReviewSummaryByLocationId(locationId)).thenReturn(emptyReviewSummary);
+
+        // when
+        ResultActions result = mockMvc.perform(get("/reviews/location/{locationId}/summary", locationId)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.averageScore").value(0.0))
+                .andExpect(jsonPath("$.reviewCount").value(0))
+                .andExpect(jsonPath("$.id").value(locationId))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("리뷰 요약 조회(회원)")
+    void getReviewSummaryByUserId() throws Exception {
+        // given
+        Long userId = 1L;
+        ReviewSummary reviewSummary = new ReviewSummary(4.3, 10L, userId);
+
+        when(reviewService.getReviewSummaryByUserId(userId)).thenReturn(reviewSummary);
+
+        // when
+        ResultActions result = mockMvc.perform(get("/reviews/user/{userId}/summary", userId)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.averageScore").value(reviewSummary.averageScore()))
+                .andExpect(jsonPath("$.reviewCount").value(reviewSummary.reviewCount()))
+                .andExpect(jsonPath("$.id").value(reviewSummary.id()))
+                .andDo(print());
+    }
+
+    @Test
+    @DisplayName("리뷰 요약 조회(회원) - 데이터 없음")
+    void getReviewSummaryByUserIdEmpty() throws Exception {
+        // given
+        Long userId = 1L;
+        ReviewSummary emptyReviewSummary = new ReviewSummary(0.0, 0L, userId);
+
+        when(reviewService.getReviewSummaryByUserId(userId)).thenReturn(emptyReviewSummary);
+
+        // when
+        ResultActions result = mockMvc.perform(get("/reviews/user/{userId}/summary", userId)
+                .contentType(MediaType.APPLICATION_JSON));
+
+        // then
+        result.andExpect(status().isOk())
+                .andExpect(jsonPath("$.averageScore").value(0.0))
+                .andExpect(jsonPath("$.reviewCount").value(0))
+                .andExpect(jsonPath("$.id").value(userId))
                 .andDo(print());
     }
 

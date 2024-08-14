@@ -7,14 +7,13 @@ import org.personal.review_service.exception.ReviewNotFoundException;
 import org.personal.review_service.repository.ReviewRepository;
 import org.personal.review_service.request.ReviewCreate;
 import org.personal.review_service.response.ReviewResponse;
+import org.personal.review_service.response.ReviewSummary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ReviewServiceImpl implements ReviewService {
@@ -26,6 +25,7 @@ public class ReviewServiceImpl implements ReviewService {
         this.reviewRepository = reviewRepository;
         this.reviewResponseBuilder = new ReviewResponseBuilder();
     }
+
     @Override
     public ReviewResponse createReview(ReviewCreate reviewCreate) {
         Review newReview = Review.builder()
@@ -71,6 +71,17 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewList.map(reviewResponseBuilder::build);
     }
 
+    @Override
+    public ReviewSummary getReviewSummaryByLocationId(Long locationId) {
+        return reviewRepository.getReviewSummaryByLocationId(locationId)
+                .orElseThrow(() -> new ReviewNotFoundException("다음 위치 ID에 알맞는 리뷰를 찾지 못했습니다: " + locationId));
+    }
+
+    @Override
+    public ReviewSummary getReviewSummaryByUserId(Long userId) {
+        return reviewRepository.getReviewSummaryByUserId(userId)
+                .orElseThrow(() -> new ReviewNotFoundException("다음 회원 ID에 알맞는 리뷰를 찾지 못했습니다: " + userId));
+    }
 
     @Override
     public Boolean deleteReviewByReviewId(Long reviewId) {
