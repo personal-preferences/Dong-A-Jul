@@ -2,6 +2,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '@/Home.vue';
 import Login from '@/Login.vue';
+import KakaoLogin from '@/KakaoLogin.vue';
 
 const routes = [
   {
@@ -14,7 +15,11 @@ const routes = [
     name: 'Login',
     component: Login,
   },
-  // 필요한 다른 경로를 추가
+  {
+    path: '/kakaoLogin',
+    name: 'KakaoLogin',
+    component: KakaoLogin,
+  }
 ];
 
 const router = createRouter({

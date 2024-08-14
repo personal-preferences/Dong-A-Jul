@@ -13,6 +13,8 @@
         <button type="submit">로그인</button>
       </form>
     </div>
+    <input type="button" @click="kakaoLogin" value="카카오로 로그인">
+    
   </template>
   
   <script setup>
@@ -41,5 +43,18 @@
       console.error('로그인 실패:', error);
     }
   };
+  const kakaoLogin = async () => {
+    try {
+      const response = await axios.get('/login/kakao');
+      const loginUrl = response.data; 
+      // URL로 이동
+      window.location.href = loginUrl;
+
+      //router.push('/');
+    } catch (error) {
+      console.error('로그인 실패:', error);
+    }
+  };
+  
   </script>
   
