@@ -3,7 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Home from '@/Home.vue';
 import Login from '@/Login.vue';
 import KakaoLogin from '@/KakaoLogin.vue';
-
+import Regist from '@/Regist.vue';
 const routes = [
   {
     path: '/',
@@ -19,6 +19,11 @@ const routes = [
     path: '/kakaoLogin',
     name: 'KakaoLogin',
     component: KakaoLogin,
+  },
+  {
+    path: '/Regist',
+    name: 'Regist',
+    component: Regist,
   }
 ];
 
