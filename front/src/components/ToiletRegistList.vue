@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import axios from 'axios'
 
 export default {
   data() {
@@ -47,64 +47,63 @@ export default {
       toiletRegistData: [],
       currentPage: 1,
       itemsPerPage: 10,
-      totalItems: 0,
-    };
+      totalItems: 0
+    }
   },
   computed: {
     totalPages() {
-      return Math.ceil(this.totalItems / this.itemsPerPage);
+      return Math.ceil(this.totalItems / this.itemsPerPage)
     },
     paginatedData() {
-      return this.toiletRegistData;
-    },
+      return this.toiletRegistData
+    }
   },
   methods: {
     async fetchData(pageNum) {
       try {
         const response = await axios.get(`http://localhost:8765/approves`, {
           params: {
-            pageNum: pageNum - 1, // Spring에서 페이지는 0부터 시작하므로
-          },
-        });
-        this.toiletRegistData = response.data.content;
-        this.totalItems = response.data.totalElements;
-        this.currentPage = pageNum;
+            pageNum: pageNum - 1 // Spring에서 페이지는 0부터 시작하므로
+          }
+        })
+        this.toiletRegistData = response.data.content
+        this.totalItems = response.data.totalElements
+        this.currentPage = pageNum
+        console.log(response)
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error('Error fetching data:', error)
       }
     },
     prevPage() {
       if (this.currentPage > 1) {
-        this.fetchData(this.currentPage - 1);
+        this.fetchData(this.currentPage - 1)
       }
     },
     nextPage() {
       if (this.currentPage < this.totalPages) {
-        this.fetchData(this.currentPage + 1);
+        this.fetchData(this.currentPage + 1)
       }
     },
     getStatus(toilet) {
-      if (!toilet.toiletRegistIsApproved && toilet.toiletRegistConfirmedDate === null) {
-        return "처리중";
-      } else if (!toilet.toiletRegistIsApproved && toilet.toiletRegistConfirmedDate !== null) {
-        return "반려";
-      } else if (toilet.toiletRegistIsApproved && toilet.toiletRegistConfirmedDate !== null) {
-        return "승인";
+      if (toilet.toiletRegistConfirmedDate === null) {
+        return '처리중'
+      } else if (toilet.toiletRegistIsApproved) {
+        return '승인'
       } else {
-        return "알 수 없음";
+        return '반려'
       }
     },
     goToDetails(toiletRegistId) {
-      this.$router.push({ name: 'ToiletDetails', params: { id: toiletRegistId } });
+      this.$router.push({ name: 'ToiletDetails', params: { id: toiletRegistId } })
     },
     goToRegister() {
-      this.$router.push({ name: 'RegisterToilet' });
-    },
+      this.$router.push({ name: 'RegisterToilet' })
+    }
   },
   mounted() {
-    this.fetchData(this.currentPage);
-  },
-};
+    this.fetchData(this.currentPage)
+  }
+}
 </script>
 
 <style scoped>
