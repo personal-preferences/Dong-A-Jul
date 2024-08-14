@@ -1,0 +1,45 @@
+<template>
+    <div>
+      <h1>Login Page</h1>
+      <form @submit.prevent="handleLogin">
+        <div>
+          <label for="email">이메일:</label>
+          <input type="email" v-model="email" id="email" required />
+        </div>
+        <div>
+          <label for="password">비밀번호:</label>
+          <input type="password" v-model="password" id="password" required />
+        </div>
+        <button type="submit">로그인</button>
+      </form>
+    </div>
+  </template>
+  
+  <script setup>
+  import { ref } from 'vue';
+  import { useRouter } from 'vue-router';
+  import axios from '@/assets/axios';
+  
+  const email = ref('');
+  const password = ref('');
+  const router = useRouter();
+  
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post('/login', {
+        userEmail: email.value,
+        userPassword: password.value,
+      });
+      
+      const access = response.headers['access'];
+      localStorage.setItem('access', access);
+      console.log('로그인 성공!');
+  
+      // 로그인 성공 시 홈으로 이동
+      router.push('/');
+    } catch (error) {
+      console.error('로그인 실패:', error);
+    }
+  };
+  </script>
+  
