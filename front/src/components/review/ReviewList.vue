@@ -1,80 +1,171 @@
 <template>
-  <!-- 리뷰 헤더 -->
-  <div class="review-header">
-    <ReviewSummary :type="'location'" :id="props.id"/>
-    <!--  정렬 기준 선택(드롭다운)  -->
-    <div class="review-order">
-    </div>
-  </div>
-  <div class="review-list">
-    <div v-if="loadingState">
-      Loading reviews...
-    </div>
-    <div v-else>
-      <div v-for="(review, index) in copyReviews" :key="index" class="review-item">
-        <ReviewComponent :review="review"/>
+  <div>
+    <!-- 리뷰 헤더 -->
+    <div class="d-flex flex-column align-items-center mb-4">
+      <h4 class="fw-bold p-3">리뷰 요약</h4>
+      <ReviewSummary :type="'location'" :id="props.id"/>
+      <div>
+        <!-- 정렬 기준 버튼 그룹 -->
+        <button
+          type="button"
+          class="btn me-2"
+          :style="getButtonStyle('reviewRegisteredDate')"
+          @click="toggleSort('reviewRegisteredDate')">
+          날짜순
+          <i :class="getSortIcon('reviewRegisteredDate')"></i>
+        </button>
+        <button
+          type="button"
+          class="btn"
+          :style="getButtonStyle('reviewScore')"
+          @click="toggleSort('reviewScore')">
+          별점순
+          <i :class="getSortIcon('reviewScore')"></i>
+        </button>
       </div>
     </div>
-  </div>
-  <!-- 페이지 선택 or 드래그 처리 -->
-  <div class="pagenation-container">
+
+    <!-- 리뷰 목록 -->
+    <div class="review-list">
+      <div v-if="loadingState" class="text-center">Loading reviews...</div>
+      <div v-else>
+        <div v-if="reviews.length === 0" class="card card-body text-center">남겨진 리뷰가 없습니다.<br>첫 리뷰를 남겨보세요!</div>
+        <div v-else>
+          <div v-for="review in copyReviews" :key="review.reviewId" class="review-item mb-3">
+            <ReviewComponent :review="review"/>
+          </div>
+
+          <!-- 페이지네이션 -->
+          <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+              <li class="page-item" :class="{ disabled: page.value === 0 }">
+                <button class="page-link" @click="changePage(page.value - 1)">Previous</button>
+              </li>
+              <li class="page-item" :class="{ active: page.value === i }" v-for="i in visiblePages" :key="i">
+                <button class="page-link" @click="changePage(i)">{{ i + 1 }}</button>
+              </li>
+              <li class="page-item" :class="{ disabled: page.value === totalPages - 1 }">
+                <button class="page-link" @click="changePage(page.value + 1)">Next</button>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
+import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
-import {ref, onMounted} from 'vue';
-import { parse, format } from 'date-fns';
-import ReviewComponent from "@/components/review/ReviewComponent.vue";
-import ReviewSummary from "@/components/review/ReviewSummary.vue";
+import ReviewComponent from '@/components/review/ReviewComponent.vue';
+import ReviewSummary from '@/components/review/ReviewSummary.vue';
 
-// 재사용성을 고려하여 userId, locationId 조회 둘 다 활용될 수 있도록 type 추가.
 const props = defineProps({
   type: String,
   id: Number
-})
+});
 
-const reviews = [];
-const copyReviews = ref([{}]);
+const reviews = ref([]);
+const copyReviews = ref([]);
 const loadingState = ref(true);
+const page = ref(0);
+const size = ref(10); // 페이지당 항목 수 (기본값)
+const totalPages = ref(1);
+const sort = ref('reviewRegisteredDate');
+const direction = ref('DESC');
 
-onMounted(async () => {
+// 페이지네이션을 1부터 10까지로 제한하기 위한 변수
+const visiblePages = computed(() => {
+  const start = Math.max(0, page.value - 4);
+  const end = Math.min(totalPages.value, start + 10);
+  return Array.from({ length: end - start }, (_, i) => start + i);
+});
+
+const fetchReviews = async () => {
   try {
-    const response = await axios.get(`${import.meta.env.VITE_REVIEW_SERVICE_BASE_URL}/${props.type}/${props.id}`);
-    reviews.value = response.data.content;
+    loadingState.value = true;
+    const response = await axios.get(`${import.meta.env.VITE_REVIEW_SERVICE_BASE_URL}/${props.type}/${props.id}`, {
+      params: {
+        page: page.value,
+        size: size.value,
+        sort: sort.value,
+        direction: direction.value
+      }
+    });
 
-    for (let i = 0; i < reviews.value.length; i++) {
-      const reviewId = reviews.value[i].reviewId;
-      const reviewContent = reviews.value[i].reviewContent;
-      const reviewScore = reviews.value[i].reviewScore;
-      const reviewIsDeleted = reviews.value[i].reviewIsDeleted;
-      const reviewRegisteredDate = reviews.value[i].reviewRegisteredDate;
-      const userId = reviews.value[i].userId;
-      const locationId = reviews.value[i].locationId;
-
-      // 날짜 문자열을 Date 객체로 변환
-      const parsedDate = parse(reviewRegisteredDate, 'yyyy-MM-dd HH:mm:ss', new Date());
-
-      copyReviews.value[i] = {
-        reviewId: reviewId,
-        reviewContent: reviewContent,
-        reviewScore: reviewScore,
-        reviewIsDeleted: reviewIsDeleted,
-        reviewRegisteredDate: format(parsedDate, 'yyyy-MM-dd HH:mm:ss'),
-        userId: userId,
-        locationId: locationId
-      };
+    if (response.status === 204) {
+      reviews.value = [];
+      totalPages.value = 1; // 204 응답 시 총 페이지 수는 1로 설정
+    } else {
+      reviews.value = response.data.content;
+      totalPages.value = response.data.totalPages;
     }
+    copyReviews.value = reviews.value;
   } catch (error) {
     console.error("Error fetching reviews:", error);
   } finally {
     loadingState.value = false;
   }
+};
+
+const changePage = (newPage) => {
+  if (newPage >= 0 && newPage < totalPages.value) {
+    page.value = newPage;
+    fetchReviews();
+  }
+};
+
+const toggleSort = (newSort) => {
+  if (sort.value === newSort) {
+    // 이미 선택된 정렬 기준이라면 방향 변경
+    direction.value = direction.value === 'DESC' ? 'ASC' : 'DESC';
+  } else {
+    // 새로운 정렬 기준이 선택된 경우, 방향을 내림차순으로 설정
+    sort.value = newSort;
+    direction.value = 'DESC';
+  }
+  fetchReviews();
+};
+
+const getSortIcon = (currentSort) => {
+  if (sort.value !== currentSort) {
+    return ''; // 비활성화된 경우 아이콘 없음
+  }
+  return direction.value === 'DESC'
+    ? 'bi bi-caret-down-fill'  // Bootstrap Icons: 내림차순
+    : 'bi bi-caret-up-fill';    // Bootstrap Icons: 오름차순
+};
+
+// 버튼 스타일을 직접 설정하는 함수
+const getButtonStyle = (currentSort) => {
+  if (sort.value === currentSort) {
+    return {
+      backgroundColor: '#007bff', // 활성화된 버튼 색상
+      color: '#ffffff',           // 텍스트 색상
+    };
+  } else {
+    return {
+      backgroundColor: '#f8f9fa', // 비활성화된 버튼 색상
+      color: '#6c757d'            // 텍스트 색상
+    };
+  }
+};
+
+onMounted(() => {
+  fetchReviews();
 });
 </script>
 
+
 <style scoped>
-.review-item {
-  padding: 1px;
+.btn {
+  border-radius: 0.25rem;
+  border: 1px solid #ced4da;
+  font-size: 0.875rem; /* 버튼 텍스트 크기 */
+}
+
+i {
+  margin-left: 0.5rem;
 }
 </style>

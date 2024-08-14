@@ -1,11 +1,13 @@
 <template>
-  <div class="review-summary">
-    <div v-if="!loadingState">
-      <p>총 리뷰 수 {{ copySummary.reviewCount }}</p>
-      <p>평균 점수 {{ copySummary.averageScore }}</p>
-    </div>
-    <div v-else>
-      <p>로딩 중...</p>
+  <div class="card text-center mb-3 shadow-sm fixed-size-card">
+    <div class="card-body">
+      <div class="d-flex justify-content-center align-items-center" v-if="!loadingState">
+        <p class="card-text text-muted me-2 mb-0 fs-8">후기 {{ copySummary.reviewCount }}</p>
+        <p class="card-text text-muted mb-0 fs-8">평점 {{ copySummary.averageScore }}</p>
+      </div>
+      <div v-else>
+        <p class="card-text fs-8">로딩 중...</p>
+      </div>
     </div>
   </div>
 </template>
@@ -45,5 +47,18 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+/* 카드의 크기를 작게 조정 */
+.fixed-size-card {
+  width: 100px;
+  height: 35px;
+  overflow: hidden; /* 내용이 넘치면 숨김 처리 */
+}
 
+.card-body {
+  padding: 0.5rem; /* 카드 내부 패딩 조정 */
+}
+
+.card-text {
+  font-size: 0.7rem; /* 기본 폰트 크기를 더 작게 조정 */
+}
 </style>
