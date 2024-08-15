@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { useUserStore } from '@/stores/user';
 
 // Axios 인스턴스 생성
 const instance = axios.create({
@@ -37,6 +38,7 @@ instance.interceptors.response.use(response => {
     originalRequest.headers.Authorization = newAccessToken;
     return instance(originalRequest);
   }
+
 
   return Promise.reject(error);
 });
