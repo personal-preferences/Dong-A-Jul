@@ -27,7 +27,7 @@
   const email = ref('');
   const password = ref('');
   const router = useRouter();
-  const { setUser } = useUserStore();
+  //const { setUser } = useUserStore();
 
   const handleLogin = async () => {
     try {
@@ -38,7 +38,7 @@
       
       const access = response.headers['access'];
       localStorage.setItem('access', access);
-      setUser(access);  // 사용자 정보 설정
+      useUserStore(access);  // 사용자 정보 설정
       console.log('로그인 성공!');
   
       // 로그인 성공 시 홈으로 이동
