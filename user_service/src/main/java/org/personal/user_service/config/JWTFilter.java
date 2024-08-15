@@ -2,6 +2,7 @@ package org.personal.user_service.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.personal.user_service.user.domain.CustomUserDetails;
@@ -15,6 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
@@ -26,24 +28,30 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
         String accessToken = request.getHeader("access");
-        String refreshToken = request.getHeader("refresh");
+        String refreshToken = findRefresh(request);
         System.out.println("accessToken = " + accessToken);
+        System.out.println("refreshToken = " + refreshToken);
+
         try {
+
             // 엑세스 토큰 검사
             if (accessToken != null && accessToken.startsWith("Bearer ")) {
                 accessToken = accessToken.split(" ")[1];
+                System.out.println("1");
 
                 if (!jwtUtil.isExpired(accessToken)) {
+                    System.out.println("not expired");
                     // 엑세스 토큰이 만료되지 않았다면 다음로직 진행
                     handleAccessToken(accessToken, response, filterChain, request);
 
-                } else if (refreshToken != null && refreshToken.startsWith("Bearer ")) {
+                } else if (refreshToken != null) {
+                    System.out.println("refresh 토큰 검사");
                     // 엑세스 토큰이 만료되고, 리프레스 토큰이 존재할 때 리프레스 토큰 검사 후 새로운 엑세스 토큰 생성
                     // 다음 로직 진행
-                    refreshToken = refreshToken.split(" ")[1];
                     handleRefreshToken(refreshToken, request, response, filterChain);
 
                 } else {
+                    System.out.println("2");
 
                     // 엑세스 토큰 만료되고, 리프레시 토큰도 없다면 401 반환
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -53,18 +61,19 @@ public class JWTFilter extends OncePerRequestFilter {
                     }
                 }
 
-                // 만약 엑세스 토큰 없다면 리프래시 토큰 검사 후 새로운 엑세스 토큰을 헤더에 담고, 다음 로직 진행
-            } else if (refreshToken != null && refreshToken.startsWith("Bearer ")) {
-                refreshToken = refreshToken.split(" ")[1];
+                // 만약 엑세스 토큰 없다면 리프래시 토큰 검사 후 새로운 엑세스 토큰을 헤더에 담고 응답
+            } else if (refreshToken != null) {
+                System.out.println("3");
                 handleRefreshToken(refreshToken, request, response, filterChain);
 
             } else {
-
+                System.out.println("4");
                 // 둘다 없으면 다음으로 진행하여 Unauthorized로 진행
                 filterChain.doFilter(request, response);
             }
 
         } catch (Exception e) {
+            System.out.println("e = " + e.getMessage());
             response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             try (PrintWriter printWriter = response.getWriter()) {
                 printWriter.print("Invalid token.");
@@ -101,11 +110,13 @@ public class JWTFilter extends OncePerRequestFilter {
             }
 
             User user = getUserFromToken(refreshToken);
-            String newAccessToken = jwtUtil.createJwt("access", user.getUserEmail(), user.getUserNickname(), user.getUserRole().name(), 86000000L);
+            String newAccessToken = jwtUtil.createJwt("access", user.getUserEmail(), user.getUserNickname(), user.getUserRole().name(), TOKENTIME.REFRESH.label());
             response.addHeader("access", "Bearer " + newAccessToken);
             authenticateUser(user);
-            filterChain.doFilter(request, response);
-        } catch (IOException | ServletException e) {
+            System.out.println("새로운 access 토큰 반환");
+            response.setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
@@ -126,5 +137,22 @@ public class JWTFilter extends OncePerRequestFilter {
         CustomUserDetails customUserDetails = new CustomUserDetails(user);
         Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authToken);
+    }
+
+    private String findRefresh(HttpServletRequest req) {
+
+        String refresh = null;
+        try {
+            Cookie[] cookies = req.getCookies();
+            for(Cookie cookie : cookies){
+                if(cookie.getName().equals("refresh")){
+                    refresh = cookie.getValue();
+                    break;
+                }
+            }
+        }catch (Exception e){
+            return null;
+        }
+        return  refresh;
     }
 }
