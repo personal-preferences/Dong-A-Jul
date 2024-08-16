@@ -29,12 +29,14 @@ const loadingState = ref(true);
 
 onMounted(async () => {
   try {
-    console.log(`${import.meta.env.VITE_REVIEW_SERVICE_BASE_URL}/${props.type}/${props.id}/summary`);
     const response = await axios.get(`${import.meta.env.VITE_REVIEW_SERVICE_BASE_URL}/${props.type}/${props.id}/summary`);
     summary.value = response.data;
 
+    // 평점 소수점 첫째 자리까지 포맷팅
+    const averageScore = parseFloat(summary.value.averageScore).toFixed(1);
+
     copySummary.value = {
-      averageScore: summary.value.averageScore,
+      averageScore: averageScore,
       reviewCount: summary.value.reviewCount,
       id: summary.value.id,
     };
@@ -49,7 +51,7 @@ onMounted(async () => {
 <style scoped>
 /* 카드의 크기를 작게 조정 */
 .fixed-size-card {
-  width: 100px;
+  width: 110px;
   height: 35px;
   overflow: hidden; /* 내용이 넘치면 숨김 처리 */
 }
