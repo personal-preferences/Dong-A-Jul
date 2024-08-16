@@ -31,9 +31,14 @@
       <div v-else>
         <div v-if="reviews.length === 0" class="card card-body text-center">남겨진 리뷰가 없습니다.<br>첫 리뷰를 남겨보세요!</div>
         <div v-else>
-          <div v-for="review in copyReviews" :key="review.reviewId" class="review-item mb-3">
-            <ReviewComponent :review="review"/>
+          <div v-for="review in copyReviews" :key="review.reviewId" class="review-item mb-3 d-flex align-items-center">
+            <ReviewComponent :review="review" class="flex-grow-1"/>
+            <button v-if="props.type === 'user'" class="btn btn-danger btn-sm ms-3" @click="deleteReview(review.reviewId)">
+              삭제
+            </button>
           </div>
+
+
 
           <!-- 페이지네이션 -->
           <nav aria-label="Page navigation">
@@ -151,6 +156,21 @@ const getButtonStyle = (currentSort) => {
     };
   }
 };
+
+const deleteReview = async (reviewId) => {
+  try {
+    const confirmDelete = confirm("정말로 이 리뷰를 삭제하시겠습니까?");
+    if (!confirmDelete) return;
+
+    await axios.delete(`${import.meta.env.VITE_REVIEW_SERVICE_BASE_URL}/${reviewId}`);
+    alert('리뷰가 삭제되었습니다.');
+    fetchReviews(); // 리뷰 목록 갱신
+  } catch (error) {
+    console.error("Error deleting review:", error);
+    alert('리뷰 삭제 중 오류가 발생했습니다.');
+  }
+};
+
 
 onMounted(() => {
   fetchReviews();
