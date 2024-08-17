@@ -1,6 +1,6 @@
 <template>
     <div>
-      <h1>Login Page</h1>
+      <h1>Regist Page</h1>
       <form @submit.prevent="registUser">
         <div>
           <label for="email">이메일:</label>
