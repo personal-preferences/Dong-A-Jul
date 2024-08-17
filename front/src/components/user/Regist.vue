@@ -25,7 +25,7 @@
   <script setup>
   import { ref } from 'vue';
   import { useRouter } from 'vue-router';
-  import axios from '@/assets/axios';
+  import axiosWithToken from '@/assets/axiosWithToken';
   
   const email = ref('');
   const nickname = ref('');
@@ -34,7 +34,7 @@
   
   const registUser = async () => {
     try {
-      const response = await axios.post('/users/regist', {
+      const response = await axiosWithToken.post('/users/regist', {
         userEmail: email.value,
         userPassword: password.value,
         userNickname: nickname.value,

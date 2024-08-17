@@ -14,13 +14,14 @@
       </form>
     </div>
     <input type="button" @click="kakaoLogin" value="카카오로 로그인">
+    <input type="button" @click="getUsersTest" value="토큰 없을 떄의 테스트">
     
   </template>
   
   <script setup>
   import { ref } from 'vue';
   import { useRouter } from 'vue-router';
-  import axios from '@/assets/axios';
+  import axiosWithToken from '@/assets/axiosWithToken';
   import { useUserStore } from '@/stores/user';
 
   
@@ -31,7 +32,7 @@
 
   const handleLogin = async () => {
     try {
-      const response = await axios.post('/login', {
+      const response = await axiosWithToken.post('/login', {
         userEmail: email.value,
         userPassword: password.value,
       });
@@ -49,7 +50,7 @@
   };
   const kakaoLogin = async () => {
     try {
-      const response = await axios.get('/login/kakao');
+      const response = await axiosWithToken.get('/login/kakao');
       const loginUrl = response.data; 
       // URL로 이동
       window.location.href = loginUrl;
@@ -59,6 +60,16 @@
       console.error('로그인 실패:', error);
     }
   };
+
+  const getUsersTest = async () => {
+  try {
+    const response = await axiosWithToken.get('/users');
+    console.log('User Info:', response.data);
+  } catch (error) {
+    console.error('User Info Fetch Error:', error);
+    router.push('/login');
+  }
+};
   
   </script>
   

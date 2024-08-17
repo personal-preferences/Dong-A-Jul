@@ -9,13 +9,14 @@
 
   <div>
     <input type="button" @click="getUserInfo" value="정보 가져오기" /> 
+    <input type="button" @click="getUsersTest" value="유저 목록 테스트" /> 
   </div>
 </template>
 
 <script setup>
 import { ref, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import axios from '@/assets/axios';
+import axiosWithToken from '@/assets/axiosWithToken';
 import { useUserStore } from '@/stores/user';
 
 const router = useRouter();
@@ -51,7 +52,7 @@ if (userInfo.value) {
 
 const getUserInfo = async () => {
   try {
-    const response = await axios.get('/users/info');
+    const response = await axiosWithToken.get('/users/info');
     console.log('User Info:', response.data);
   } catch (error) {
     console.error('User Info Fetch Error:', error);
