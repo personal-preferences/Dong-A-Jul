@@ -1,0 +1,108 @@
+<template>
+  <div id="map" ref="mapRef" style="width:400px;height:400px;"></div>
+</template>
+
+<script setup>
+import { onMounted, ref } from 'vue';
+import axios from 'axios'
+
+const mapRef = ref(null);
+
+onMounted(async () => {
+  try {
+    await loadNaverMapsScript();
+
+    if (window.naver && window.naver.maps) {
+      const mapOptions = {
+        center: new window.naver.maps.LatLng(37.3595704, 127.105399),
+        zoom: 10
+      };
+
+      const map = new window.naver.maps.Map(mapRef.value, mapOptions);
+      const bounds = map.getBounds();
+      const southWest = bounds.getSW();
+      const northEast = bounds.getNE();
+
+      let locationMarkers = []
+
+      await axios.get('http://localhost:8080/locations', {
+        params: {
+          northEastLatitude: northEast.lat(),
+          northEastLongitude: northEast.lng(),
+          southWestLatitude: southWest.lat(),
+          southWestLongitude: southWest.lng()
+        }
+      })
+        .then(response => {
+          locationMarkers = response.data;
+        })
+        .catch(axiosError => {
+          console.log('마커 요청 오류 발생 : ', axiosError)
+        });
+
+      const markers = [];
+
+      // 새로운 마커 추가
+      locationMarkers.forEach(location => {
+        const position = new naver.maps.LatLng(location.latitude, location.longitude)
+
+        const marker = new naver.maps.Marker({
+          map: map,
+          position: position,
+          title: location.name,   // 마커에 마우스를 올렸을 때 이름 표시
+          icon: {
+            content: '<p>🚽</p>',
+            size: new naver.maps.Size(24, 37),
+            anchor: new naver.maps.Point(12, 37)
+          },
+          zIndex: 100
+        })
+
+        markers.push(marker);
+      });
+
+      window.naver.maps.Event.addListener(map, 'idle', () => {
+        updateMarkers(map, markers);
+      });
+
+    } else {
+      console.error('Naver Maps API is not loaded');
+    }
+  } catch (error) {
+    console.error('Error initializing map:', error);
+  }
+});
+
+function loadNaverMapsScript() {
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = `https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${import.meta.env.VITE_NAVER_MAPS_CLIENT_ID}`;
+    script.async = true;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+}
+
+function updateMarkers(map, markers) {
+  const mapBounds = map.getBounds();
+  markers.forEach(marker => {
+    const position = marker.getPosition();
+    if (mapBounds.hasLatLng(position)) {
+      showMarker(map, marker);
+    } else {
+      hideMarker(map, marker);
+    }
+  });
+}
+
+function showMarker(map, marker) {
+  if (marker.getMap()) return;
+  marker.setMap(map);
+}
+
+function hideMarker(map, marker) {
+  if (!marker.getMap()) return;
+  marker.setMap(null);
+}
+</script>
