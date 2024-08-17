@@ -4,6 +4,15 @@
       <div :class="['sidebar', { 'active': isSidebarOpen }]" id="sidebar">
         <input type="text" class="form-control mb-3" placeholder="검색" />
 
+        <div v-if="allMarkerToilets.length > 0 && !selectedToilet" class="toilet-list">
+          <h3>화장실 목록</h3>
+          <ul>
+            <li v-for="toilet in allMarkerToilets" :key="toilet.id" @click="selectToilet(toilet)">
+              {{ toilet.name }}
+            </li>
+          </ul>
+        </div>
+
         <ToiletInfoDetails v-if="selectedToilet" :location="selectedToilet" />
 
         <button
@@ -23,13 +32,20 @@ import { ref, watch } from 'vue';
 import ToiletInfoDetails from "@/components/ToiletinfoDetails.vue";
 
 const props = defineProps({
-  selectedToilet: Object
+  selectedToilet: Object,
+  allMarkerToilets: Array
 });
+
+const emit = defineEmits(['selectToilet']);
 
 const isSidebarOpen = ref(true);
 
 const toggleSidebar = () => {
   isSidebarOpen.value = !isSidebarOpen.value;
+};
+
+const selectToilet = (toilet) => {
+  emit('selectToilet', toilet);
 };
 
 watch(() => props.selectedToilet, (newVal) => {

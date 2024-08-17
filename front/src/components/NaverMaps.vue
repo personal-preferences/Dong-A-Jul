@@ -10,7 +10,7 @@ const props = defineProps({
   isSidebarOpen: Boolean,
 });
 
-const emit = defineEmits(['selectToilet'])
+const emit = defineEmits(['updateToilets', 'selectToilet'])
 
 const mapRef = ref(null);
 
@@ -41,6 +41,7 @@ onMounted(async () => {
       })
           .then(response => {
             locationMarkers = response.data;
+            emit('updateToilets', locationMarkers); // 모든 화장실 정보를 부모 컴포넌트로 전달
           })
           .catch(axiosError => {
             console.log('마커 요청 오류 발생 : ', axiosError)
