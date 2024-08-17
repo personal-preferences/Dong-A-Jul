@@ -1,7 +1,20 @@
 <template>
   <div class="toilet-details" v-if="toiletInfo">
-    <h2>부가정보</h2>
-
+    <h2>기본정보</h2>
+    <div class="info-group">
+      <div>
+        <label>화장실:</label>
+        <span>{{ props.location.name }}</span>
+      </div>
+      <div>
+        <label>도로명주소:</label>
+        <span>{{ props.location.roadAddress }}</span>
+      </div>
+      <div>
+        <label>지번주소:</label>
+        <span>{{ props.location.jibunAddress }}</span>
+      </div>
+    </div>
     <div class="info-group">
       <h3>시설 정보</h3>
       <div>
@@ -91,15 +104,18 @@ import { ref, onMounted } from 'vue'
 import axios from 'axios'
 
 const toiletInfo = ref(null)
-const locationId = 1
+const props = defineProps({
+  location: Object
+})
 
 onMounted(async () => {
   await searchInfo()
+  console.log(props.location)
 })
 
 const searchInfo = async () => {
   try {
-    const response = await axios.get(`http://localhost:8080/info/${locationId}`)
+    const response = await axios.get(`http://localhost:8081/info/${props.location.id}`)
     toiletInfo.value = response.data
   } catch (error) {
     console.error('정보 조회에 실패했습니다:', error)

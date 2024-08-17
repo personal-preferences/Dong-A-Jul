@@ -1,28 +1,41 @@
 <template>
-  <div :class="['sidebar', { 'active': isSidebarOpen }]">
-    <div class="p-3">
-      <!-- 검색창 -->
-      <input type="text" class="form-control mb-3" placeholder="Search..." />
+  <div>
+    <div class="d-flex">
+      <div :class="['sidebar', { 'active': isSidebarOpen }]" id="sidebar">
+        <input type="text" class="form-control mb-3" placeholder="검색" />
 
-      <!-- 메뉴 리스트 -->
-      <ul class="list-unstyled ps-0">
-        <li><a href="#" class="link-dark rounded">메뉴1</a></li>
-        <li><a href="#" class="link-dark rounded">메뉴2</a></li>
-        <li><a href="#" class="link-dark rounded">메뉴3</a></li>
-        <li><a href="#" class="link-dark rounded">메뉴4</a></li>
-      </ul>
+        <ToiletInfoDetails v-if="selectedToilet" :location="selectedToilet" />
+
+        <button
+            class="btn btn-primary toggle-btn"
+            @click="toggleSidebar"
+            :style="{ right: isSidebarOpen ? '-15px' : '-30px' }"
+        >
+          {{ isSidebarOpen ? '<' : '>' }}
+        </button>
+      </div>
     </div>
-
-    <!-- 토글 버튼 -->
-    <button class="btn btn-primary sidebar-toggle" @click="$emit('toggle-sidebar')">
-      {{ isSidebarOpen ? '<' : '>' }}
-    </button>
   </div>
 </template>
 
 <script setup>
-defineProps({
-  isSidebarOpen: Boolean,
+import { ref, watch } from 'vue';
+import ToiletInfoDetails from "@/components/ToiletinfoDetails.vue";
+
+const props = defineProps({
+  selectedToilet: Object
+});
+
+const isSidebarOpen = ref(true);
+
+const toggleSidebar = () => {
+  isSidebarOpen.value = !isSidebarOpen.value;
+};
+
+watch(() => props.selectedToilet, (newVal) => {
+  if (newVal && !isSidebarOpen.value) {
+    isSidebarOpen.value = true;
+  }
 });
 </script>
 
@@ -42,12 +55,9 @@ defineProps({
   transform: translateX(0);
 }
 
-.sidebar-toggle {
+.toggle-btn {
   position: absolute;
   top: 50%;
-  right: -37px;
   transform: translateY(-50%);
-  z-index: 1000;
-  font-weight: bold;
 }
 </style>

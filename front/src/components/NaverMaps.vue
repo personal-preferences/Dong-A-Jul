@@ -10,6 +10,8 @@ const props = defineProps({
   isSidebarOpen: Boolean,
 });
 
+const emit = defineEmits(['selectToilet'])
+
 const mapRef = ref(null);
 
 onMounted(async () => {
@@ -47,18 +49,22 @@ onMounted(async () => {
       const markers = [];
 
       locationMarkers.forEach(location => {
-        const position = new naver.maps.LatLng(location.latitude, location.longitude)
+        const position = new window.naver.maps.LatLng(location.latitude, location.longitude)
 
-        const marker = new naver.maps.Marker({
+        const marker = new window.naver.maps.Marker({
           map: map,
           position: position,
           title: location.name,   // 마커에 마우스를 올렸을 때 이름 표시
           icon: {
-            content: '<p>🚽</p>',
-            size: new naver.maps.Size(24, 37),
-            anchor: new naver.maps.Point(12, 37)
+            content: `<a>🚽</a>`, // 버튼으로 생성
+            size: new window.naver.maps.Size(24, 37),
+            anchor: new window.naver.maps.Point(12, 37)
           },
           zIndex: 100
+        })
+
+        window.naver.maps.Event.addListener(marker, 'click', () => {
+          emit('selectToilet', location)
         })
 
         markers.push(marker);
