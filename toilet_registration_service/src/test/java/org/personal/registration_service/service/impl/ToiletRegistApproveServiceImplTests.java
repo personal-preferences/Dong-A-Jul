@@ -6,6 +6,9 @@ import static org.mockito.Mockito.*;
 import static org.personal.registration_service.common.Constants.*;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
@@ -19,6 +22,11 @@ import org.personal.registration_service.exception.ToiletRegistException;
 import org.personal.registration_service.repository.ToiletRegistRepository;
 import org.personal.registration_service.request.ToiletRegistApproveRequest;
 import org.personal.registration_service.response.ToiletRegistApproveResponse;
+import org.personal.registration_service.response.ToiletRegistResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
 class ToiletRegistApproveServiceImplTests {
@@ -42,17 +50,16 @@ class ToiletRegistApproveServiceImplTests {
 	}
 
 	@Test
-	public void 화장실등록실패_이미처리된신청임(){
+	public void 화장실등록실패_이미처리된신청임() {
 		// given
 		ToiletRegist mockToiletRegist = mock(ToiletRegist.class);
-		doReturn(Optional.of(mockToiletRegist)).when(toiletRegistRepository).findById(1L);
-		doReturn(LocalDateTime.now().toString()).when(mockToiletRegist).getToiletRegistConfirmedDate();
+		when(toiletRegistRepository.findById(1L)).thenReturn(Optional.of(mockToiletRegist));
+		when(mockToiletRegist.getToiletRegistConfirmedDate()).thenReturn(LocalDateTime.now().toString());
 
 		// when & then
 		assertThatThrownBy(() -> target.updateToiletRegistApprove(requestReject()))
 			.isInstanceOf(ToiletRegistException.class)
-			.hasMessageContaining(  "이미 등록 신청 처리된 화장실입니다.");
-
+			.hasMessageContaining("이미 등록 신청 처리된 화장실입니다.");
 	}
 
 	@Test
@@ -85,6 +92,181 @@ class ToiletRegistApproveServiceImplTests {
 		assertThat(result.message()).isEqualTo(APPROVE);
 	}
 
+	@Test
+	public void 화장실등록조회_성공() {
+		// given
+		ToiletRegist mockToiletRegist = ToiletRegist.builder()
+			.toiletRegistId(1L)
+			.toiletRegistDate("2023-08-12")
+			.toiletRegistIsApproved(true)
+			.toiletRegistConfirmedDate("2023-08-13")
+			.toiletRegistToiletName("서울역 화장실")
+			.toiletRegistRoadNameAddress("서울시 용산구 한강대로 405")
+			.toiletRegistNumberAddress("서울시 용산구 남대문로 20")
+			.toiletRegistLatitude(37.5551)
+			.toiletRegistLongitude(126.9707)
+			.toiletRegistManagementAgency("용산구청")
+			.toiletRegistPhoneNumber("02-123-4567")
+			.toiletRegistOpeningHours("24시간")
+			.toiletRegistOpeningHoursDetails("연중무휴")
+			.toiletRegistInstallationYearMonth("2020-05")
+			.toiletRegistOwnershipType("공공")
+			.toiletRegistWasteDisposalMethod("정화조")
+			.toiletInfoSafetyFacilityInstallationIsRequired(true)
+			.toiletRegistEmergencyBellIsInstalled(true)
+			.toiletRegistEmergencyBellLocation("남자화장실 입구")
+			.toiletRegistEntranceCctvIsInstalled(true)
+			.toiletRegistDiaperChangingTableIsAvailable(true)
+			.toiletRegistDiaperChangingTableLocation("여자화장실 입구")
+			.toiletRegistMaleToiletsNumber(5)
+			.toiletRegistMaleUrinalsNumber(10)
+			.toiletRegistMaleDisabledToiletsNumber(1)
+			.toiletRegistMaleDisabledUrinalsNumber(2)
+			.toiletRegistMaleChildToiletsNumber(1)
+			.toiletRegistMaleChildUrinalsNumber(2)
+			.toiletRegistFemaleToiletsNumber(8)
+			.toiletRegistFemaleDisabledToiletsNumber(2)
+			.toiletRegistFemaleChildToiletsNumber(2)
+			.userEmail("user@example.com")
+			.build();
+
+		doReturn(Optional.of(mockToiletRegist)).when(toiletRegistRepository).findByToiletRegistId(1L);
+
+		// when
+		ToiletRegistResponse response = target.getToiletRegist(1L);
+
+		// then
+		assertThat(response).isNotNull();
+		assertThat(response.toiletRegistId()).isEqualTo(1L);
+		assertThat(response.toiletRegistToiletName()).isEqualTo("서울역 화장실");
+		assertThat(response.toiletRegistRoadNameAddress()).isEqualTo("서울시 용산구 한강대로 405");
+		assertThat(response.toiletRegistNumberAddress()).isEqualTo("서울시 용산구 남대문로 20");
+		assertThat(response.toiletRegistLatitude()).isEqualTo(37.5551);
+		assertThat(response.toiletRegistLongitude()).isEqualTo(126.9707);
+		assertThat(response.toiletRegistManagementAgency()).isEqualTo("용산구청");
+		assertThat(response.toiletRegistPhoneNumber()).isEqualTo("02-123-4567");
+		assertThat(response.toiletRegistOpeningHours()).isEqualTo("24시간");
+		assertThat(response.toiletRegistOpeningHoursDetails()).isEqualTo("연중무휴");
+		assertThat(response.toiletRegistInstallationYearMonth()).isEqualTo("2020-05");
+		assertThat(response.toiletRegistOwnershipType()).isEqualTo("공공");
+		assertThat(response.toiletRegistWasteDisposalMethod()).isEqualTo("정화조");
+		assertThat(response.toiletInfoSafetyFacilityInstallationIsRequired()).isTrue();
+		assertThat(response.toiletRegistEmergencyBellIsInstalled()).isTrue();
+		assertThat(response.toiletRegistEmergencyBellLocation()).isEqualTo("남자화장실 입구");
+		assertThat(response.toiletRegistEntranceCctvIsInstalled()).isTrue();
+		assertThat(response.toiletRegistDiaperChangingTableIsAvailable()).isTrue();
+		assertThat(response.toiletRegistDiaperChangingTableLocation()).isEqualTo("여자화장실 입구");
+		assertThat(response.toiletRegistMaleToiletsNumber()).isEqualTo(5);
+		assertThat(response.toiletRegistMaleUrinalsNumber()).isEqualTo(10);
+		assertThat(response.toiletRegistMaleDisabledToiletsNumber()).isEqualTo(1);
+		assertThat(response.toiletRegistMaleDisabledUrinalsNumber()).isEqualTo(2);
+		assertThat(response.toiletRegistMaleChildToiletsNumber()).isEqualTo(1);
+		assertThat(response.toiletRegistMaleChildUrinalsNumber()).isEqualTo(2);
+		assertThat(response.toiletRegistFemaleToiletsNumber()).isEqualTo(8);
+		assertThat(response.toiletRegistFemaleDisabledToiletsNumber()).isEqualTo(2);
+		assertThat(response.toiletRegistFemaleChildToiletsNumber()).isEqualTo(2);
+		assertThat(response.userEmail()).isEqualTo("user@example.com");
+	}
+
+	@Test
+	public void 화장실등록조회실패_등록된화장실없음() {
+		// given
+		doReturn(Optional.empty()).when(toiletRegistRepository).findByToiletRegistId(1L);
+
+		// when
+		ToiletRegistException exception = assertThrows(ToiletRegistException.class, () -> {
+			target.getToiletRegist(1L);
+		});
+
+		// then
+		assertThat(exception).isNotNull();
+		assertThat(exception.getErrorResult()).isEqualTo(ToiletRegistErrorResult.ENTITY_NOT_FOUND);
+	}
+
+	@Test
+	public void 화장실전체조회_성공() {
+		// given
+		ToiletRegist toiletRegist1 = ToiletRegist.builder()
+			.toiletRegistId(1L)
+			.toiletRegistToiletName("화장실 1")
+			.build();
+
+		ToiletRegist toiletRegist2 = ToiletRegist.builder()
+			.toiletRegistId(2L)
+			.toiletRegistToiletName("화장실 2")
+			.build();
+
+		Pageable pageable = PageRequest.of(0, 10);
+		List<ToiletRegist> toiletRegistList = Arrays.asList(toiletRegist1, toiletRegist2);
+		Page<ToiletRegist> page = new PageImpl<>(toiletRegistList, pageable, toiletRegistList.size());
+
+		doReturn(page).when(toiletRegistRepository).findAllByPageable(pageable);
+
+		// when
+		Page<ToiletRegistResponse> result = target.listToiletRegist(0);
+
+		// then
+		assertThat(result).isNotNull();
+		assertThat(result.getContent().size()).isEqualTo(2);
+		assertThat(result.getContent().get(0).toiletRegistId()).isEqualTo(1L);
+		assertThat(result.getContent().get(0).toiletRegistToiletName()).isEqualTo("화장실 1");
+		assertThat(result.getContent().get(1).toiletRegistId()).isEqualTo(2L);
+		assertThat(result.getContent().get(1).toiletRegistToiletName()).isEqualTo("화장실 2");
+	}
+
+	@Test
+	public void 화장실전체조회_실패_빈결과() {
+		// given
+		Pageable pageable = PageRequest.of(0, 10);
+		Page<ToiletRegist> emptyPage = new PageImpl<>(Collections.emptyList(), pageable, 0);
+
+		doReturn(emptyPage).when(toiletRegistRepository).findAllByPageable(pageable);
+
+		// when
+		ToiletRegistException exception = assertThrows(ToiletRegistException.class, () -> {
+			target.listToiletRegist(0);
+		});
+
+		// then
+		assertThat(exception).isNotNull();
+		assertThat(exception.getErrorResult()).isEqualTo(ToiletRegistErrorResult.ENTITY_NOT_FOUND);
+	}
+
+	@Test
+	public void 화장실전체조회정렬테스트() {
+		// given
+		ToiletRegist toiletRegist1 = ToiletRegist.builder()
+			.toiletRegistId(1L)
+			.toiletRegistToiletName("화장실 1")
+			.toiletRegistConfirmedDate("2024-08-13")
+			.build();
+
+		ToiletRegist toiletRegist2 = ToiletRegist.builder()
+			.toiletRegistId(2L)
+			.toiletRegistToiletName("화장실 2")
+			.toiletRegistConfirmedDate(null)
+			.build();
+
+		Pageable pageable = PageRequest.of(0, 10);
+		List<ToiletRegist> toiletRegistList = Arrays.asList(toiletRegist2, toiletRegist1);
+		Page<ToiletRegist> page = new PageImpl<>(toiletRegistList, pageable, toiletRegistList.size());
+
+		doReturn(page).when(toiletRegistRepository).findAllByPageable(pageable);
+
+		// when
+		Page<ToiletRegistResponse> result = target.listToiletRegist(0);
+
+		// then
+		assertThat(result).isNotNull();
+		assertThat(result.getContent().size()).isEqualTo(2);
+		assertThat(result.getContent().get(0).toiletRegistId()).isEqualTo(2L);
+		assertThat(result.getContent().get(0).toiletRegistConfirmedDate()).isEqualTo(null);
+		assertThat(result.getContent().get(0).toiletRegistToiletName()).isEqualTo("화장실 2");
+		assertThat(result.getContent().get(1).toiletRegistId()).isEqualTo(1L);
+		assertThat(result.getContent().get(1).toiletRegistToiletName()).isEqualTo("화장실 1");
+		assertThat(result.getContent().get(1).toiletRegistConfirmedDate()).isEqualTo("2024-08-13");
+	}
+
 	private ToiletRegistApproveRequest requestReject(){
 		return ToiletRegistApproveRequest.builder()
 			.toiletRegistId(1L)
@@ -98,5 +280,4 @@ class ToiletRegistApproveServiceImplTests {
 			.isApproved(true)
 			.build();
 	}
-
 }
