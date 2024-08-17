@@ -12,6 +12,9 @@
       <router-link to="/regist">Regist</router-link>
       &nbsp;
       <router-link to="/userInfo">userInfo</router-link>
+      &nbsp;
+      <router-link to="/toiletRegistList">toiletRegistList</router-link>
+
     </nav>
   <RouterView />
   </div>
