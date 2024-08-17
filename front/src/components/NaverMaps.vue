@@ -57,7 +57,7 @@ onMounted(async () => {
           position: position,
           title: location.name,   // 마커에 마우스를 올렸을 때 이름 표시
           icon: {
-            content: `<a>🚽</a>`, // 버튼으로 생성
+            content: `<p>🚽</p>`, // 버튼으로 생성
             size: new window.naver.maps.Size(24, 37),
             anchor: new window.naver.maps.Point(12, 37)
           },
