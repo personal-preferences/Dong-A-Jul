@@ -18,6 +18,9 @@ import { useRouter } from 'vue-router';
 import axios from '@/assets/axios';
 import { useUserStore } from '@/stores/user';
 
+const router = useRouter();
+
+
 const userData = ref({
   userEmail: '',
   userNickname: '',
@@ -42,6 +45,8 @@ watch(userInfo, (newUserInfo) => {
 // 현재 로그인 정보가 있는지 확인
 if (userInfo.value) {
   userData.value = userInfo.value;
+}else{
+  router.push('/login');
 }
 
 const getUserInfo = async () => {
@@ -54,5 +59,5 @@ const getUserInfo = async () => {
   }
 };
 
-const router = useRouter();
+
 </script>

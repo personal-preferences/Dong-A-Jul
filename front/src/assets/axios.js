@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { useUserStore } from '@/stores/user';
+import { useRouter } from 'vue-router';
+const router = useRouter();
 
 // Axios 인스턴스 생성
 const instance = axios.create({
@@ -33,10 +35,16 @@ instance.interceptors.response.use(response => {
     console.log(`new Access token: ${newAccessToken}`);
     // 새로운 access token 저장
     localStorage.setItem('access', newAccessToken);
-
     // Authorization 헤더 갱신 및 요청 재시도
     originalRequest.headers.Authorization = newAccessToken;
     return instance(originalRequest);
+  }
+  
+  // 403 상태코드 처리 (새로운 access token 수신 시)
+  else if (error.response.status === 403 ) {
+    localStorage.removeItem('access');
+    router.push('/Login');
+    return ;
   }
 
 
