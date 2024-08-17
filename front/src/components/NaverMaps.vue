@@ -1,10 +1,14 @@
 <template>
-  <div id="map" ref="mapRef" style="width:400px;height:400px;"></div>
+  <div :class="['map-container', isSidebarOpen ? 'with-sidebar' : 'fullscreen']" ref="mapRef"></div>
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
-import axios from 'axios'
+import { onMounted, ref, watch } from 'vue';
+import axios from 'axios';
+
+const props = defineProps({
+  isSidebarOpen: Boolean,
+});
 
 const mapRef = ref(null);
 
@@ -33,16 +37,15 @@ onMounted(async () => {
           southWestLongitude: southWest.lng()
         }
       })
-        .then(response => {
-          locationMarkers = response.data;
-        })
-        .catch(axiosError => {
-          console.log('마커 요청 오류 발생 : ', axiosError)
-        });
+          .then(response => {
+            locationMarkers = response.data;
+          })
+          .catch(axiosError => {
+            console.log('마커 요청 오류 발생 : ', axiosError)
+          });
 
       const markers = [];
 
-      // 새로운 마커 추가
       locationMarkers.forEach(location => {
         const position = new naver.maps.LatLng(location.latitude, location.longitude)
 
@@ -65,6 +68,12 @@ onMounted(async () => {
         updateMarkers(map, markers);
       });
 
+      // 사이드바 상태 변경에 따른 지도 리사이즈
+      watch(() => props.isSidebarOpen, () => {
+        setTimeout(() => {
+          map.updateSize();
+        }, 300); // 애니메이션 시간과 일치시킴
+      });
     } else {
       console.error('Naver Maps API is not loaded');
     }
@@ -106,3 +115,19 @@ function hideMarker(map, marker) {
   marker.setMap(null);
 }
 </script>
+
+<style scoped>
+.map-container {
+  width: 800px;
+  height: 800px;
+  transition: margin-left 0.3s ease;
+}
+
+.map-container.fullscreen {
+  margin-left: 0;
+}
+
+.map-container.with-sidebar {
+  margin-left: 250px;
+}
+</style>
