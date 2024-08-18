@@ -26,4 +26,6 @@ public interface UserService {
     ResponseUserDetail registKakaoUser(RequestRegist requestRegistUser);
 
     ResponseUser getMyInfo();
+
+    List<ResponseUser> getUserList(int page);
 }

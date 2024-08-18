@@ -9,6 +9,8 @@ import org.personal.user_service.user.request.RequestRegist;
 import org.personal.user_service.user.request.RequestUpdatePassword;
 import org.personal.user_service.user.response.ResponseUser;
 import org.personal.user_service.user.response.ResponseUserDetail;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -60,15 +62,6 @@ public class UserServiceImpl implements UserService {
                     .userDeleteDate(null)
                     .userIsDeleted(false)
                     .build();
-
-//            user.setUserEmail(requestRegist.userEmail());
-//            user.setUserNickname(requestRegist.userNickname());
-//            user.setUserPassword(bCryptPasswordEncoder.encode(requestRegist.userPassword()));
-//            user.setUserRole(ROLE.valueOf(requestRegist.userRole()));
-//            user.setUserEnrollDate(LocalDateTime.now());
-//            user.setUserDeleteDate(null);
-//            user.setUserIsDeleted(false);
-
             userRepository.save(user);
         } catch (Exception e) {
             throw new InvalidRequestException(e.getMessage());
@@ -136,6 +129,16 @@ public class UserServiceImpl implements UserService {
         System.out.println("userEmail = " + userEmail);
 
         return convertToResponseUser(userRepository.findByUserEmail(userEmail));
+    }
+
+    @Override
+    public List<ResponseUser> getUserList(int page) {
+        if(page<=0)
+            throw new InvalidRequestException("잘못된 페이지입니다.");
+        PageRequest pageable = PageRequest.of(page-1,10, Sort.by("userId").ascending());
+        List<User> userList = userRepository.findAll(pageable).getContent();
+
+        return userList.stream().map(this::convertToResponseUser).toList();
     }
 
 
