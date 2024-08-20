@@ -16,13 +16,14 @@ import org.personal.user_service.user.request.RequestUpdatePassword;
 import org.personal.user_service.user.response.ResponseUser;
 import org.personal.user_service.user.request.RequestRegist;
 import org.personal.user_service.user.service.UserServiceImpl;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
+import org.springframework.security.core.context.SecurityContext;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -181,10 +182,11 @@ class UserServiceApplicationTests {
 
     @Test
     @DisplayName("사용자 비밀번호 변경")
-    public void testChangePassword(){
+    public void testChangePassword() {
 
         // given
         RequestUpdatePassword requestUpdatePassword = new RequestUpdatePassword(1L, "1234");
+
         User afterChangedUser = new User();
         afterChangedUser.setUserEmail(user1.getUserEmail());
         afterChangedUser.setUserNickname(user1.getUserNickname());
@@ -193,6 +195,24 @@ class UserServiceApplicationTests {
         afterChangedUser.setUserDeleteDate(user1.getUserDeleteDate());
         afterChangedUser.setUserIsDeleted(user1.isUserIsDeleted());
         afterChangedUser.setUserRole(user1.getUserRole());
+
+        // Mock Authentication and SecurityContext
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
+
+        // Set the mocked Authentication in the SecurityContext
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+
+        // Mock authenticated user's name and role
+        when(authentication.getName()).thenReturn(user1.getUserEmail());
+
+        // 권한 설정: List of GrantedAuthority를 반환하도록 설정
+        Collection<GrantedAuthority> authorities = Collections.singletonList(
+                new SimpleGrantedAuthority(user1.getUserRole().name())
+        );
+        when(authentication.getAuthorities()).thenReturn(anyCollection());
+//        when()
 
         when(bCryptPasswordEncoder.encode("1234")).thenReturn("changed_password");
         when(userRepository.findById(1L)).thenReturn(Optional.ofNullable(user1));
@@ -206,7 +226,6 @@ class UserServiceApplicationTests {
         verify(userRepository).save(any(User.class));
         assertEquals("changed_password", afterChangedUser.getUserPassword());
     }
-
     @Test
     @DisplayName("사용자 탈퇴")
     public void testDeleteUser() {

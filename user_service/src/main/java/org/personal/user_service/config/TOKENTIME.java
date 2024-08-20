@@ -1,7 +1,7 @@
 package org.personal.user_service.config;
 
 public enum TOKENTIME {
-    ACCESS(6000L),
+    ACCESS(600000L),
     REFRESH(86000000L);
 
     private final long l;

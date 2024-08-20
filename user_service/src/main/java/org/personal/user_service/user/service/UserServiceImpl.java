@@ -12,6 +12,7 @@ import org.personal.user_service.user.response.ResponseUserDetail;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -76,10 +78,15 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = false)
     public void putUserPassword(RequestUpdatePassword requestUpdatePassword) {
-
+        String userRole = getAuthenticationUserRole();
+        String userName = getAuthenticationUserName();
         // 회원 비밀번호 수정
         User user = userRepository.findById(requestUpdatePassword.userId())
                 .orElseThrow(()->new NotFoundException("잘못된 회원 번호"));
+        // 회원이 자신이 아니고 권한이 관리자도 아니면 예외 발생
+        if(!userName.equals(user.getUserEmail()) && !userRole.equals(ROLE.ROLE_ADMIN.name()))
+            throw new InvalidRequestException("잘못된 요청");
+
         user.setUserPassword(bCryptPasswordEncoder.encode(requestUpdatePassword.userPassword()));
 
         userRepository.save(user);
@@ -153,8 +160,17 @@ public class UserServiceImpl implements UserService {
     }
 
     // 사용자 정보 가져옴
-    public static String getAuthenticationUserName(){
+    public String getAuthenticationUserName(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName();
     }
+    public String getAuthenticationUserRole() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // 권한이 있는 경우 권한을 반환
+        if (authentication != null && authentication.getAuthorities() != null && !authentication.getAuthorities().isEmpty()) {
+            return authentication.getAuthorities().iterator().next().getAuthority();
+        }
+        return null; // 권한이 없을 경우 null 반환
+    }
+
 }

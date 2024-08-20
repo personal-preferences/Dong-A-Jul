@@ -1,11 +1,13 @@
-# Login 
+# USER_SERVICE
 
 ## 목차
-1. 회원 기능
-2. 로그인 기능
-3. 토큰 관리
 
-## 1. 기능 설명
+---
+1. User feature
+2. Login feature 
+3. Access, Refresh Token 
+
+## 1. User Feature
 
 ---
 
@@ -13,13 +15,13 @@
 1. Info <br>
     페이지에 해당하는 회원들을 반환합니다. 페이지 번호는 1번부터 시작합니다. 해당 페이지에 회원이 없다면 빈 배열을 반환합니다.
 2. Request <br>
-   1. PathVariable: page(int)
+   - PathVariable: page(int)
 3. Response
-   1. Body <br>
+   - Body <br>
        List - (userEmail, userNickName, userEnrollDate, userDeleteDate, userIsDeleted, userRole)
-   2. Status <br>
-      success: 200  
-      fail: 400 
+   - Status <br>
+         success: 200  
+         fail: 400 
 
 ### 1-2. 회원 상세 조회(Get - "api/users/info)
 1. Info <br>
@@ -27,9 +29,9 @@
 2. Request<br>
    X
 3. Response
-   1. Body <br>
+   - Body <br>
       (userEmail, userNickName, userEnrollDate, userDeleteDate, userIsDeleted, userRole)
-   2. Status <br>
+   - Status <br>
       success: 200  
       fail: 400 
 
@@ -44,16 +46,18 @@
    2. Status <br>
       success: 200 <br>
       fail: 400
-### 1- . ( - " ")
+   
+### 1-4. 비밀번호 수정 (Put- "api/users/password")
 1. Info <br>
-
+   회원의 비밀번호를 수정합니다.
 2. Request<br>
-
+   - Body: userId(Long), userPassword(Stirng)
 3. Response <br>
    1. Body <br>
-      
+      요청 Body 검증 실패 시 잘못된 부분을 응답합니다.
    2. Status <br>
-      
+      success: 200 <Br>
+      fail: 400, 404
 ### 1- . ( - " ")
 1. Info <br>
 
