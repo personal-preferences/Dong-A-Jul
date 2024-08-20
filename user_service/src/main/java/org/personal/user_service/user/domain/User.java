@@ -3,10 +3,9 @@ package org.personal.user_service.user.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
-import org.hibernate.annotations.Where;
 import org.personal.user_service.user.etc.ROLE;
+import org.personal.user_service.user.request.RequestRegist;
 
 import java.time.LocalDateTime;
 
@@ -40,6 +39,18 @@ public class User {
     @Column(name = "user_role")
     @Enumerated(EnumType.STRING)
     private ROLE userRole;
+
+    public static User regist(RequestRegist requestRegist, String userPassword) {
+        return User.builder()
+                .userEmail(requestRegist.userEmail())
+                .userNickname(requestRegist.userNickname())
+                .userPassword(userPassword)
+                .userRole(ROLE.ROLE_USER)
+                .userEnrollDate(LocalDateTime.now())
+                .userDeleteDate(null)
+                .userIsDeleted(false)
+                .build();
+    }
 
     public User deleteUser() {
         this.userDeleteDate = LocalDateTime.now();

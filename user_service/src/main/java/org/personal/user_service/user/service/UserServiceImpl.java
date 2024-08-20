@@ -52,22 +52,9 @@ public class UserServiceImpl implements UserService {
                 throw new InvalidRequestException(
                         ((user.getUserEmail().equals(requestRegist.userEmail()))? "이메일": "닉네임")
                                 + " 중복");
-//                throw new InvalidRequestException("이메일 중복");
             }
 
-//            if(userRepository.existsByUserNickname(requestRegist.userNickname())){
-//                throw new InvalidRequestException("닉네임 중복");
-//            }
-
-            user = User.builder()
-                    .userEmail(requestRegist.userEmail())
-                    .userNickname(requestRegist.userNickname())
-                    .userPassword(bCryptPasswordEncoder.encode(requestRegist.userPassword()))
-                    .userRole(ROLE.ROLE_USER)
-                    .userEnrollDate(LocalDateTime.now())
-                    .userDeleteDate(null)
-                    .userIsDeleted(false)
-                    .build();
+            user = User.regist(requestRegist, bCryptPasswordEncoder.encode(requestRegist.userPassword()));
             userRepository.save(user);
         } catch (Exception e) {
             throw new InvalidRequestException(e.getMessage());
