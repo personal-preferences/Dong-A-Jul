@@ -49,7 +49,7 @@ public class UserController {
 
 
     @PostMapping("/regist")
-    public ResponseEntity regist(@RequestBody@Validated RequestRegist requestRegist, Errors errors){
+    public ResponseEntity<Void> regist(@RequestBody@Validated RequestRegist requestRegist, Errors errors){
 
         if (errors.hasErrors()){
 

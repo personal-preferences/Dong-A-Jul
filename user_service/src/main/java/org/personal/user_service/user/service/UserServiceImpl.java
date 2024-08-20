@@ -47,13 +47,19 @@ public class UserServiceImpl implements UserService {
             if (isrequestRegistNull(requestRegist)) {
                 throw new InvalidRequestException("잘못된 회원가입");
             }
-            if(userRepository.existsByUserEmail(requestRegist.userEmail())){
-                throw new InvalidRequestException("이메일 중복");
+            User user = userRepository.findByUserEmailOrUserNickname(requestRegist.userEmail(), requestRegist.userNickname());
+            if(user != null){
+                throw new InvalidRequestException(
+                        ((user.getUserEmail().equals(requestRegist.userEmail()))? "이메일": "닉네임")
+                                + " 중복");
+//                throw new InvalidRequestException("이메일 중복");
             }
-            if(userRepository.existsByUserNickname(requestRegist.userNickname())){
-                throw new InvalidRequestException("닉네임 중복");
-            }
-            User user = User.builder()
+
+//            if(userRepository.existsByUserNickname(requestRegist.userNickname())){
+//                throw new InvalidRequestException("닉네임 중복");
+//            }
+
+            user = User.builder()
                     .userEmail(requestRegist.userEmail())
                     .userNickname(requestRegist.userNickname())
                     .userPassword(bCryptPasswordEncoder.encode(requestRegist.userPassword()))
