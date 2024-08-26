@@ -1,5 +1,6 @@
 package org.personal.user_service.user.service;
 
+import org.personal.user_service.config.MessageProducer;
 import org.personal.user_service.user.domain.User;
 import org.personal.user_service.user.etc.ROLE;
 import org.personal.user_service.user.exception.InvalidRequestException;
@@ -27,10 +28,12 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final MessageProducer messageProducer;
 
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, MessageProducer messageProducer) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.messageProducer = messageProducer;
     }
 
 
@@ -71,7 +74,7 @@ public class UserServiceImpl implements UserService {
 
         User user= userRepository.findById(userId)
                 .orElseThrow(()-> new NotFoundException("잘못된 회원 번호"));
-
+        messageProducer.send();
         return convertToResponseUser(user);
     }
 
@@ -127,7 +130,7 @@ public class UserServiceImpl implements UserService {
 
         String userEmail = getAuthenticationUserName();
         System.out.println("userEmail = " + userEmail);
-
+        messageProducer.send();
         return convertToResponseUser(userRepository.findByUserEmail(userEmail));
     }
 
@@ -154,6 +157,7 @@ public class UserServiceImpl implements UserService {
     private ResponseUserDetail convertToResponseUserDetail(User user) {
         return new ResponseUserDetail(user);
     }
+
     // User to ResponseUser
     private ResponseUser convertToResponseUser(User user) {
         return new ResponseUser(user);
@@ -164,6 +168,7 @@ public class UserServiceImpl implements UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName();
     }
+
     public String getAuthenticationUserRole() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         // 권한이 있는 경우 권한을 반환
