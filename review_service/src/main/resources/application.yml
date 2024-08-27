@@ -2,9 +2,9 @@ spring:
   application:
     name: review_service
   datasource:
-    url: jdbc:postgresql://localhost:5432/daj-review
-    username: postgres
-    password: postgres
+    url: jdbc:postgresql://220.73.19.191:5432/dongajul
+    username: test
+    password: test
     driver-class-name: org.postgresql.Driver
 
   jpa:
