@@ -21,26 +21,14 @@ spring:
         default-page-size: 10
 # kafka 설정
   cloud:
-    function:
-      definition: kafkaConsumer
     stream:
       kafka:
-        bindings:
-          producer-out-0:
-            producer:
-              configuration:
-                key:
-                  serializer: org.apache.kafka.common.serialization.StringSerializer
-          kafkaConsumer-in-0:
-            consumer:
-              configuration:
-                key:
-                  deserializer: org.apache.kafka.common.serialization.StringDeserializer
         binder:
           brokers: 220.73.19.191:9092
       bindings:
-        producer-out-0:
-          destination: testTopic # topic
-          contentType: application/json
-        kafkaConsumer-in-0:
-          destination: testTopic  # topic
+        input-in-0:                                   # Consumer 클래스의 메소드명으로 기본 바인딩이 생긴다
+          destination: toilet-location-deleted-sync   # topic 이름
+        inputAsync-in-0:
+          destination: toilet-location-deleted
+    function:
+      definition: input;inputAsync                    # 사용하고 싶은 binding이 여러개일 경우 ;으로 구분하여 나열한다

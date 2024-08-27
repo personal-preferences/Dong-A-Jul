@@ -3,6 +3,7 @@ package org.personal.locations_service.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.personal.locations_service.messaging.LocationEventProducer;
 import org.personal.locations_service.request.LocationCreate;
 import org.personal.locations_service.request.LocationEdit;
 import org.personal.locations_service.request.LocationMarker;
@@ -23,6 +24,7 @@ import java.util.List;
 public class LocationController {
 
     private final LocationService locationService;
+    private final LocationEventProducer locationEventProducer;
 
     @PostMapping
     public void add(@RequestBody @Valid LocationCreate locationCreate) {
@@ -55,4 +57,11 @@ public class LocationController {
 
     @DeleteMapping("/{locationId}")
     public void delete(@PathVariable Long locationId) { locationService.delete(locationId); }
+
+    @GetMapping("/kafka")
+    public String messageProduce(){
+        locationEventProducer.asyncSend("toilet-location-deleted", "삭제됨");
+        locationEventProducer.syncSend("toilet-location-deleted-sync", "삭제됨");
+        return "Kafka service started";
+    }
 }
