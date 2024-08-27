@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://220.73.19.191:5432/dongajul
+    username: test
+    password: test
+
+  jpa:
+    show-sql: true
+    database: postgresql
+    properties:
+      hibernate:
+        ddl-auto: none
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
