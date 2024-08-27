@@ -40,9 +40,16 @@ public class UserController {
         return ResponseEntity.ok(userList);
     }
 
+    @GetMapping("/page/{page}")
+    public ResponseEntity<List<ResponseUser>> getUserList(@PathVariable int page){
+
+        List<ResponseUser> userList = userService.getUserList(page);
+        return ResponseEntity.ok(userList);
+    }
+
 
     @PostMapping("/regist")
-    public ResponseEntity regist(@RequestBody@Validated RequestRegist requestRegist, Errors errors){
+    public ResponseEntity<Void> regist(@RequestBody@Validated RequestRegist requestRegist, Errors errors){
 
         if (errors.hasErrors()){
 

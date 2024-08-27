@@ -9,7 +9,10 @@ import org.personal.user_service.user.request.RequestRegist;
 import org.personal.user_service.user.request.RequestUpdatePassword;
 import org.personal.user_service.user.response.ResponseUser;
 import org.personal.user_service.user.response.ResponseUserDetail;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -45,21 +49,14 @@ public class UserServiceImpl implements UserService {
             if (isrequestRegistNull(requestRegist)) {
                 throw new InvalidRequestException("잘못된 회원가입");
             }
-            if(userRepository.existsByUserEmail(requestRegist.userEmail())){
-                throw new InvalidRequestException("이메일 중복");
+            User user = userRepository.findByUserEmailOrUserNickname(requestRegist.userEmail(), requestRegist.userNickname());
+            if(user != null){
+                throw new InvalidRequestException(
+                        ((user.getUserEmail().equals(requestRegist.userEmail()))? "이메일": "닉네임")
+                                + " 중복");
             }
-            if(userRepository.existsByUserNickname(requestRegist.userNickname())){
-                throw new InvalidRequestException("닉네임 중복");
-            }
-            User user = new User();
-            user.setUserEmail(requestRegist.userEmail());
-            user.setUserNickname(requestRegist.userNickname());
-            user.setUserPassword(bCryptPasswordEncoder.encode(requestRegist.userPassword()));
-            user.setUserRole(ROLE.valueOf(requestRegist.userRole()));
-            user.setUserEnrollDate(LocalDateTime.now());
-            user.setUserDeleteDate(null);
-            user.setUserIsDeleted(false);
 
+            user = User.regist(requestRegist, bCryptPasswordEncoder.encode(requestRegist.userPassword()));
             userRepository.save(user);
         } catch (Exception e) {
             throw new InvalidRequestException(e.getMessage());
@@ -81,10 +78,15 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = false)
     public void putUserPassword(RequestUpdatePassword requestUpdatePassword) {
-
+        String userRole = getAuthenticationUserRole();
+        String userName = getAuthenticationUserName();
         // 회원 비밀번호 수정
         User user = userRepository.findById(requestUpdatePassword.userId())
                 .orElseThrow(()->new NotFoundException("잘못된 회원 번호"));
+        // 회원이 자신이 아니고 권한이 관리자도 아니면 예외 발생
+        if(!userName.equals(user.getUserEmail()) && !userRole.equals(ROLE.ROLE_ADMIN.name()))
+            throw new InvalidRequestException("잘못된 요청");
+
         user.setUserPassword(bCryptPasswordEncoder.encode(requestUpdatePassword.userPassword()));
 
         userRepository.save(user);
@@ -114,9 +116,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional(readOnly = false)
-    public void registKakaoUser(RequestRegist requestRegistUser) {
+    public ResponseUserDetail registKakaoUser(RequestRegist requestRegistUser) {
         if (!userRepository.existsByUserEmail(requestRegistUser.userEmail()))
             registUser(requestRegistUser);
+        return convertToResponseUserDetail(userRepository.findByUserEmail(requestRegistUser.userEmail()));
     }
 
     @Override
@@ -128,12 +131,21 @@ public class UserServiceImpl implements UserService {
         return convertToResponseUser(userRepository.findByUserEmail(userEmail));
     }
 
+    @Override
+    public List<ResponseUser> getUserList(int page) {
+        if(page<=0)
+            throw new InvalidRequestException("잘못된 페이지입니다.");
+        PageRequest pageable = PageRequest.of(page-1,10, Sort.by("userId").ascending());
+        List<User> userList = userRepository.findAll(pageable).getContent();
+
+        return userList.stream().map(this::convertToResponseUser).toList();
+    }
+
 
     // 요청 Null 2차 확인 로직 (컨트롤러에서 1차 검사진행)
     private boolean isrequestRegistNull(RequestRegist requestRegist) {
 
         return requestRegist.userEmail() == null
-                || requestRegist.userRole() == null
                 || requestRegist.userNickname() == null
                 || requestRegist.userPassword() == null;
     }
@@ -148,8 +160,17 @@ public class UserServiceImpl implements UserService {
     }
 
     // 사용자 정보 가져옴
-    public static String getAuthenticationUserName(){
+    public String getAuthenticationUserName(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName();
     }
+    public String getAuthenticationUserRole() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        // 권한이 있는 경우 권한을 반환
+        if (authentication != null && authentication.getAuthorities() != null && !authentication.getAuthorities().isEmpty()) {
+            return authentication.getAuthorities().iterator().next().getAuthority();
+        }
+        return null; // 권한이 없을 경우 null 반환
+    }
+
 }

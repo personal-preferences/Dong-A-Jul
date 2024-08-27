@@ -1,5 +1,6 @@
 package org.personal.user_service.user.controller;
 
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -61,12 +62,22 @@ public class LoginController {
     @RequestMapping("/auth/success")
     public void kakaoLoginRedirect(@RequestParam String accessToken, @RequestParam String refreshToken, HttpServletResponse response) throws IOException {
 
-        response.addHeader("access", accessToken);
-        response.addHeader("refresh", refreshToken);
+        response.addCookie(createCookie("refresh",refreshToken));
         // 아래는 프론트 화면 구현되면 리다이렉트 시킬 url로 지정할 것
-//        String redirectUrl = "http://localhost:8765/kakao/login?access=" + accessToken + "&refresh=" + refreshToken;
-//        response.sendRedirect(redirectUrl);
+        String redirectUrl = "http://localhost:5173/kakaoLogin?access=" + accessToken;
+
+        response.sendRedirect(redirectUrl);
         System.out.println("카카오 로그인 완료");
+    }
+
+    private Cookie createCookie(String key, String value) {
+        Cookie cookie = new Cookie(key, value);
+        cookie.setMaxAge(24*60*60); // 초
+//        cookie.setSecure(true);   //https 인 경우 사용
+        cookie.setPath("/");   //쿠키 지정 범위
+        cookie.setHttpOnly(true);
+
+        return cookie;
     }
 
 

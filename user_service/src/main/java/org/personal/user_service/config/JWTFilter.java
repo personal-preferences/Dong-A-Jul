@@ -29,15 +29,12 @@ public class JWTFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
         String accessToken = request.getHeader("access");
         String refreshToken = findRefresh(request);
-        System.out.println("accessToken = " + accessToken);
-        System.out.println("refreshToken = " + refreshToken);
 
         try {
 
             // 엑세스 토큰 검사
             if (accessToken != null && accessToken.startsWith("Bearer ")) {
                 accessToken = accessToken.split(" ")[1];
-                System.out.println("1");
 
                 if (!jwtUtil.isExpired(accessToken)) {
                     System.out.println("not expired");
@@ -51,7 +48,6 @@ public class JWTFilter extends OncePerRequestFilter {
                     handleRefreshToken(refreshToken, request, response, filterChain);
 
                 } else {
-                    System.out.println("2");
 
                     // 엑세스 토큰 만료되고, 리프레시 토큰도 없다면 401 반환
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -62,12 +58,7 @@ public class JWTFilter extends OncePerRequestFilter {
                 }
 
                 // 만약 엑세스 토큰 없다면 리프래시 토큰 검사 후 새로운 엑세스 토큰을 헤더에 담고 응답
-            } else if (refreshToken != null) {
-                System.out.println("3");
-                handleRefreshToken(refreshToken, request, response, filterChain);
-
             } else {
-                System.out.println("4");
                 // 둘다 없으면 다음으로 진행하여 Unauthorized로 진행
                 filterChain.doFilter(request, response);
             }
@@ -98,7 +89,9 @@ public class JWTFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private void handleRefreshToken(String refreshToken, HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws IOException {
+    private void handleRefreshToken(String refreshToken, HttpServletRequest request,
+                                    HttpServletResponse response, FilterChain filterChain) throws IOException {
+
         try {
             if (jwtUtil.isExpired(refreshToken)) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -110,7 +103,8 @@ public class JWTFilter extends OncePerRequestFilter {
             }
 
             User user = getUserFromToken(refreshToken);
-            String newAccessToken = jwtUtil.createJwt("access", user.getUserEmail(), user.getUserNickname(), user.getUserRole().name(), TOKENTIME.REFRESH.label());
+            String newAccessToken = jwtUtil.createJwt("access", user.getUserEmail(), user.getUserNickname(),
+                    user.getUserRole().name(), TOKENTIME.ACCESS.label());
             response.addHeader("access", "Bearer " + newAccessToken);
             authenticateUser(user);
             System.out.println("새로운 access 토큰 반환");

@@ -23,7 +23,9 @@ public interface UserService {
 
     ResponseUserDetail getUserByEmail(String userEmail);
 
-    void registKakaoUser(RequestRegist requestRegistUser);
+    ResponseUserDetail registKakaoUser(RequestRegist requestRegistUser);
 
     ResponseUser getMyInfo();
+
+    List<ResponseUser> getUserList(int page);
 }

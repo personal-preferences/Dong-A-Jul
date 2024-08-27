@@ -53,6 +53,7 @@ public class LoginServiceImpl implements LoginService{
                 responseUser.userRole().name(), TOKENTIME.ACCESS.label()); // 1시간
         String refreshToken = jwtUtil.createJwt("refresh", responseUser.userEmail(), responseUser.userNickname(),
                 responseUser.userRole().name(),TOKENTIME.REFRESH.label() ); // 24시간
+
         response.addHeader("access", "Bearer " + accessToken);
         response.addCookie(createCookie("refresh",refreshToken));
 
@@ -119,12 +120,12 @@ public class LoginServiceImpl implements LoginService{
         String role = "ROLE_USER"; // default: user
 
         // 카카오 회원 초기 비밀번호는 12341234입니다.
-        RequestRegist requestRegistUser = new RequestRegist(email,nickname,"12341234","ROLE_USER");
+        RequestRegist requestRegistUser = new RequestRegist(email,nickname,"12341234");
 
-        userService.registKakaoUser(requestRegistUser);
+        ResponseUserDetail userDetail = userService.registKakaoUser(requestRegistUser);
 
         // JWT 토큰을 생성 후 전달
-        return createTokens(email, nickname, role);
+        return createTokens(userDetail.userEmail(), userDetail.userNickname(), userDetail.userRole().name());
     }
 
     private ResponseToken createTokens(String email, String nickname, String role) {
