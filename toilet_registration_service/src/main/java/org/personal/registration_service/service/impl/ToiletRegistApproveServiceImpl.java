@@ -7,7 +7,9 @@ import java.time.LocalDateTime;
 import org.personal.registration_service.common.ToiletRegistErrorResult;
 import org.personal.registration_service.domain.ToiletRegist;
 import org.personal.registration_service.exception.ToiletRegistException;
+import org.personal.registration_service.message.KafkaService;
 import org.personal.registration_service.repository.ToiletRegistRepository;
+import org.personal.registration_service.request.ToiletLocation;
 import org.personal.registration_service.request.ToiletRegistApproveRequest;
 import org.personal.registration_service.response.ToiletRegistApproveResponse;
 import org.personal.registration_service.response.ToiletRegistResponse;
@@ -24,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class ToiletRegistApproveServiceImpl implements ToiletRegistApproveService {
 
 	final ToiletRegistRepository toiletRegistRepository;
+	final KafkaService kafkaService;
 
 	@Override
 	public ToiletRegistApproveResponse updateToiletRegistApprove(ToiletRegistApproveRequest request) {
@@ -39,6 +42,10 @@ public class ToiletRegistApproveServiceImpl implements ToiletRegistApproveServic
 		toiletRegistRepository.save(toiletRegist);
 
 		String status = request.isApproved() ? APPROVE : REJECT;
+
+		if(status.equals(APPROVE)){
+			kafkaService.sendToiletLocation(toiletLocation(toiletRegist));
+		}
 
 		return new ToiletRegistApproveResponse(status);
 	}
@@ -62,5 +69,16 @@ public class ToiletRegistApproveServiceImpl implements ToiletRegistApproveServic
 		}
 
 		return toiletRegists.map(ToiletRegistResponse::of);
+	}
+
+	public ToiletLocation toiletLocation(ToiletRegist toiletRegist){
+		return ToiletLocation.builder()
+			.toiletRegistId(toiletRegist.getToiletRegistId())
+			.name(toiletRegist.getToiletRegistToiletName())
+			.roadAddress(toiletRegist.getToiletRegistRoadNameAddress())
+			.jibunAddress(toiletRegist.getToiletRegistNumberAddress())
+			.latitude(toiletRegist.getToiletRegistLatitude())
+			.longitude(toiletRegist.getToiletRegistLongitude())
+			.build();
 	}
 }
