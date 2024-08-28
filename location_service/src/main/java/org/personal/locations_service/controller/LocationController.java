@@ -60,8 +60,18 @@ public class LocationController {
 
     @GetMapping("/kafka")
     public String messageProduce(){
-        locationEventProducer.asyncSend("toilet-location-deleted", "삭제됨");
+        LocationCreate request = LocationCreate
+                .builder()
+                .name("홍대 화장실")
+                .roadAddress("서울 마포구 서교동 1길")
+                .jibunAddress("서울 마포구 동교동 150-1")
+                .latitude(10.23f)
+                .longitude(32.99f)
+                .build();
+
         locationEventProducer.syncSend("toilet-location-deleted-sync", "삭제됨");
+        locationEventProducer.asyncSend("toilet-location-deleted", request);
+
         return "Kafka service started";
     }
 }

@@ -12,11 +12,11 @@ public class LocationEventProducer {
     private final StreamBridge streamBridge;
 
     @Async
-    public void asyncSend(String topic, String message) {
+    public void asyncSend(String topic, Object message) {
         streamBridge.send(topic, message);
     }
 
-    public void syncSend(String topic, String message) {
+    public void syncSend(String topic, Object message) {
         boolean result = streamBridge.send(topic, message);
         if(!result) {
             throw new RuntimeException("Failed to send message to topic: " + topic + ", message: " + message);
