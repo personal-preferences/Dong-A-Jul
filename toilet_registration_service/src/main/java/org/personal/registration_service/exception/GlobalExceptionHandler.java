@@ -45,9 +45,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	}
 
 	@ExceptionHandler({ToiletRegistException.class})
-	public ResponseEntity<ErrorResponse> handleRestApiException(final ToiletRegistException exception) {
-		log.warn("MembershipException occur: ", exception);
-		return this.makeErrorResponseEntity(exception.getErrorResult());
+	public ResponseEntity<ErrorResponse> handleToiletRegistException(final ToiletRegistException exception) {
+		log.warn("ToiletRegistException occur: ", exception);
+		return this.makeErrorResponseEntity(exception.getErrorResult(), exception.getMessage());
 	}
 
 	@ExceptionHandler({IllegalArgumentException.class})
@@ -68,10 +68,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return this.makeErrorResponseEntity(ToiletRegistErrorResult.ENTITY_NOT_FOUND, exception.getMessage());
 	}
 
+	@ExceptionHandler(KafkaRegistException.class)
+	public ResponseEntity<ErrorResponse> handleKafkaRegistException(final KafkaRegistException ex) {
+		log.warn("KafkaRegistException occur: ", ex);
+		return this.makeErrorResponseEntity(ex.getErrorResult(), ex.getMessage());
+	}
+
 	@ExceptionHandler({Exception.class})
 	public ResponseEntity<ErrorResponse> handleException(final Exception exception) {
 		log.warn("Exception occur: ", exception);
-		return this.makeErrorResponseEntity(ToiletRegistErrorResult.UNKNOWN_EXCEPTION);
+		return this.makeErrorResponseEntity(ToiletRegistErrorResult.UNKNOWN_EXCEPTION, exception.getMessage());
 	}
 
 	private ResponseEntity<ErrorResponse> makeErrorResponseEntity(final ToiletRegistErrorResult errorResult) {
@@ -81,10 +87,9 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	private ResponseEntity<ErrorResponse> makeErrorResponseEntity(final ToiletRegistErrorResult errorResult, final String message) {
 		return ResponseEntity.status(errorResult.getHttpStatus())
-			.body(new ErrorResponse(errorResult.name(), errorResult.getMessage()));
+			.body(new ErrorResponse(errorResult.name(), message));
 	}
 
 	record ErrorResponse(String code, String message) {
 	}
-
 }
