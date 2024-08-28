@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '3.3.2'
+	id 'org.springframework.boot' version '3.2.3'
 	id 'io.spring.dependency-management' version '1.1.6'
 	id 'org.asciidoctor.jvm.convert' version '3.3.2'
 }
@@ -14,14 +14,17 @@ java {
 	}
 }
 
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
-}
-
 repositories {
 	mavenCentral()
+	maven { url "https://repo.spring.io/release" }  // Spring의 릴리스 리포지토리 추가
+	maven { url "https://repo.spring.io/milestone" }  // 필요시 마일스톤 리포지토리 추가
+	maven { url "https://repo.spring.io/snapshot" }  // 필요시 스냅샷 리포지토리 추가
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:Hoxton.SR12"  // Spring Cloud BOM 추가
+	}
 }
 
 ext {
@@ -30,29 +33,42 @@ ext {
 }
 
 dependencies {
+	// Spring Boot Dependencies
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.hibernate.orm:hibernate-core:6.2.7.Final'
 	implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
+
+	// Spring Cloud Stream & Kafka Dependencies
+	implementation 'org.springframework.cloud:spring-cloud-stream'
+	implementation 'org.springframework.cloud:spring-cloud-stream-binder-kafka'
+
+	// Lombok for code generation
 	compileOnly 'org.projectlombok:lombok'
-	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// Database Drivers
 	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'org.postgresql:postgresql'
-	annotationProcessor 'org.projectlombok:lombok'
+
+	// Development tools
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
+	// Testing
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// Google Gson
 	implementation 'com.google.code.gson:gson:2.10.1'
 
-	// QueryDSL 의존성
+	// QueryDSL Dependencies
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}:jakarta"
 	implementation "com.querydsl:querydsl-core:${queryDslVersion}"
 
-	// QueryDSL 쿼리 타입 생성 (QClass 생성 시 @Entity 탐색)
+	// QueryDSL Annotation Processor
 	annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}:jakarta"
-
-	// java.lang.NoClassDefFoundError:javax/persistence/Entity 에러 방지
 	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
 }

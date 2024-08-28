@@ -2,7 +2,25 @@ server:
   port: 8765
 
 spring:
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: 220.73.19.191:9092
+      bindings:
+        checkRegistrationApprove:
+          destination: check-registration-approve
+          group: registration-service
+          content-type: application/json
+        toiletRegistrationInformation:
+          destination: toilet-registration-information
+          content-type: application/json
+        toiletRegistrationLocation:
+          destination: toilet-registration-location
+          content-type: application/json
+
   application:
     name: user_service
+
   profiles:
-    active: h2 ,postgresql # 기본 프로파일을 h2와 postgresql로 설정합니다.
+    active: h2, postgresql
