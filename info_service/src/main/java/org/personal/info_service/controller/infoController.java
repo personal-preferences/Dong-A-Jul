@@ -1,13 +1,15 @@
 package org.personal.info_service.controller;
 
-import jakarta.validation.Valid;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
+import org.personal.info_service.messaging.MessageProducer;
 import org.personal.info_service.request.RequestCreateInfo;
 import org.personal.info_service.response.ToiletInfoResponse;
 import org.personal.info_service.service.ToiletInfoService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,6 +21,10 @@ import java.util.List;
 public class infoController {
 
     private final ToiletInfoService toiletInfoService;
+    private final MessageProducer messageProducer;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @PostMapping("/add")
     public ResponseEntity<ToiletInfoResponse> addInfo(@RequestBody RequestCreateInfo toiletInfo){
@@ -83,6 +89,45 @@ public class infoController {
         List<ToiletInfoResponse> infoList = toiletInfoService.getDisabledToiletList();
 
         return ResponseEntity.status(HttpStatus.OK).body(infoList);
+    }
+
+    // 카프카 테스트
+    @GetMapping("/kafka/regist")
+    public String createInfoTest() throws JsonProcessingException {
+
+        String json = objectMapper.writeValueAsString(createTestToiletInfo());
+        messageProducer.send("test", json);
+
+        return "regist ToiletInfo";
+    }
+
+    public RequestCreateInfo createTestToiletInfo() {
+        return RequestCreateInfo.builder()
+                .isDeleted(false)
+                .toiletInfoManagementAgency("Public Agency")
+                .toiletInfoPhoneNumber("123-456-7890")
+                .toiletInfoOpeningHours("09:00 - 18:00")
+                .toiletInfoOpeningHoursDetails("Open all week except holidays")
+                .toiletInfoInstallationYearMonth("2024-07")
+                .toiletInfoOwnershipType("Public")
+                .toiletInfoWasteDisposalMethod("Sewage")
+                .toiletInfoSafetyFacilityInstallationIsRequired(true)
+                .toiletInfoEmergencyBellIsInstalled(true)
+                .toiletInfoEmergencyBellLocation("Near entrance")
+                .toiletInfoEntranceCCTVIsInstalled(true)
+                .toiletInfoDiaperChangingTableIsAvailable(true)
+                .toiletInfoDiaperChangingTableLocation("Corner near entrance")
+                .toiletInfoMaleToiletsNumber(3)
+                .toiletInfoMaleUrinalsNumber(4)
+                .toiletInfoMaleDisabledToiletsNumber(1)
+                .toiletInfoMaleDisabledUrinalsNumber(1)
+                .toiletInfoMaleChildToiletsNumber(1)
+                .toiletInfoMaleChildUrinalsNumber(1)
+                .toiletInfoFemaleToiletsNumber(4)
+                .toiletInfoFemaleDisabledToiletsNumber(1)
+                .toiletInfoFemaleChildToiletsNumber(1)
+                .toiletLocationId(1L)
+                .build();
     }
 
 }

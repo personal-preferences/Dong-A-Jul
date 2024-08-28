@@ -13,12 +13,23 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://220.73.19.191:5432/dongajul
-    username: 
-    password: 
-
+    username:
+    password:
   jpa:
     hibernate:
       ddl-auto: update #create update none
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     show-sql: true
+  cloud:
+    function:
+      definition: createToiletInfo;deleteToiletInfo
+    stream:
+      kafka:
+        binder:
+          brokers: 220.73.19.191:9092
+      bindings:
+        createToiletInfo-in-0:
+          destination: test
+        deleteToiletInfo-in-0:
+          destination: test1
