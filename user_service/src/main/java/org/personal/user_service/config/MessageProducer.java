@@ -1,7 +1,9 @@
 package org.personal.user_service.config;
 
 import lombok.AllArgsConstructor;
+import org.personal.user_service.user.response.ResponseUser;
 import org.springframework.cloud.stream.function.StreamBridge;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -13,12 +15,11 @@ public class MessageProducer {
     private final StreamBridge streamBridge;
 
     @Async
-    public void send() {
-//        streamBridge.send(bindingName, MessageBuilder
-//                .withPayload(payload)
-//                .setHeader(KafkaHeaders.KEY, key)
-//                .build());
-        streamBridge.send(bindingName,"하이요");
+    public void send(ResponseUser user) {
+        streamBridge.send(
+                bindingName,
+                MessageBuilder.withPayload(user).build()
+        );
     }
 
 }

@@ -1,5 +1,6 @@
 package org.personal.user_service.user.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.personal.user_service.config.MessageProducer;
 import org.personal.user_service.user.domain.User;
 import org.personal.user_service.user.etc.ROLE;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -71,10 +73,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public ResponseUser getUser(Long userId) {
-
         User user= userRepository.findById(userId)
                 .orElseThrow(()-> new NotFoundException("잘못된 회원 번호"));
-        messageProducer.send();
         return convertToResponseUser(user);
     }
 
@@ -100,10 +100,13 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Long userId) {
 
         // 회원 삭제
+        log.info("userId: "+ userId);
+        System.out.println("userId = " + userId);
         User user = userRepository.findById(userId)
                 .orElseThrow(()->new NotFoundException("없는 회원번호"));
-        user.deleteUser();
 
+        user.deleteUser();
+        messageProducer.send(convertToResponseUser(user));
         userRepository.save(user);
     }
 
@@ -130,7 +133,6 @@ public class UserServiceImpl implements UserService {
 
         String userEmail = getAuthenticationUserName();
         System.out.println("userEmail = " + userEmail);
-        messageProducer.send();
         return convertToResponseUser(userRepository.findByUserEmail(userEmail));
     }
 

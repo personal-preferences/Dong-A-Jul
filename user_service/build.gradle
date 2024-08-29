@@ -60,7 +60,10 @@ dependencies {
 
     implementation 'org.springframework.cloud:spring-cloud-stream'
     implementation 'org.springframework.cloud:spring-cloud-stream-binder-kafka'
+    implementation 'org.springframework.boot:spring-boot-starter-json'
+
 }
+
 
 tasks.named('test') {
     outputs.dir snippetsDir

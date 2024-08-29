@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Setter
 @ToString
 @Entity
-@Table(name = "user", schema = "public")
+@Table(name = "users", schema = "public")
 @SQLRestriction("user_is_deleted = false")
 public class User {
 
