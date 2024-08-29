@@ -23,7 +23,8 @@ spring:
           contentType: application/json
         kafkaConsumer-in-0:
           destination: testTopic
-
+        deleteReviewConsumer-in-0:
+          destination: deleteReview
   application:
     name: review_service
   datasource:
