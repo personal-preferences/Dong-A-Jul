@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.personal.locations_service.domain.Location;
 import org.personal.locations_service.exception.ToiletNotFound;
+import org.personal.locations_service.messaging.LocationEventProducer;
 import org.personal.locations_service.repository.LocationRepository;
 import org.personal.locations_service.request.LocationCreate;
 import org.personal.locations_service.request.LocationEdit;
@@ -21,6 +22,7 @@ import java.util.List;
 public class LocationServiceImpl implements LocationService{
 
     private final LocationRepository locationRepository;
+    private final LocationEventProducer locationEventProducer;
 
     @Override
     public void add(LocationCreate locationCreate) {
@@ -71,5 +73,7 @@ public class LocationServiceImpl implements LocationService{
         Location location = locationRepository.findById(id).orElseThrow(ToiletNotFound::new);
 
         locationRepository.delete(location);
+
+        locationEventProducer.send("toilet-location-deleted", location.getId());
     }
 }
