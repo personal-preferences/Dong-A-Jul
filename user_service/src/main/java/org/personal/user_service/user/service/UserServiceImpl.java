@@ -1,5 +1,7 @@
 package org.personal.user_service.user.service;
 
+import lombok.extern.slf4j.Slf4j;
+import org.personal.user_service.config.MessageProducer;
 import org.personal.user_service.user.domain.User;
 import org.personal.user_service.user.etc.ROLE;
 import org.personal.user_service.user.exception.InvalidRequestException;
@@ -23,14 +25,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    private final MessageProducer messageProducer;
 
-    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+    public UserServiceImpl(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, MessageProducer messageProducer) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.messageProducer = messageProducer;
     }
 
 
@@ -68,10 +73,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public ResponseUser getUser(Long userId) {
-
         User user= userRepository.findById(userId)
                 .orElseThrow(()-> new NotFoundException("잘못된 회원 번호"));
-
         return convertToResponseUser(user);
     }
 
@@ -97,10 +100,13 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Long userId) {
 
         // 회원 삭제
+        log.info("userId: "+ userId);
+        System.out.println("userId = " + userId);
         User user = userRepository.findById(userId)
                 .orElseThrow(()->new NotFoundException("없는 회원번호"));
-        user.deleteUser();
 
+        user.deleteUser();
+        messageProducer.send(convertToResponseUser(user));
         userRepository.save(user);
     }
 
@@ -127,7 +133,6 @@ public class UserServiceImpl implements UserService {
 
         String userEmail = getAuthenticationUserName();
         System.out.println("userEmail = " + userEmail);
-
         return convertToResponseUser(userRepository.findByUserEmail(userEmail));
     }
 
@@ -154,6 +159,7 @@ public class UserServiceImpl implements UserService {
     private ResponseUserDetail convertToResponseUserDetail(User user) {
         return new ResponseUserDetail(user);
     }
+
     // User to ResponseUser
     private ResponseUser convertToResponseUser(User user) {
         return new ResponseUser(user);
@@ -164,6 +170,7 @@ public class UserServiceImpl implements UserService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return authentication.getName();
     }
+
     public String getAuthenticationUserRole() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         // 권한이 있는 경우 권한을 반환

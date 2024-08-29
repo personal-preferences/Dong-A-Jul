@@ -22,4 +22,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleGeneralException(Exception e) {
         return new ResponseEntity<>("Internal Server Error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    // 500 처리 올리기
+
 }

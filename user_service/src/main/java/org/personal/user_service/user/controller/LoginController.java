@@ -4,6 +4,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.personal.user_service.user.request.RequestLogin;
 import org.personal.user_service.user.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import java.io.IOException;
 @RestController
 @RequestMapping("")
 @RequiredArgsConstructor
+@Slf4j
 public class LoginController {
 
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
@@ -55,7 +57,9 @@ public class LoginController {
                 "redirect_uri=" +
                 kakaoRedirect +
                 "&response_type=code";
-        System.out.println("login return");
+
+        log.info("login return");
+
         return ResponseEntity.ok(url);
     }
 
@@ -67,7 +71,9 @@ public class LoginController {
         String redirectUrl = "http://localhost:5173/kakaoLogin?access=" + accessToken;
 
         response.sendRedirect(redirectUrl);
-        System.out.println("카카오 로그인 완료");
+
+        log.info("카카오 로그인 완료");
+
     }
 
     private Cookie createCookie(String key, String value) {
