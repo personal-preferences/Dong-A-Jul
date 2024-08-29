@@ -5,7 +5,7 @@ import org.personal.registration_service.domain.ToiletRegist;
 import lombok.Builder;
 
 @Builder
-public record ToiletInformation (
+public record ToiletInformationRequest(
 	String toiletInfoManagementAgency,
 	String toiletInfoPhoneNumber,
 	String toiletInfoOpeningHours,
@@ -19,19 +19,19 @@ public record ToiletInformation (
 	Boolean toiletInfoEntranceCCTVIsInstalled,
 	Boolean toiletInfoDiaperChangingTableIsAvailable,
 	String toiletInfoDiaperChangingTableLocation,
-	int toiletInfoMaleToiletsNumber,
-	int toiletInfoMaleUrinalsNumber,
-	int toiletInfoMaleDisabledToiletsNumber,
-	int toiletInfoMaleDisabledUrinalsNumber,
-	int toiletInfoMaleChildToiletsNumber,
-	int toiletInfoMaleChildUrinalsNumber,
-	int toiletInfoFemaleToiletsNumber,
-	int toiletInfoFemaleDisabledToiletsNumber,
-	int toiletInfoFemaleChildToiletsNumber,
+	Integer toiletInfoMaleToiletsNumber,
+	Integer toiletInfoMaleUrinalsNumber,
+	Integer toiletInfoMaleDisabledToiletsNumber,
+	Integer toiletInfoMaleDisabledUrinalsNumber,
+	Integer toiletInfoMaleChildToiletsNumber,
+	Integer toiletInfoMaleChildUrinalsNumber,
+	Integer toiletInfoFemaleToiletsNumber,
+	Integer toiletInfoFemaleDisabledToiletsNumber,
+	Integer toiletInfoFemaleChildToiletsNumber,
 	Long toiletLocationId
 ) {
-	public static ToiletInformation of(Long toiletLocationId, ToiletRegist toiletRegist){
-		return ToiletInformation.builder()
+	public static ToiletInformationRequest of(Long toiletLocationId, ToiletRegist toiletRegist){
+		return ToiletInformationRequest.builder()
 			.toiletInfoManagementAgency(toiletRegist.getToiletRegistManagementAgency())
 			.toiletInfoPhoneNumber(toiletRegist.getToiletRegistPhoneNumber())
 			.toiletInfoOpeningHours(toiletRegist.getToiletRegistOpeningHours())
