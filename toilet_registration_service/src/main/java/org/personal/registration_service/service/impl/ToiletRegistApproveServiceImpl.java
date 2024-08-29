@@ -9,7 +9,7 @@ import org.personal.registration_service.domain.ToiletRegist;
 import org.personal.registration_service.exception.ToiletRegistException;
 import org.personal.registration_service.message.KafkaService;
 import org.personal.registration_service.repository.ToiletRegistRepository;
-import org.personal.registration_service.request.ToiletLocation;
+import org.personal.registration_service.request.ToiletLocationRequest;
 import org.personal.registration_service.request.ToiletRegistApproveRequest;
 import org.personal.registration_service.response.ToiletRegistApproveResponse;
 import org.personal.registration_service.response.ToiletRegistResponse;
@@ -44,7 +44,7 @@ public class ToiletRegistApproveServiceImpl implements ToiletRegistApproveServic
 		String status = request.isApproved() ? APPROVE : REJECT;
 
 		if(status.equals(APPROVE)){
-			kafkaService.sendToiletLocation(toiletLocation(toiletRegist));
+			kafkaService.sendToiletLocation(ToiletLocationRequest.of(toiletRegist));
 		}
 
 		return new ToiletRegistApproveResponse(status);
@@ -69,16 +69,5 @@ public class ToiletRegistApproveServiceImpl implements ToiletRegistApproveServic
 		}
 
 		return toiletRegists.map(ToiletRegistResponse::of);
-	}
-
-	public ToiletLocation toiletLocation(ToiletRegist toiletRegist){
-		return ToiletLocation.builder()
-			.toiletRegistId(toiletRegist.getToiletRegistId())
-			.name(toiletRegist.getToiletRegistToiletName())
-			.roadAddress(toiletRegist.getToiletRegistRoadNameAddress())
-			.jibunAddress(toiletRegist.getToiletRegistNumberAddress())
-			.latitude(toiletRegist.getToiletRegistLatitude())
-			.longitude(toiletRegist.getToiletRegistLongitude())
-			.build();
 	}
 }
