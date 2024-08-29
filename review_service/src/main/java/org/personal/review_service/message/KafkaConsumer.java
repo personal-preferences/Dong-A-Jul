@@ -8,6 +8,8 @@ import org.springframework.messaging.Message;
 import org.springframework.stereotype.Service;
 import org.springframework.cloud.stream.annotation.StreamListener;
 
+import java.util.Map;
+
 @Slf4j
 @Service
 public class KafkaConsumer {
@@ -20,11 +22,12 @@ public class KafkaConsumer {
     }
 
     @StreamListener("deleteReviewConsumer-in-0")
-    public void deleteReview(Message<Review> message) {
+    public void deleteReview(Message<Map<String, Object>> message) {
         try {
-            Long reviewId = message.getPayload().getReviewId();
-            reviewService.deleteReviewByReviewId(reviewId);
-            log.info("삭제된 리뷰 ID: {}", reviewId);
+            Long locationId = ((Number) message.getPayload().get("locationId")).longValue();
+            int deletedCount = reviewService.deleteReviewsByLocationId(locationId);
+            log.info("인식된 위치 ID: {}", locationId);
+            log.info("삭제된 리뷰 수: {}", deletedCount);
         } catch (Exception e) {
             log.error("다음 메시지가 포함된 리뷰 삭제 실패: {}", message, e);
         }

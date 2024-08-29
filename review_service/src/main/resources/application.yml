@@ -18,13 +18,8 @@ spring:
         binder:
           brokers: 220.73.19.191:9092
       bindings:
-        producer-out-0:
-          destination: testTopic
-          contentType: application/json
-        kafkaConsumer-in-0:
-          destination: testTopic
         deleteReviewConsumer-in-0:
-          destination: deleteReview
+          destination: toilet-delete
   application:
     name: review_service
   datasource:
