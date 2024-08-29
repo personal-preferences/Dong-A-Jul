@@ -30,6 +30,6 @@ spring:
           brokers: 220.73.19.191:9092
       bindings:
         createToiletInfo-in-0:
-          destination: test
+          destination: toilet-info-regist
         deleteToiletInfo-in-0:
-          destination: test1
+          destination: toilet-delete

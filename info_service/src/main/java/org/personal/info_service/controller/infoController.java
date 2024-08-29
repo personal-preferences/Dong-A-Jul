@@ -96,7 +96,7 @@ public class infoController {
     public String createInfoTest() throws JsonProcessingException {
 
         String json = objectMapper.writeValueAsString(createTestToiletInfo());
-        messageProducer.send("test", json);
+        messageProducer.send("toilet-info-regist", json);
 
         return "regist ToiletInfo";
     }
