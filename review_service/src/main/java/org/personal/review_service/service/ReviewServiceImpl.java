@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class ReviewServiceImpl implements ReviewService {
@@ -91,5 +92,17 @@ public class ReviewServiceImpl implements ReviewService {
         review.markAsDeleted();
         reviewRepository.save(review);
         return true;
+    }
+
+    @Override
+    public int deleteReviewsByLocationId(Long locationId) {
+        List<Review> reviews = reviewRepository.findReviewsByLocationId(locationId, Pageable.unpaged()).getContent();
+        if (reviews.isEmpty()) {
+            throw new ReviewNotFoundException("다음 위치 ID에 알맞는 리뷰를 찾지 못했습니다: " + locationId);
+        }
+
+        reviews.forEach(Review::markAsDeleted);
+        reviewRepository.saveAll(reviews);
+        return reviews.size();
     }
 }

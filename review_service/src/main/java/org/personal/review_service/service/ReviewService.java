@@ -16,9 +16,11 @@ public interface ReviewService {
 
     Page<ReviewResponse> getReviewListByLocationId(Long locationId, Pageable pageable);
 
-    Boolean deleteReviewByReviewId(Long reviewId);
-
     ReviewSummary getReviewSummaryByLocationId(Long locationId);
 
     ReviewSummary getReviewSummaryByUserId(Long userId);
+
+    Boolean deleteReviewByReviewId(Long reviewId);
+
+    int deleteReviewsByLocationId(Long locationId);
 }

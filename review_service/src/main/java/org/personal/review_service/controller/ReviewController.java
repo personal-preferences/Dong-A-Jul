@@ -105,4 +105,14 @@ public class ReviewController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND); // 리뷰가 없는 경우 404 반환
         }
     }
+
+    @DeleteMapping("/location/{locationId}")
+    public ResponseEntity<Integer> deleteReviewsByLocationId(@PathVariable Long locationId) {
+        try {
+            int deletedCount = reviewService.deleteReviewsByLocationId(locationId);
+            return new ResponseEntity<>(deletedCount, HttpStatus.OK); // 삭제 성공 시 200 반환
+        } catch (ReviewNotFoundException e) {
+            return new ResponseEntity<>(0, HttpStatus.NOT_FOUND); // 리뷰가 없는 경우 404 반환
+        }
+    }
 }
