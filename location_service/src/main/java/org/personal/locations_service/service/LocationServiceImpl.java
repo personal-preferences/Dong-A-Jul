@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.personal.locations_service.domain.Location;
 import org.personal.locations_service.exception.ToiletNotFound;
 import org.personal.locations_service.messaging.LocationEventProducer;
+import org.personal.locations_service.messaging.dto.LocationDeletedEvent;
 import org.personal.locations_service.repository.LocationRepository;
 import org.personal.locations_service.request.LocationCreate;
 import org.personal.locations_service.request.LocationEdit;
@@ -74,6 +75,11 @@ public class LocationServiceImpl implements LocationService{
 
         locationRepository.delete(location);
 
-        locationEventProducer.send("toilet-location-deleted", location.getId());
+        // Kafka 메시지 발행
+        LocationDeletedEvent locationDeletedEvent = LocationDeletedEvent.builder()
+                .locationId(location.getId())
+                .build();
+
+        locationEventProducer.send("toilet-location-deleted", locationDeletedEvent);
     }
 }
