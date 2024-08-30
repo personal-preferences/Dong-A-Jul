@@ -14,7 +14,7 @@ spring:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://220.73.19.191:5432/dongajul
     username:
-    password:
+    password: 
   jpa:
     hibernate:
       ddl-auto: update #create update none
@@ -28,6 +28,7 @@ spring:
       kafka:
         binder:
           brokers: 220.73.19.191:9092
+          autoCreateTopics: true
       bindings:
         createToiletInfo-in-0:
           destination: toilet-info-regist

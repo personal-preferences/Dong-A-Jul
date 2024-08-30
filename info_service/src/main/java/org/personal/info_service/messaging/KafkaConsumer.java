@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.personal.info_service.request.RequestCreateInfo;
+import org.personal.info_service.request.RequestDeleteInfo;
 import org.personal.info_service.response.ToiletInfoResponse;
 import org.personal.info_service.service.ToiletInfoService;
 import org.springframework.context.annotation.Bean;
@@ -43,10 +44,14 @@ public class KafkaConsumer {
 
     @Bean
     @SneakyThrows
-    public Consumer<Message<Long>> deleteToiletInfo() {
+    public Consumer<Message<String>> deleteToiletInfo() {
         return message -> {
             try {
-                toiletInfoService.deleteToiletinfo(message.getPayload());
+                RequestDeleteInfo deleteInfo = objectMapper.readValue(message.getPayload(), RequestDeleteInfo.class);
+                log.info("Processing deleteInfo : {}", deleteInfo);
+
+                toiletInfoService.deleteToiletinfo(deleteInfo.locationId());
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
