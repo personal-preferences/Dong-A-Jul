@@ -12,9 +12,9 @@ public interface ReviewService {
 
     ReviewResponse getReview(Long reviewId);
 
-    Page<ReviewResponse> getReviewListByUserId(Long userId, Pageable pageable);
+    Page<ReviewResponse> getReviewListByUserId(Long userId, String sort, String direction, int page);
 
-    Page<ReviewResponse> getReviewListByLocationId(Long locationId, Pageable pageable);
+    Page<ReviewResponse> getReviewListByLocationId(Long locationId, String sort, String direction, int page);
 
     ReviewSummary getReviewSummaryByLocationId(Long locationId);
 
@@ -23,4 +23,6 @@ public interface ReviewService {
     Boolean deleteReviewByReviewId(Long reviewId);
 
     int deleteReviewsByLocationId(Long locationId);
+
+    Pageable createPageable(String sort, String direction, int page);
 }

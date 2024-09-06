@@ -56,9 +56,7 @@ public class ReviewController {
             @RequestParam(defaultValue = "DESC") String direction,
             @RequestParam(defaultValue = "0") int page) {
         try {
-            Sort.Direction sortDirection = Sort.Direction.fromString(direction);
-            Pageable pageable = PageRequest.of(page, 10, Sort.by(sortDirection, sort));
-            Page<ReviewResponse> reviewResponses = reviewService.getReviewListByUserId(userId, pageable);
+            Page<ReviewResponse> reviewResponses = reviewService.getReviewListByUserId(userId, sort, direction, page);
             return new ResponseEntity<>(reviewResponses, HttpStatus.OK);
         } catch (ReviewNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -73,9 +71,7 @@ public class ReviewController {
             @RequestParam(defaultValue = "DESC") String direction,
             @RequestParam(defaultValue = "0") int page) {
         try {
-            Sort.Direction sortDirection = Sort.Direction.fromString(direction);
-            Pageable pageable = PageRequest.of(page, 10, Sort.by(sortDirection, sort));
-            Page<ReviewResponse> reviewResponses = reviewService.getReviewListByLocationId(locationId, pageable);
+            Page<ReviewResponse> reviewResponses = reviewService.getReviewListByLocationId(locationId, sort, direction, page);
             return new ResponseEntity<>(reviewResponses, HttpStatus.OK);
         } catch (ReviewNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -85,15 +81,23 @@ public class ReviewController {
     @GetMapping("/location/{locationId}/summary")
     public ResponseEntity<ReviewSummary> getReviewSummaryByLocationId(
             @PathVariable Long locationId) {
-        ReviewSummary reviewSummary = reviewService.getReviewSummaryByLocationId(locationId);
-        return new ResponseEntity<>(reviewSummary, HttpStatus.OK);
+        try {
+            ReviewSummary reviewSummary = reviewService.getReviewSummaryByLocationId(locationId);
+            return new ResponseEntity<>(reviewSummary, HttpStatus.OK);
+        } catch (ReviewNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
     }
 
     @GetMapping("/user/{userId}/summary")
     public ResponseEntity<ReviewSummary> getReviewSummaryByUserId(
             @PathVariable Long userId) {
-        ReviewSummary reviewSummary = reviewService.getReviewSummaryByUserId(userId);
-        return new ResponseEntity<>(reviewSummary, HttpStatus.OK);
+        try {
+            ReviewSummary reviewSummary = reviewService.getReviewSummaryByUserId(userId);
+            return new ResponseEntity<>(reviewSummary, HttpStatus.OK);
+        } catch (ReviewNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
     }
 
     @DeleteMapping("/{reviewId}")

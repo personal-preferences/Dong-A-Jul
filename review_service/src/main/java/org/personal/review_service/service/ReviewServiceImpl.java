@@ -10,7 +10,9 @@ import org.personal.review_service.response.ReviewResponse;
 import org.personal.review_service.response.ReviewSummary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -51,8 +53,8 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Page<ReviewResponse> getReviewListByUserId(Long userId, Pageable pageable) {
-        Page<Review> reviewList = reviewRepository.findReviewsByUserId(userId, pageable);
+    public Page<ReviewResponse> getReviewListByUserId(Long userId, String sort, String direction, int page) {
+        Page<Review> reviewList = reviewRepository.findReviewsByUserId(userId, createPageable(sort, direction, page));
 
         if (reviewList.isEmpty()) {
             throw new ReviewNotFoundException("다음 회원 ID에 알맞는 리뷰를 찾지 못했습니다: " + userId);
@@ -62,8 +64,8 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public Page<ReviewResponse> getReviewListByLocationId(Long locationId, Pageable pageable) {
-        Page<Review> reviewList = reviewRepository.findReviewsByLocationId(locationId, pageable);
+    public Page<ReviewResponse> getReviewListByLocationId(Long locationId, String sort, String direction, int page) {
+        Page<Review> reviewList = reviewRepository.findReviewsByLocationId(locationId, createPageable(sort, direction, page));
 
         if (reviewList.isEmpty()) {
             throw new ReviewNotFoundException("다음 위치 ID에 알맞는 리뷰를 찾지 못했습니다: " + locationId);
@@ -104,5 +106,11 @@ public class ReviewServiceImpl implements ReviewService {
         reviews.forEach(Review::markAsDeleted);
         reviewRepository.saveAll(reviews);
         return reviews.size();
+    }
+
+    @Override
+    public Pageable createPageable(String sort, String direction, int page) {
+        Sort.Direction sortDirection = Sort.Direction.fromString(direction);
+        return PageRequest.of(page, 10, Sort.by(sortDirection, sort));
     }
 }
