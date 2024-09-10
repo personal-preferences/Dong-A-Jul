@@ -4,14 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.personal.locations_service.domain.Location;
 import org.personal.locations_service.exception.ToiletNotFound;
-import org.personal.locations_service.messaging.LocationEventProducer;
-import org.personal.locations_service.messaging.dto.LocationDeletedEvent;
+import org.personal.locations_service.message.LocationEventProducer;
+import org.personal.locations_service.message.dto.LocationDeletedEvent;
 import org.personal.locations_service.repository.LocationRepository;
 import org.personal.locations_service.request.LocationCreate;
 import org.personal.locations_service.request.LocationEdit;
 import org.personal.locations_service.request.LocationMarker;
 import org.personal.locations_service.response.LocationResponse;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
