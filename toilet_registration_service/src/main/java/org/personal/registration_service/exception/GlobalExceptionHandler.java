@@ -80,11 +80,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return this.makeErrorResponseEntity(ToiletRegistErrorResult.UNKNOWN_EXCEPTION, exception.getMessage());
 	}
 
-	private ResponseEntity<ErrorResponse> makeErrorResponseEntity(final ToiletRegistErrorResult errorResult) {
-		return ResponseEntity.status(errorResult.getHttpStatus())
-			.body(new ErrorResponse(errorResult.name(), errorResult.getMessage()));
-	}
-
 	private ResponseEntity<ErrorResponse> makeErrorResponseEntity(final ToiletRegistErrorResult errorResult, final String message) {
 		return ResponseEntity.status(errorResult.getHttpStatus())
 			.body(new ErrorResponse(errorResult.name(), message));
