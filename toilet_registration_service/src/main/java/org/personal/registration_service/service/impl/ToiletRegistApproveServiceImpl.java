@@ -17,9 +17,15 @@ import org.personal.registration_service.service.ToiletRegistApproveService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationAdapter;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import jakarta.persistence.LockModeType;
 import lombok.RequiredArgsConstructor;
+import lombok.Synchronized;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +35,8 @@ public class ToiletRegistApproveServiceImpl implements ToiletRegistApproveServic
 	final KafkaService kafkaService;
 
 	@Override
+	@Lock(LockModeType.PESSIMISTIC_WRITE)
+	@Transactional
 	public ToiletRegistApproveResponse updateToiletRegistApprove(ToiletRegistApproveRequest request) {
 		final ToiletRegist toiletRegist = toiletRegistRepository.findById(request.toiletRegistId())
 			.orElseThrow(() -> new ToiletRegistException(ToiletRegistErrorResult.ENTITY_NOT_FOUND));
@@ -43,8 +51,14 @@ public class ToiletRegistApproveServiceImpl implements ToiletRegistApproveServic
 
 		String status = request.isApproved() ? APPROVE : REJECT;
 
-		if(status.equals(APPROVE)){
-			kafkaService.sendToiletLocation(ToiletLocationRequest.of(toiletRegist));
+		if (status.equals(APPROVE)) {
+			// 트랜잭션 커밋 후에 Kafka 메시지 전송
+			TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronizationAdapter() {
+				@Override
+				public void afterCommit() {
+					kafkaService.sendToiletLocation(ToiletLocationRequest.of(toiletRegist));
+				}
+			});
 		}
 
 		return new ToiletRegistApproveResponse(status);

@@ -7,6 +7,7 @@ import org.personal.registration_service.response.ToiletRegistResponse;
 import org.personal.registration_service.service.ToiletRegistService;
 import org.springframework.stereotype.Service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -16,6 +17,7 @@ public class ToiletRegistServiceImpl implements ToiletRegistService {
 	private final ToiletRegistRepository toiletRegistRepository;
 
 	@Override
+	@Transactional
 	public ToiletRegistResponse addToiletRegist(ToiletRegistRequest request){
 
 		final ToiletRegist toiletRegist = ToiletRegist.of(request);
