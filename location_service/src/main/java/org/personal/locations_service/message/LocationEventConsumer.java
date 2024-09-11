@@ -18,16 +18,8 @@ public class LocationEventConsumer {
     @Bean
     public Consumer<Message<String>> input() {
         return message -> {
-            log.error("[Sync] Processing message: {}", message);
-            log.info("[Sync] Processed payload: {}", message.getPayload());
-        };
-    }
-
-    @Bean
-    public Consumer<Message<String>> inputAsync() {
-        return message -> {
-            log.error("[Async] Processing message: {}", message);
-            log.info("[Async] Processed payload: {}", message.getPayload());
+            log.error("Processing message: {}", message);
+            log.info("Processed payload: {}", message.getPayload());
             try {
                 LocationCreate locationCreate = objectMapper.readValue(message.getPayload(), LocationCreate.class);
                 log.info("[Async] 객체 변환: {}", locationCreate);

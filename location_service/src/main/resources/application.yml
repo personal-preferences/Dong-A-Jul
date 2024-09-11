@@ -27,8 +27,6 @@ spring:
           brokers: 220.73.19.191:9092
       bindings:
         input-in-0:                                   # Consumer 클래스의 메소드명으로 기본 바인딩이 생긴다
-          destination: toilet-location-deleted-sync   # topic 이름
-        inputAsync-in-0:
-          destination: toilet-location-deleted
+          destination: toilet-registration-approved   # topic 이름
     function:
       definition: input;inputAsync                    # 사용하고 싶은 binding이 여러개일 경우 ;으로 구분하여 나열한다
