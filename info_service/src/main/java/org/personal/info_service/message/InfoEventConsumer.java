@@ -1,4 +1,4 @@
-package org.personal.info_service.messaging;
+package org.personal.info_service.message;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
