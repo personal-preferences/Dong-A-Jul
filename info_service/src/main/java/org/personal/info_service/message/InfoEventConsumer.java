@@ -17,12 +17,12 @@ import java.util.function.Consumer;
 
 @Slf4j
 @Configuration
-public class KafkaConsumer {
+public class InfoEventConsumer {
 
     ObjectMapper objectMapper = new ObjectMapper();
     private final ToiletInfoService toiletInfoService;
 
-    public KafkaConsumer(ToiletInfoService toiletInfoService) {
+    public InfoEventConsumer(ToiletInfoService toiletInfoService) {
         this.toiletInfoService = toiletInfoService;
     }
 

@@ -1,4 +1,4 @@
-package org.personal.info_service.messaging;
+package org.personal.info_service.message;
 
 import lombok.AllArgsConstructor;
 import org.springframework.cloud.stream.function.StreamBridge;

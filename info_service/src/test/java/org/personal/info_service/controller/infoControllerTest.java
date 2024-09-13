@@ -38,6 +38,8 @@ class infoControllerTest {
     @Autowired
     private ToiletInfoService toiletInfoService;
 
+    public final static Long TEST_ID = -1L;
+
     @Test
     @DisplayName("화장실 정보 등록 성공")
     void addToiletInfoSuccess() throws Exception {
@@ -57,7 +59,7 @@ class infoControllerTest {
     void addDuplicateKeyInfo() throws Exception {
 
         RequestCreateInfo origin = RequestCreateInfo.builder()
-                .toiletLocationId(1L)
+                .toiletLocationId(TEST_ID)
                 .build();
         toiletInfoService.createToiletInfo(origin);
 
@@ -90,13 +92,13 @@ class infoControllerTest {
     void modifyToiletInfoSuccess() throws Exception {
 
         RequestCreateInfo origin = RequestCreateInfo.builder()
-                .toiletLocationId(1L)
+                .toiletLocationId(TEST_ID)
                 .toiletInfoFemaleToiletsNumber(3)
                 .build();
         toiletInfoService.createToiletInfo(origin);
 
         RequestCreateInfo request = RequestCreateInfo.builder()
-                .toiletLocationId(1L)
+                .toiletLocationId(TEST_ID)
                 .toiletInfoFemaleToiletsNumber(5)
                 .build();
         String json = objectMapper.writeValueAsString(request);
@@ -114,7 +116,7 @@ class infoControllerTest {
     void modifyInfoIllegalArgumentException() throws Exception {
 
         RequestCreateInfo request = RequestCreateInfo.builder()
-                .toiletLocationId(-1L)
+                .toiletLocationId(TEST_ID*2)
                 .toiletInfoFemaleToiletsNumber(5)
                 .build();
         String json = objectMapper.writeValueAsString(request);
@@ -131,7 +133,7 @@ class infoControllerTest {
     void deleteToiletInfoSuccess() throws Exception {
 
         RequestCreateInfo origin = RequestCreateInfo.builder()
-                .toiletLocationId(1L)
+                .toiletLocationId(TEST_ID)
                 .build();
         toiletInfoService.createToiletInfo(origin);
 
@@ -145,7 +147,7 @@ class infoControllerTest {
     @DisplayName("정보 삭제 실패 - 저장된 값이 없는 경우")
     void deleteInfoIllegalArgumentException() throws Exception {
 
-        mockMvc.perform(delete("/info/delete/" + -1L)
+        mockMvc.perform(delete("/info/delete/" + TEST_ID*2)
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isNoContent())
                 .andDo(print());
@@ -156,7 +158,7 @@ class infoControllerTest {
     void getToiletInfoSuccess() throws Exception {
 
         RequestCreateInfo origin = RequestCreateInfo.builder()
-                .toiletLocationId(1L)
+                .toiletLocationId(TEST_ID)
                 .build();
         toiletInfoService.createToiletInfo(origin);
 
@@ -171,7 +173,7 @@ class infoControllerTest {
     @DisplayName("정보 조회 실패 - 저장된 값이 없는 경우")
     void getInfoIllegalArgumentException() throws Exception {
 
-        mockMvc.perform(get("/info/" + -1L)
+        mockMvc.perform(get("/info/" + TEST_ID*2)
                         .contentType(APPLICATION_JSON))
                 .andExpect(status().isNoContent())
                 .andDo(print());
@@ -182,10 +184,10 @@ class infoControllerTest {
     void getToiletInfoListSuccess() throws Exception {
 
         RequestCreateInfo origin1 = RequestCreateInfo.builder()
-                .toiletLocationId(1L)
+                .toiletLocationId(TEST_ID)
                 .build();
         RequestCreateInfo origin2 = RequestCreateInfo.builder()
-                .toiletLocationId(2L)
+                .toiletLocationId(TEST_ID*2)
                 .build();
         toiletInfoService.createToiletInfo(origin1);
         toiletInfoService.createToiletInfo(origin2);
@@ -206,7 +208,7 @@ class infoControllerTest {
     void getDisabledToiletInfoListSuccess() throws Exception {
 
         RequestCreateInfo origin = RequestCreateInfo.builder()
-                .toiletLocationId(1L)
+                .toiletLocationId(TEST_ID)
                 .toiletInfoFemaleDisabledToiletsNumber(3)
                 .build();
         toiletInfoService.createToiletInfo(origin);
@@ -243,7 +245,7 @@ class infoControllerTest {
                 .toiletInfoFemaleToiletsNumber(4)
                 .toiletInfoFemaleDisabledToiletsNumber(1)
                 .toiletInfoFemaleChildToiletsNumber(1)
-                .toiletLocationId(1L)
+                .toiletLocationId(TEST_ID)
                 .build();
     }
 }

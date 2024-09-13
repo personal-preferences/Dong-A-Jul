@@ -28,6 +28,8 @@ class ToiletInfoServiceTest {
     @Autowired
     private ToiletInfoRepository  toiletInfoRepository;
 
+    public final static Long TEST_ID = -1L;
+
     @Test
     @DisplayName("화장실 정보 저장")
     void registToiletInfo(){
@@ -81,10 +83,10 @@ class ToiletInfoServiceTest {
     void getToiletInfoList(){
 
         RequestCreateInfo info1 = RequestCreateInfo.builder()
-                .toiletLocationId(1L)
+                .toiletLocationId(TEST_ID)
                 .build();
         RequestCreateInfo info2 = RequestCreateInfo.builder()
-                .toiletLocationId(2L)
+                .toiletLocationId(TEST_ID*2)
                 .build();
         toiletInfoService.createToiletInfo(info1);
         toiletInfoService.createToiletInfo(info2);
@@ -136,7 +138,7 @@ class ToiletInfoServiceTest {
                 .toiletInfoFemaleToiletsNumber(4)
                 .toiletInfoFemaleDisabledToiletsNumber(1)
                 .toiletInfoFemaleChildToiletsNumber(1)
-                .toiletLocationId(1L)
+                .toiletLocationId(TEST_ID)
                 .build();
     }
 

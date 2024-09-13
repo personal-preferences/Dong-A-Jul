@@ -13,8 +13,8 @@ spring:
   datasource:
     driver-class-name: org.postgresql.Driver
     url: jdbc:postgresql://220.73.19.191:5432/dongajul
-    username:
-    password: 
+    username: 
+    password:
   jpa:
     hibernate:
       ddl-auto: update #create update none
@@ -33,4 +33,4 @@ spring:
         createToiletInfo-in-0:
           destination: toilet-info-regist
         deleteToiletInfo-in-0:
-          destination: toilet-delete
+          destination: toilet-location-deleted
