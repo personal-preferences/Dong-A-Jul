@@ -37,20 +37,25 @@
 ![JWT](https://img.shields.io/badge/JWT-000000.svg?&logo=json-web-token&logoColor=white)
 ![Gradle](https://img.shields.io/badge/Gradle-8.7-02303A.svg?&logo=gradle)
 ![JUnit5](https://img.shields.io/badge/JUnit5-25A162.svg?&logo=junit5&logoColor=white&color=green)
+![Kafka](https://img.shields.io/badge/Apache%20Kafka-231F20?style=for-the-badge&logo=apache-kafka&logoColor=white)
 
 ### DB
-
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
 
 <br>
 
 ## 🎨 DDD
-🔗 DDD 설계
+🔗 <a href="https://miro.com/app/board/uXjVKQtve4I=/?share_link_id=857640009601">DDD 설계</a>
+![image](https://github.com/user-attachments/assets/d7b38e89-9a22-43cc-9da1-693a7a03e6e3)
+
 
 <br>
 
 
 
 ## 📃 문서
+🔗 <a href="https://docs.google.com/spreadsheets/d/1bZu4tf6-LjbFvtZ1JaCs-oltaSkSiw7a6RtgsQm0Vlw/edit?usp=sharing">문서 링크</a>
+
 <details>
   <summary>프로젝트 기획서</summary>
 </details>
