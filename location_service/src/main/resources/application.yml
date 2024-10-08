@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: location_service
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://220.73.19.191:5432/dongajul
+    username: test
+    password: test
+  jpa:
+    database: postgresql
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    hibernate:
+      ddl-auto: create
+  data:
+    web:
+      pageable:
+        one-indexed-parameters: true
+        default-page-size: 10
