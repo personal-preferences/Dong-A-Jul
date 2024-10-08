@@ -1,0 +1,98 @@
+# 화장실 위치 찾기 서비스: 동아줄
+
+[사진]
+
+
+<br>
+
+## 👋 프로젝트 멤버 소개
+
+| [사진] | [사진] | [사진] | [사진] | [사진] | [사진] | 
+| :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
+|                            신대영                            |                            이현우                            |                            장민석                            |                            조예린                            |                            최종찬                            |                            한소혜                            |
+| [<img src="https://img.shields.io/badge/Github-Link-181717?logo=Github">](github-URL) | [<img src="https://img.shields.io/badge/Github-Link-181717?logo=Github">](github-URL) | [<img src="https://img.shields.io/badge/Github-Link-181717?logo=Github">](github-URL) | [<img src="https://img.shields.io/badge/Github-Link-181717?logo=Github">](github-URL) | [<img src="https://img.shields.io/badge/Github-Link-181717?logo=Github">](github-URL) | [<img src="https://img.shields.io/badge/Github-Link-181717?logo=Github">](github-URL) |
+
+
+
+
+
+<br>
+
+## 💡 기술 스택
+
+### Frontend
+
+![Vue 3](https://img.shields.io/badge/Vue_3-4FC08D.svg?&logo=vue.js&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E.svg?&logo=javascript&logoColor=black)
+![HTML](https://img.shields.io/badge/HTML-E34F26?logo=html5&logoColor=white)
+![CSS](https://img.shields.io/badge/CSS-1572B6?logo=css3&logoColor=white)
+
+### Backend
+
+![Java](https://img.shields.io/badge/Java-17-007396.svg?&logo=java&color=red)
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-3-6DB33F.svg?&logo=spring-boot&color=lightgreen)
+![Spring Data JPA](https://img.shields.io/badge/Spring_Data_JPA-6DB33F.svg?&logo=spring-data-JPA)
+![Hibernate](https://img.shields.io/badge/Hibernate-59666C.svg?&logo=hibernate)
+![Spring Security](https://img.shields.io/badge/Spring_Security-6DB33F.svg?&logo=spring-security&logoColor=white)
+![JWT](https://img.shields.io/badge/JWT-000000.svg?&logo=json-web-token&logoColor=white)
+![Gradle](https://img.shields.io/badge/Gradle-8.7-02303A.svg?&logo=gradle)
+![JUnit5](https://img.shields.io/badge/JUnit5-25A162.svg?&logo=junit5&logoColor=white&color=green)
+
+### DB
+
+
+<br>
+
+## 🎨 DDD
+🔗 DDD 설계
+
+<br>
+
+
+
+## 📃 문서
+<details>
+  <summary>프로젝트 기획서</summary>
+</details>
+
+<details>
+  <summary>요구사항 정의서</summary>
+</details>
+
+<details>
+  <summary>WBS</summary>
+</details>
+
+
+<details>
+  <summary>단위 테스트 결과서</summary>
+</details>
+
+<details>
+  <summary>UI/UX 단위 테스트</summary>
+</details>
+
+
+<details>
+  <summary>통합 테스트 결과서</summary>
+</details>
+
+
+
+
+
+
+<br>
+
+## 🤔 회고
+
+| &nbsp;&nbsp;팀&nbsp;원&nbsp;&nbsp;&nbsp; | 회고록 |
+| :--------------------------------------: | ------ |
+|                  신대영                  |  |
+|                  이현우                  |  |
+|                  장민석                  |  |
+|                  조예린                  |  |
+|                  최종찬                  |  |
+|                  한소혜                  |  |
+
+
