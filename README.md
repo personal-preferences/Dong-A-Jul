@@ -1,16 +1,15 @@
 # 화장실 위치 찾기 서비스: 동아줄
 
-[사진]
+[로고]
 
 
 <br>
 
 ## 👋 프로젝트 멤버 소개
 
-| [사진] | [사진] | [사진] | [사진] | [사진] | [사진] | 
-| :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
 |                            신대영                            |                            이현우                            |                            장민석                            |                            조예린                            |                            최종찬                            |                            한소혜                            |
-| [<img src="https://img.shields.io/badge/Github-Link-181717?logo=Github">](github-URL) | [<img src="https://img.shields.io/badge/Github-Link-181717?logo=Github">](github-URL) | [<img src="https://img.shields.io/badge/Github-Link-181717?logo=Github">](github-URL) | [<img src="https://img.shields.io/badge/Github-Link-181717?logo=Github">](github-URL) | [<img src="https://img.shields.io/badge/Github-Link-181717?logo=Github">](github-URL) | [<img src="https://img.shields.io/badge/Github-Link-181717?logo=Github">](github-URL) |
+| :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
+| [<img src="https://img.shields.io/badge/Github-Link-181717?logo=Github">](https://github.com/DYShin1) | [<img src="https://img.shields.io/badge/Github-Link-181717?logo=Github">](https://github.com/daersh) | [<img src="https://img.shields.io/badge/Github-Link-181717?logo=Github">](https://github.com/ms1011) | [<img src="https://img.shields.io/badge/Github-Link-181717?logo=Github">](https://github.com/orlzlL) | [<img src="https://img.shields.io/badge/Github-Link-181717?logo=Github">](https://github.com/CJC0512) | [<img src="https://img.shields.io/badge/Github-Link-181717?logo=Github">](https://github.com/Sosohy) |
 
 
 
@@ -55,37 +54,6 @@
 
 ## 📃 문서
 🔗 <a href="https://docs.google.com/spreadsheets/d/1bZu4tf6-LjbFvtZ1JaCs-oltaSkSiw7a6RtgsQm0Vlw/edit?usp=sharing">문서 링크</a>
-
-<details>
-  <summary>프로젝트 기획서</summary>
-</details>
-
-<details>
-  <summary>요구사항 정의서</summary>
-</details>
-
-<details>
-  <summary>WBS</summary>
-</details>
-
-
-<details>
-  <summary>단위 테스트 결과서</summary>
-</details>
-
-<details>
-  <summary>UI/UX 단위 테스트</summary>
-</details>
-
-
-<details>
-  <summary>통합 테스트 결과서</summary>
-</details>
-
-
-
-
-
 
 <br>
 
